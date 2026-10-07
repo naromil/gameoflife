@@ -1,6 +1,6 @@
 package com.naromil.gol;
 
-public class Main {
+public class MainLauncher {
     public static void main(String[] args) {
         int duration = 60;
         int gridHeight = 10, gridWidth = 16;

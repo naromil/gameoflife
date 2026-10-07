@@ -2,6 +2,6 @@ package com.naromil.gol.elements;
 
 import com.naromil.gol.display.Color;
 
-public interface Tile {
-  Color getColor();
+public abstract class Tile {
+  public abstract Color getColor();
 }
