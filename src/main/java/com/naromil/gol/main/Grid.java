@@ -7,6 +7,7 @@ public class Grid {
     private static final int MAX_HEIGHT = 100;
     private static final int MAX_WIDTH = 100;
 
+    /* ---- Grid Properties ---- */
     private int height;
     private int width;
     private final Tile[][] tiles;
@@ -23,6 +24,14 @@ public class Grid {
         }
     }
 
+    public int getHeight() {
+        return height;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
     protected void clear() {
         for (int i = 0; i < MAX_HEIGHT; i++) {
             for (int j = 0; j < MAX_WIDTH; j++) {
@@ -34,9 +43,6 @@ public class Grid {
     public void setSize(int gridWidth, int gridHeight) {
         this.width = gridWidth;
         this.height = gridHeight;
-    }
-
-    public void nextState() {
     }
 
     public Color[][] toColorGrid() {
@@ -51,5 +57,9 @@ public class Grid {
             }
         }
         return colorGrid;
+    }
+
+    /* ---- Logic ---- */
+    public void nextState() {
     }
 }

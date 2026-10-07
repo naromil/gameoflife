@@ -27,6 +27,7 @@ public class MainController {
     @FXML
     private Pane gridDisplayPane;
 
+    // Initialize the application
     @FXML
     public void initialize() {
         // Initialize grid
@@ -50,6 +51,7 @@ public class MainController {
         displayGrid();
     }
 
+    // Put the grid on the canvas
     private void displayGrid() {
         Color[][] colorGrid = grid.toColorGrid();
         GraphicsContext gc = gridDisplay.getGraphicsContext2D();
@@ -66,6 +68,23 @@ public class MainController {
                 gc.setFill(javafx.scene.paint.Color.rgb(color.r(), color.g(), color.b()));
                 gc.fillRect(j * tileWidth, i * tileHeight, tileWidth, tileHeight);
             }
+        }
+        drawTileOutlines(gc, rows, cols, tileWidth, tileHeight);
+    }
+
+    private void drawTileOutlines(GraphicsContext gc, int rows, int cols, double tileWidth, double tileHeight) {
+        double width = gridDisplay.getWidth();
+        double height = gridDisplay.getHeight();
+        gc.setStroke(javafx.scene.paint.Color.BLACK);
+        gc.setLineWidth(1);
+        // Half-pixel offsets keep the 1px outline crisp, and the clips keep the outer border inside the canvas.
+        for (int i = 0; i <= rows; i++) {
+            double y = Math.min(Math.round(i * tileHeight) + 0.5, height - 0.5);
+            gc.strokeLine(0, y, width, y);
+        }
+        for (int j = 0; j <= cols; j++) {
+            double x = Math.min(Math.round(j * tileWidth) + 0.5, width - 0.5);
+            gc.strokeLine(x, 0, x, height);
         }
     }
 
@@ -91,12 +110,12 @@ public class MainController {
         displayGrid();
     }
 
-    /* ---- Interval, Start and Stop ---- */
+    /* ---- Interval ---- */
     @FXML
     private ScrollBar intervalScroll;
     @FXML
     private Label intervalLabel;
-
+    
     private void updateInterval(double value) {
         intervalLabel.setText("Interval: " + (int) value + " ms");
         if (isRunning()) {
@@ -108,6 +127,7 @@ public class MainController {
         return (int) intervalScroll.getValue();
     }
 
+    /* ---- Simulation Control ---- */
     boolean isRunning;
 
     public void setRunning(boolean running) {
@@ -146,6 +166,7 @@ public class MainController {
         simulation.play();
     }
 
+    /* ---- Buttons ---- */
     @FXML
     private Button startButton;
 
