@@ -8,12 +8,17 @@
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.naromil.gol.main.MainController">
+<BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.naromil.gol.main.MainController">
    <center>
-      <Canvas fx:id="gridDisplay" height="300.0" width="400.0" BorderPane.alignment="CENTER" />
+      <Pane fx:id="gridDisplayPane" BorderPane.alignment="CENTER">
+         <children>
+            <Canvas fx:id="gridDisplay" />
+         </children>
+      </Pane>
    </center>
    <right>
       <VBox alignment="TOP_CENTER" prefHeight="400.0" prefWidth="150.0" spacing="5.0" BorderPane.alignment="CENTER">
