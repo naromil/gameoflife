@@ -1,4 +1,4 @@
-package com.naromil.gol;
+package com.naromil.gol.main;
 
 import com.naromil.gol.display.Color;
 import com.naromil.gol.elements.Tile;
