@@ -4,23 +4,39 @@ import com.naromil.gol.display.Color;
 import com.naromil.gol.elements.Tile;
 
 public class Grid {
-    private final int height;
-    private final int width;
+    private static final int MAX_HEIGHT = 100;
+    private static final int MAX_WIDTH = 100;
+
+    private int height;
+    private int width;
     private final Tile[][] tiles;
 
-    public Grid(int gridHeight, int gridWidth) {
-        this.height = gridHeight;
-        this.width = gridWidth;
-        this.tiles = new Tile[gridHeight][gridWidth];
+    public Grid() {
+        this.height = MAX_HEIGHT;
+        this.width = MAX_WIDTH;
+        this.tiles = new Tile[MAX_HEIGHT][MAX_WIDTH];
         // Initialize the grid with some initial state
-        for (int i = 0; i < gridHeight; i++) {
-            for (int j = 0; j < gridWidth; j++) {
-                tiles[i][j] = null; // TODO: have random types of tiles
+        for (int i = 0; i < MAX_HEIGHT; i++) {
+            for (int j = 0; j < MAX_WIDTH; j++) {
+                tiles[i][j] = null;
             }
         }
     }
 
-    public void update() {
+    protected void clear() {
+        for (int i = 0; i < MAX_HEIGHT; i++) {
+            for (int j = 0; j < MAX_WIDTH; j++) {
+                tiles[i][j] = null;
+            }
+        }
+    }
+
+    public void setSize(int gridWidth, int gridHeight) {
+        this.width = gridWidth;
+        this.height = gridHeight;
+    }
+
+    public void nextState() {
     }
 
     public Color[][] toColorGrid() {

@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollBar?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -28,18 +29,28 @@
                   <Button alignment="CENTER" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onResetButtonPressed" prefHeight="26.0" prefWidth="62.0" text="Reset" />
                </children>
             </HBox>
-            <ScrollBar fx:id="intervalScroll" max="10000.0" unitIncrement="100.0">
+            <Label prefHeight="18.0" prefWidth="140.0" text="Grid Size" />
+            <HBox alignment="CENTER" spacing="5.0">
+               <children>
+                  <Spinner fx:id="gridWidthSpinner" editable="true" />
+                  <Spinner fx:id="gridHeightSpinner" editable="true" />
+               </children>
+               <padding>
+                  <Insets left="5.0" right="5.0" />
+               </padding>
+            </HBox>
+            <Label fx:id="intervalLabel" prefHeight="18.0" prefWidth="140.0" text="Interval: ?" />
+            <ScrollBar fx:id="intervalScroll" max="10000.0" unitIncrement="100.0" value="1000.0">
                <VBox.margin>
-                  <Insets bottom="5.0" right="5.0" top="10.0" />
+                  <Insets right="5.0" />
                </VBox.margin>
             </ScrollBar>
-            <Label fx:id="intervalLabel" prefHeight="18.0" prefWidth="140.0" text="Interval: ?" />
             <Label layoutX="57.0" layoutY="10.0" text="Legend">
                <font>
                   <Font size="16.0" />
                </font>
             </Label>
-            <Canvas fx:id="legendDisplay" height="250.0" width="150.0" />
+            <Canvas fx:id="legendDisplay" height="200.0" width="150.0" />
          </children>
          <BorderPane.margin>
             <Insets top="5.0" />
