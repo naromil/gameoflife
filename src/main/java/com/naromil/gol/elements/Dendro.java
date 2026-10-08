@@ -3,8 +3,10 @@ package com.naromil.gol.elements;
 import com.naromil.gol.main.Color;
 
 public class Dendro extends Tile {
+    public static final Color DEFAULT_COLOR = Color.similarColor(new Color(165, 200, 59));
+
     public Dendro() {
-        super(Color.similarColor(new Color(165, 200, 59)));
+        super(Color.similarColor(DEFAULT_COLOR));
     }
   
     @Override

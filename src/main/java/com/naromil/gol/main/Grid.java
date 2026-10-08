@@ -24,6 +24,10 @@ public class Grid {
         }
     }
 
+    public Tile[][] getTiles() {
+        return tiles;
+    }
+
     public int getHeight() {
         return height;
     }

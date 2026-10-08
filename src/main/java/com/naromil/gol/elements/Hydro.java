@@ -3,8 +3,10 @@ package com.naromil.gol.elements;
 import com.naromil.gol.main.Color;
 
 public class Hydro extends Tile {
+    public static final Color DEFAULT_COLOR = Color.similarColor(new Color(76, 194, 241));
+
     public Hydro() {
-        super(Color.similarColor(new Color(76, 194, 241)));
+        super(Color.similarColor(DEFAULT_COLOR));
     }
 
     @Override

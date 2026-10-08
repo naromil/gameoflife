@@ -3,8 +3,10 @@ package com.naromil.gol.elements;
 import com.naromil.gol.main.Color;
 
 public class Geo extends Tile {
+    public static final Color DEFAULT_COLOR = Color.similarColor(new Color(248, 186, 78));
+
     public Geo() {
-        super(Color.similarColor(new Color(248, 186, 78)));
+        super(Color.similarColor(DEFAULT_COLOR));
     }
 
     @Override

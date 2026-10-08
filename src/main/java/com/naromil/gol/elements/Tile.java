@@ -3,7 +3,9 @@ package com.naromil.gol.elements;
 import com.naromil.gol.main.Color;
 
 public abstract class Tile {
-  
+
+  public static final Color DEFAULT_COLOR = null;
+
   protected final Color color;
 
   public Tile(Color color) {

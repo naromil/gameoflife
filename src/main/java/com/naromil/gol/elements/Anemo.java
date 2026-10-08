@@ -3,8 +3,10 @@ package com.naromil.gol.elements;
 import com.naromil.gol.main.Color;
 
 public class Anemo extends Tile {
+    public static final Color DEFAULT_COLOR = Color.similarColor(new Color(117, 194, 170));
+
     public Anemo() {
-        super(Color.similarColor(new Color(117, 194, 170)));
+        super(Color.similarColor(DEFAULT_COLOR));
     }
 
     @Override

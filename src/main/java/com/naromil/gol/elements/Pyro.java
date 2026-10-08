@@ -3,8 +3,10 @@ package com.naromil.gol.elements;
 import com.naromil.gol.main.Color;
 
 public class Pyro extends Tile {
+    public static final Color DEFAULT_COLOR = Color.similarColor(new Color(239, 121, 56));
+
     public Pyro() {
-        super(Color.similarColor(new Color(239, 121, 56)));
+        super(Color.similarColor(DEFAULT_COLOR));
     }
 
     @Override

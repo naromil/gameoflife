@@ -3,8 +3,10 @@ package com.naromil.gol.elements;
 import com.naromil.gol.main.Color;
 
 public class Electro extends Tile {
+    public static final Color DEFAULT_COLOR = Color.similarColor(new Color(211, 118, 240));
+
     public Electro() {
-        super(Color.similarColor(new Color(211, 118, 240)));
+        super(Color.similarColor(DEFAULT_COLOR));
     }
 
     @Override

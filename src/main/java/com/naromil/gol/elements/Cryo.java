@@ -3,8 +3,10 @@ package com.naromil.gol.elements;
 import com.naromil.gol.main.Color;
 
 public class Cryo extends Tile {
+    public static final Color DEFAULT_COLOR = Color.similarColor(new Color(159, 214, 227));
+    
     public Cryo() {
-        super(Color.similarColor(new Color(159, 214, 227)));
+        super(Color.similarColor(DEFAULT_COLOR));
     }
 
     @Override

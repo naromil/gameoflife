@@ -1,5 +1,11 @@
 package com.naromil.gol.main;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import com.naromil.gol.elements.Tile;
+import com.naromil.gol.elements.TileFactory;
+
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -68,6 +74,50 @@ public class MainController {
             }
         }
         drawTileOutlines(gc, rows, cols, tileWidth, tileHeight);
+        displayLegend();
+    }
+
+    // Name and color of every tile type currently on the board
+    private void displayLegend() {
+        GraphicsContext gc = legendDisplay.getGraphicsContext2D();
+        double width = legendDisplay.getWidth();
+        double height = legendDisplay.getHeight();
+        gc.clearRect(0, 0, width, height);
+        gc.setFont(javafx.scene.text.Font.font(12));
+
+        // Tile types currently present on the board
+        Tile[][] tiles = grid.getTiles();
+        Set<Class<? extends Tile>> present = new HashSet<>();
+        for (int i = 0; i < grid.getHeight(); i++) {
+            for (int j = 0; j < grid.getWidth(); j++) {
+                if (tiles[i][j] != null) {
+                    present.add(tiles[i][j].getClass());
+                }
+            }
+        }
+
+        double rowHeight = 20;
+        double y = rowHeight;
+        for (Class<? extends Tile> type : TileFactory.TYPES) {
+            if (!present.contains(type)) {
+                continue;
+            }
+            Color color = TileFactory.getDefaultColor(type);
+            if (color == null) {
+                continue;
+            }
+            if (y > height) {
+                break;
+            }
+            gc.setFill(javafx.scene.paint.Color.rgb(color.r(), color.g(), color.b()));
+            gc.fillRect(4, y - 11, 14, 14);
+            gc.setStroke(javafx.scene.paint.Color.BLACK);
+            gc.setLineWidth(1);
+            gc.strokeRect(4.5, y - 11.5, 14, 14);
+            gc.setFill(javafx.scene.paint.Color.BLACK);
+            gc.fillText(type.getSimpleName(), 24, y);
+            y += rowHeight;
+        }
     }
 
     private void drawTileOutlines(GraphicsContext gc, int rows, int cols, double tileWidth, double tileHeight) {
@@ -75,7 +125,6 @@ public class MainController {
         double height = gridDisplay.getHeight();
         gc.setStroke(javafx.scene.paint.Color.BLACK);
         gc.setLineWidth(1);
-        // Half-pixel offsets keep the 1px outline crisp, and the clips keep the outer border inside the canvas.
         for (int i = 0; i <= rows; i++) {
             double y = Math.min(Math.round(i * tileHeight) + 0.5, height - 0.5);
             gc.strokeLine(0, y, width, y);
