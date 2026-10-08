@@ -1,6 +1,5 @@
 package com.naromil.gol.main;
 
-import com.naromil.gol.display.Color;
 import com.naromil.gol.elements.Tile;
 
 public class Grid {

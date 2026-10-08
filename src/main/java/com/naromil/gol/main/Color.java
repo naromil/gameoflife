@@ -1,4 +1,4 @@
-package com.naromil.gol.display;
+package com.naromil.gol.main;
 
 public record Color(int r, int g, int b) {
   public Color {
