@@ -33,6 +33,18 @@ public class Grids {
         return minDistance == Integer.MAX_VALUE ? -1 : minDistance;
     }
 
+    public static int countTilesWithinDistance(Grid grid, int i, int j, int width, int height, Class<? extends Tile> tileType, int distance) {
+        int count = 0;
+        for (Point2D adjacent : getNeighbors(i, j, width, height, distance)) {
+            int newI = i + adjacent.x();
+            int newJ = j + adjacent.y();
+            if (tileType.isInstance(grid.getTile(newI, newJ))) {
+                count++;
+            }
+        }
+        return count;
+    }
+
     // valid adjacent Point2Ds after boundary check
     public static Point2D[] getNeighbors(int i, int j, int width, int height) {
         return getNeighbors(i, j, width, height, 1);

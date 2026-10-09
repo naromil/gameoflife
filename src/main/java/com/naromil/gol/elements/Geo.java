@@ -5,6 +5,7 @@ import com.naromil.gol.main.Grid;
 
 public class Geo extends Tile {
     public static final Color DEFAULT_COLOR = new Color(248, 186, 78);
+    public static final double BASE_GEO_MOUNTAIN_CHANCE = 0.005;
 
     public Geo() {
         super(Color.similarColor(DEFAULT_COLOR));
@@ -12,16 +13,22 @@ public class Geo extends Tile {
 
     @Override
     public boolean act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
-        // Example: spread to random direction
-        int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
-        for (int[] dir : directions) {
-            int newI = i + dir[0];
-            int newJ = j + dir[1];
-            boolean success = Math.random() < 0.25;
-            if (success && newI >= 0 && newI < height && newJ >= 0 && newJ < width) {
+        // mountains
+        // erode
+        int adjacentGeoCount = Grids.countTilesWithinDistance(grid, i, j, width, height, Geo.class, 1);
+        if (adjacentGeoCount < 2) {
+            return false;
+        }
+        // grow
+        for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
+            int newI = i + adjacent.x();
+            int newJ = j + adjacent.y();
+            int neighborAdjacentGeoCount = Grids.countTilesWithinDistance(grid, newI, newJ, width, height, Geo.class, 1);
+            if (neighborAdjacentGeoCount >= 5 && Math.random() < BASE_GEO_MOUNTAIN_CHANCE) {
                 newGrid.setTile(newI, newJ, new Geo());
             }
         }
+
         return true;
     }
 }
