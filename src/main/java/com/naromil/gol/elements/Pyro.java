@@ -4,7 +4,7 @@ import com.naromil.gol.main.Color;
 import com.naromil.gol.main.Grid;
 
 public class Pyro extends Tile {
-    public static final Color DEFAULT_COLOR = Color.similarColor(new Color(239, 121, 56));
+    public static final Color DEFAULT_COLOR = new Color(239, 121, 56);
     public static final int MAX_TICKS_BURNOUT = 3;
     public static final double BASE_BURNING_CHANCE = 0.20;
 

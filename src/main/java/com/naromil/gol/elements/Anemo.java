@@ -4,7 +4,7 @@ import com.naromil.gol.main.Color;
 import com.naromil.gol.main.Grid;
 
 public class Anemo extends Tile {
-    public static final Color DEFAULT_COLOR = Color.similarColor(new Color(117, 194, 170));
+    public static final Color DEFAULT_COLOR = new Color(117, 194, 170);
 
     public Anemo() {
         super(Color.similarColor(DEFAULT_COLOR));

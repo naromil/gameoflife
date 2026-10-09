@@ -4,7 +4,7 @@ import com.naromil.gol.main.Color;
 import com.naromil.gol.main.Grid;
 
 public class Dendro extends Tile {
-    public static final Color DEFAULT_COLOR = Color.similarColor(new Color(165, 200, 59));
+    public static final Color DEFAULT_COLOR = new Color(165, 200, 59);
     public static final int MAX_TICKS_WITHOUT_HYDRO = 30;
     public static final int MAX_TICKS_DENDRO_CORE = 6;
     public static final double BASE_GROWTH_CHANCE = 0.05;

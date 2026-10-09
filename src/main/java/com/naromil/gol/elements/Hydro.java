@@ -4,7 +4,7 @@ import com.naromil.gol.main.Color;
 import com.naromil.gol.main.Grid;
 
 public class Hydro extends Tile {
-    public static final Color DEFAULT_COLOR = Color.similarColor(new Color(76, 194, 241));
+    public static final Color DEFAULT_COLOR = new Color(76, 194, 241);
     public static final int MAX_TICKS_RAIN = 15;
     public static final double BASE_VAPORIZE_CHANCE = 0.50;
     public static final double BASE_VAPORIZE_STEAM_CHANCE = 0.30;

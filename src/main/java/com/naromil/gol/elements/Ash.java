@@ -4,7 +4,7 @@ import com.naromil.gol.main.Color;
 import com.naromil.gol.main.Grid;
 
 public class Ash extends Tile {
-    public static final Color DEFAULT_COLOR = Color.similarColor(new Color(105, 105, 105));
+    public static final Color DEFAULT_COLOR = new Color(105, 105, 105);
     public static final int MAX_TICKS = 10;
 
     private int tick = 0;

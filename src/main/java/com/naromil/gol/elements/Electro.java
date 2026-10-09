@@ -4,7 +4,7 @@ import com.naromil.gol.main.Color;
 import com.naromil.gol.main.Grid;
 
 public class Electro extends Tile {
-    public static final Color DEFAULT_COLOR = Color.similarColor(new Color(211, 118, 240));
+    public static final Color DEFAULT_COLOR = new Color(211, 118, 240);
 
     public Electro() {
         super(Color.similarColor(DEFAULT_COLOR));
