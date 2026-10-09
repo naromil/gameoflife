@@ -16,6 +16,8 @@ public class Pyro extends Tile {
 
     @Override
     public boolean act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
+        boolean flg = true;
+
         // burnout: become ash
         tickBurnout++;
         if (tickBurnout >= MAX_TICKS_BURNOUT) {
@@ -48,6 +50,18 @@ public class Pyro extends Tile {
             }
         }
 
-        return true;
+        // melt
+        for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
+            int newI = i + adjacent.x();
+            int newJ = j + adjacent.y();
+            if (grid.getTile(newI, newJ) instanceof Cryo) {
+                if(newGrid.getTile(newI, newJ) instanceof Cryo) {
+                    newGrid.setTile(newI, newJ, new Hydro());
+                }
+                flg = false; // melt: goes out
+            }
+        }
+
+        return flg;
     }
 }

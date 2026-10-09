@@ -24,6 +24,8 @@ public class Hydro extends Tile {
 
     @Override
     public boolean act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
+        boolean flg = true;
+
         // rain: dry out
         if (Grids.doesExistWithinDistance(grid, i, j, width, height, Hydro.class, 1)) {
             tickRain = 0;
@@ -39,12 +41,15 @@ public class Hydro extends Tile {
             int newI = i + adjacent.x();
             int newJ = j + adjacent.y();
             if (grid.getTile(newI, newJ) instanceof Pyro && Math.random() < BASE_VAPORIZE_CHANCE) {
-                newGrid.setTile(newI, newJ, new Empty());
+                if (newGrid.getTile(newI, newJ) instanceof Pyro) {
+                    newGrid.setTile(newI, newJ, new Empty());
+                }
                 if (Math.random() < BASE_VAPORIZE_STEAM_CHANCE) {
-                    return false; // vaporize: steam
+                    flg = false; // vaporize: steam
                 }
             }
         }
-        return true;
+        
+        return flg;
     }
 }
