@@ -38,8 +38,8 @@ public class Geo extends Tile {
             return false; // erode
         }
         for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
-            int newI = i + adjacent.x();
-            int newJ = j + adjacent.y();
+            int newI = adjacent.x();
+            int newJ = adjacent.y();
             int neighborAdjacentGeoCount = Grids.countTilesWithinDistance(grid, newI, newJ, width, height, Geo.class, 1);
             if (neighborAdjacentGeoCount >= 5 && Math.random() < BASE_MOUNTAINS_CHANCE) {
                 newGrid.setTile(newI, newJ, new Geo()); // grow
@@ -48,8 +48,8 @@ public class Geo extends Tile {
 
         // crystallize
         for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
-            int newI = i + adjacent.x();
-            int newJ = j + adjacent.y();
+            int newI = adjacent.x();
+            int newJ = adjacent.y();
             Tile adjacentTile = grid.getTile(newI, newJ);
             if (adjacentTile instanceof Pyro || adjacentTile instanceof Hydro || adjacentTile instanceof Cryo || adjacentTile instanceof Electro) {
                 shieldDuration = INITIAL_SHIELD_DURATION;

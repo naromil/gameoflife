@@ -38,8 +38,8 @@ public class Hydro extends Tile {
 
         // vaporize
         for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
-            int newI = i + adjacent.x();
-            int newJ = j + adjacent.y();
+            int newI = adjacent.x();
+            int newJ = adjacent.y();
             if (grid.getTile(newI, newJ) instanceof Pyro && Math.random() < BASE_VAPORIZE_CHANCE) {
                 if (newGrid.getTile(newI, newJ) instanceof Pyro) {
                     newGrid.setTile(newI, newJ, new Empty());

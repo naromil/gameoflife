@@ -27,8 +27,8 @@ public class Pyro extends Tile {
 
         // burning
         for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
-            int newI = i + adjacent.x();
-            int newJ = j + adjacent.y();
+            int newI = adjacent.x();
+            int newJ = adjacent.y();
             if (grid.getTile(newI, newJ) instanceof Dendro && Math.random() < BASE_BURNING_CHANCE) {
                 newGrid.setTile(newI, newJ, new Pyro());
             }
@@ -36,13 +36,13 @@ public class Pyro extends Tile {
 
         // burgeon
         for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
-            int newI = i + adjacent.x();
-            int newJ = j + adjacent.y();
+            int newI = adjacent.x();
+            int newJ = adjacent.y();
             if (grid.getTile(newI, newJ) instanceof Dendro && ((Dendro) grid.getTile(newI, newJ)).hasDendroCore()) {
                 // burgeon: ignite
                 for (Point2D adjacent2 : Grids.getNeighbors(newI, newJ, width, height, 2)) {
-                    int newI2 = i + adjacent2.x();
-                    int newJ2 = j + adjacent2.y();
+                    int newI2 = adjacent2.x();
+                    int newJ2 = adjacent2.y();
                     if (grid.getTile(newI2, newJ2) instanceof Dendro) {
                         newGrid.setTile(newI2, newJ2, new Pyro());
                     }
@@ -52,8 +52,8 @@ public class Pyro extends Tile {
 
         // melt
         for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
-            int newI = i + adjacent.x();
-            int newJ = j + adjacent.y();
+            int newI = adjacent.x();
+            int newJ = adjacent.y();
             if (grid.getTile(newI, newJ) instanceof Cryo) {
                 if(newGrid.getTile(newI, newJ) instanceof Cryo) {
                     newGrid.setTile(newI, newJ, new Hydro());

@@ -29,8 +29,8 @@ public class Cryo extends Tile {
 
         // frozen
         for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
-            int newI = i + adjacent.x();
-            int newJ = j + adjacent.y();
+            int newI = adjacent.x();
+            int newJ = adjacent.y();
             if (grid.getTile(newI, newJ) instanceof Hydro && Grids.countTilesWithinDistance(grid, newI, newJ, width, height, Cryo.class, 1) >= 2) {
                 double frozenChance = (currentSeason == SeasonType.WINTER) ? BASE_FROZEN_WINTER_CHANCE : BASE_FROZEN_NORMAL_CHANCE;
                 if (Math.random() < frozenChance && newGrid.getTile(newI, newJ) instanceof Hydro) {

@@ -30,8 +30,8 @@ public class Grids {
     public static int countTilesWithinDistance(Grid grid, int i, int j, int width, int height, Class<? extends Tile> tileType, int distance) {
         int count = 0;
         for (Point2D adjacent : getNeighbors(i, j, width, height, distance)) {
-            int newI = i + adjacent.x();
-            int newJ = j + adjacent.y();
+            int newI = adjacent.x();
+            int newJ = adjacent.y();
             if (tileType.isInstance(grid.getTile(newI, newJ))) {
                 count++;
             }
@@ -39,7 +39,7 @@ public class Grids {
         return count;
     }
 
-    // valid adjacent Point2Ds after boundary check
+    // valid adjacent Point2D coordinates after boundary check
     public static Point2D[] getNeighbors(int i, int j, int width, int height) {
         return getNeighbors(i, j, width, height, 1);
     }

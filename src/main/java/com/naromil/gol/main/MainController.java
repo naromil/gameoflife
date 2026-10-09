@@ -59,7 +59,7 @@ public class MainController {
     /* ---- Display section ---- */
     // Put the grid on the canvas
     private void displayGrid() {
-        
+
         Color[][] colorGrid = grid.getTilesColorGrid();
         GraphicsContext gc = gridDisplay.getGraphicsContext2D();
         int rows = colorGrid.length;
@@ -226,7 +226,7 @@ public class MainController {
 
     private Animation createSimulation() {
         // A zero-length frame would stop the timeline instead of running it.
-        Duration period = Duration.millis(Math.max(1, getInterval()));
+        Duration period = Duration.millis(Math.max(10, getInterval()));
         Timeline timeline = new Timeline(new KeyFrame(period, event -> {
             grid = grid.nextState();
             displayGrid();
