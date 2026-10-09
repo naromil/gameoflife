@@ -19,30 +19,35 @@ public class Season {
         return currentSeasonTick;
     }
 
-    public void act() {
-        // season change
-        currentSeasonTick++;
-        if (currentSeasonTick >= SEASON_DURATION) {
-            currentSeasonTick = 0;
-            switch (currentSeason) {
-                case SPRING:
-                    currentSeason = SeasonType.SUMMER;
-                    break;
-                case SUMMER:
-                    currentSeason = SeasonType.FALL;
-                    break;
-                case FALL:
-                    currentSeason = SeasonType.WINTER;
-                    break;
-                case WINTER:
-                    currentSeason = SeasonType.SPRING;
-                    break;
-            }
-        }
-    }
-
     public void clear() {
         currentSeason = SeasonType.SPRING;
         currentSeasonTick = 0;
+    }
+
+    public Season nextState() {
+        // season change
+        Season nextSeason = new Season();
+        nextSeason.currentSeason = currentSeason;
+        nextSeason.currentSeasonTick = currentSeasonTick + 1;
+
+        if (nextSeason.currentSeasonTick >= SEASON_DURATION) {
+            nextSeason.currentSeasonTick = 0;
+            switch (nextSeason.currentSeason) {
+                case SPRING:
+                    nextSeason.currentSeason = SeasonType.SUMMER;
+                    break;
+                case SUMMER:
+                    nextSeason.currentSeason = SeasonType.FALL;
+                    break;
+                case FALL:
+                    nextSeason.currentSeason = SeasonType.WINTER;
+                    break;
+                case WINTER:
+                    nextSeason.currentSeason = SeasonType.SPRING;
+                    break;
+            }
+        }
+
+        return nextSeason;
     }
 }

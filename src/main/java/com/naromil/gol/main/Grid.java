@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import com.naromil.gol.elements.Tile;
 import com.naromil.gol.elements.TileFactory;
 import com.naromil.gol.environment.Season;
+import com.naromil.gol.environment.SeasonType;
 
 // responsible for storing the data of the grid state and logics for advancing to the next state
 public class Grid {
@@ -17,7 +18,13 @@ public class Grid {
 
     private final Season season;
 
+    // default constructor; starts with fresh state
     public Grid() {
+        this(MAX_HEIGHT, MAX_WIDTH, new Season());
+    }
+
+    // the comprehensive constructor used to create the next state of the current
+    private Grid(int height, int width, Season season) {
         this.height = MAX_HEIGHT;
         this.width = MAX_WIDTH;
         this.tiles = new Tile[MAX_HEIGHT][MAX_WIDTH];
@@ -28,12 +35,7 @@ public class Grid {
             }
         }
 
-        this.season = new Season();
-    }
-
-    public Grid(int height, int width) {
-        this();
-        setSize(width, height);
+        this.season = season;
     }
 
     public Tile[][] getTiles() {
@@ -54,6 +56,10 @@ public class Grid {
 
     public void setTile(int i, int j, Tile tile) {
         tiles[i][j] = tile;
+    }
+
+    public SeasonType getCurrentSeason() {
+        return season.getCurrentSeason();
     }
 
     /* ---- Grid Management ---- */
@@ -121,15 +127,15 @@ public class Grid {
     /* ---- Main Logic ---- */
     public Grid nextState() {
         // 1. Check if the board is empty and initialize it with random tiles if it is
+        // If not empty, act with what is left on the board
         if(emptyBoard(tiles)) {
             initializeRandomBoard();
             return this;
         }
 
-        // 2. If not empty, act with what is left on the board
-        Grid newGrid = new Grid(height, width);
+        Grid newGrid = new Grid(height, width, season.nextState());
 
-        // 3. Global actions
+        // 2. Global actions
         for (Class<? extends Tile> tileClass : TileFactory.TYPES) {
             try {
                 Method globalAct = tileClass.getMethod("globalAct", Grid.class, Grid.class, int.class, int.class);
@@ -142,7 +148,7 @@ public class Grid {
             }
         }
         
-        // 4. Each tile act according to their own rules
+        // 3. Each tile act according to their own rules
         boolean[][] aliveState = new boolean[height][width];
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
@@ -153,7 +159,7 @@ public class Grid {
             }
         }
 
-        // 5. Alive ones can continue if not covered already
+        // 4. Alive ones can continue if not covered already
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 if (aliveState[i][j] && newGrid.getTile(i, j) == null) {
