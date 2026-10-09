@@ -10,7 +10,7 @@ public class Grid {
     /* ---- Grid Properties ---- */
     private int height;
     private int width;
-    private final Tile[][] tiles;
+    private Tile[][] tiles;
 
     public Grid() {
         this.height = MAX_HEIGHT;
@@ -98,10 +98,7 @@ public class Grid {
             }
         }
 
-        // Update the grid to the new state
-        for (int i = 0; i < height; i++) {
-            System.arraycopy(newTiles[i], 0, tiles[i], 0, width);
-        }
+        tiles = newTiles;
     }
 
     private void initializeRandomBoard() {
