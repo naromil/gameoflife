@@ -126,6 +126,20 @@ public class Grid {
         return colorGrid;
     }
 
+    public Color[][] getStatusColorGrid() {
+        Color[][] statusGrid = new Color[height][width];
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                if (tiles[i][j] != null && !(tiles[i][j] instanceof Empty)) {
+                    statusGrid[i][j] = tiles[i][j].getStatusColor(); // could be null
+                } else {
+                    statusGrid[i][j] = null;
+                }
+            }
+        }
+        return statusGrid;
+    }
+
     /* ---- Main Logic ---- */
     public Grid nextState() {
         // 1. Check if the board is empty and initialize it with random tiles if it is

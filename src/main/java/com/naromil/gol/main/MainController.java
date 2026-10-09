@@ -56,8 +56,10 @@ public class MainController {
         displayGrid();
     }
 
+    /* ---- Display section ---- */
     // Put the grid on the canvas
     private void displayGrid() {
+        
         Color[][] colorGrid = grid.getTilesColorGrid();
         GraphicsContext gc = gridDisplay.getGraphicsContext2D();
         int rows = colorGrid.length;
@@ -67,6 +69,8 @@ public class MainController {
         }
         double tileWidth = gridDisplay.getWidth() / cols;
         double tileHeight = gridDisplay.getHeight() / rows;
+
+        // big tile squares
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 Color color = colorGrid[i][j];
@@ -74,8 +78,47 @@ public class MainController {
                 gc.fillRect(j * tileWidth, i * tileHeight, tileWidth, tileHeight);
             }
         }
+
+        // small status squares in the center
+        Color[][] statusGrid = grid.getStatusColorGrid();
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                Color statusColor = statusGrid[i][j];
+                if (statusColor != null) {
+                    // fill half width and half height square in the center of the tile
+                    double statusSize = Math.min(tileWidth, tileHeight) / 2;
+                    double statusX = j * tileWidth + (tileWidth - statusSize) / 2;
+                    double statusY = i * tileHeight + (tileHeight - statusSize) / 2;
+                    gc.setFill(javafx.scene.paint.Color.rgb(statusColor.r(), statusColor.g(), statusColor.b()));
+                    gc.fillRect(statusX, statusY, statusSize, statusSize);
+                    drawOutline(gc, statusX, statusY, statusSize, statusSize);
+                }
+            }
+        }
+
         drawTileOutlines(gc, rows, cols, tileWidth, tileHeight);
         displayLegend();
+    }
+
+    private void drawOutline(GraphicsContext gc, double x, double y, double width, double height) {
+        gc.setStroke(javafx.scene.paint.Color.BLACK);
+        gc.setLineWidth(1);
+        gc.strokeRect(x + 0.5, y + 0.5, width - 1, height - 1);
+    }
+
+    private void drawTileOutlines(GraphicsContext gc, int rows, int cols, double tileWidth, double tileHeight) {
+        double width = gridDisplay.getWidth();
+        double height = gridDisplay.getHeight();
+        gc.setStroke(javafx.scene.paint.Color.BLACK);
+        gc.setLineWidth(1);
+        for (int i = 0; i <= rows; i++) {
+            double y = Math.min(Math.round(i * tileHeight) + 0.5, height - 0.5);
+            gc.strokeLine(0, y, width, y);
+        }
+        for (int j = 0; j <= cols; j++) {
+            double x = Math.min(Math.round(j * tileWidth) + 0.5, width - 0.5);
+            gc.strokeLine(x, 0, x, height);
+        }
     }
 
     // Name and color of every tile type currently on the board
@@ -119,21 +162,6 @@ public class MainController {
             gc.setFill(javafx.scene.paint.Color.BLACK);
             gc.fillText(type.getSimpleName(), 24, y);
             y += rowHeight;
-        }
-    }
-
-    private void drawTileOutlines(GraphicsContext gc, int rows, int cols, double tileWidth, double tileHeight) {
-        double width = gridDisplay.getWidth();
-        double height = gridDisplay.getHeight();
-        gc.setStroke(javafx.scene.paint.Color.BLACK);
-        gc.setLineWidth(1);
-        for (int i = 0; i <= rows; i++) {
-            double y = Math.min(Math.round(i * tileHeight) + 0.5, height - 0.5);
-            gc.strokeLine(0, y, width, y);
-        }
-        for (int j = 0; j <= cols; j++) {
-            double x = Math.min(Math.round(j * tileWidth) + 0.5, width - 0.5);
-            gc.strokeLine(x, 0, x, height);
         }
     }
 

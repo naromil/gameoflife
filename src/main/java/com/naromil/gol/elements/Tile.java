@@ -17,6 +17,10 @@ public abstract class Tile {
         return color;
     }
 
+    public Color getStatusColor() {
+        return null; // default no color so not rendered at all
+    }
+
     /**
      * @return whether the original tile itself survives or not. 
      */

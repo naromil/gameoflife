@@ -16,6 +16,15 @@ public class Geo extends Tile {
     }
 
     @Override
+    public Color getStatusColor() {
+        if (shieldDuration > 0) {
+            return DEFAULT_COLOR;
+        } else {
+            return null;
+        }
+    }
+
+    @Override
     public boolean act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
         // crystallize: countdown
         boolean hasShield = shieldDuration > 0;
