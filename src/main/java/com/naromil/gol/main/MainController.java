@@ -41,8 +41,7 @@ public class MainController {
         gridHeightSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 10));
 
         // Listeners
-        intervalScroll.valueProperty().addListener(
-            (observable, oldValue, newValue) -> updateInterval(newValue.doubleValue()));
+        intervalScroll.valueProperty().addListener((observable, oldValue, newValue) -> updateInterval(newValue.doubleValue()));
         updateInterval(intervalScroll.getValue());
         gridWidthSpinner.valueProperty().addListener((observable, oldValue, newValue) -> onGridSizeChanged());
         gridHeightSpinner.valueProperty().addListener((observable, oldValue, newValue) -> onGridSizeChanged());
