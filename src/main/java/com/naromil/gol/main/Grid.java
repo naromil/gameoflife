@@ -27,12 +27,12 @@ public class Grid {
 
     // the comprehensive constructor used to create the next state of the current
     private Grid(int height, int width, Season season) {
-        this.height = MAX_HEIGHT;
-        this.width = MAX_WIDTH;
+        this.height = height;
+        this.width = width;
         this.tiles = new Tile[MAX_HEIGHT][MAX_WIDTH];
         // Initialize the grid with some initial state
-        for (int i = 0; i < MAX_HEIGHT; i++) {
-            for (int j = 0; j < MAX_WIDTH; j++) {
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
                 tiles[i][j] = new Empty();
             }
         }
