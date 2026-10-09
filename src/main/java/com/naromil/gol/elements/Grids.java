@@ -8,16 +8,10 @@ import com.naromil.gol.main.Grid;
 public class Grids {
     /* ---- Grid exploration section ---- */
     public static boolean doesExistWithinDistance(Grid grid, int i, int j, int width, int height, Class<? extends Tile> tileType, int distance) {
-        for (Point2D adjacent : getNeighbors(i, j, width, height, distance)) {
-            int newI = i + adjacent.x();
-            int newJ = j + adjacent.y();
-            if (tileType.isInstance(grid.getTile(newI, newJ))) {
-                return true;
-            }
-        }
-        return false;
+        return countTilesWithinDistance(grid, i, j, width, height, tileType, distance) > 0;
     }
 
+    // O(n^2) search
     public static int nearestTileDistance(Grid grid, int i, int j, int width, int height, Class<? extends Tile> tileType) {
         int minDistance = Integer.MAX_VALUE;
         for (int x = 0; x < height; x++) {

@@ -37,20 +37,23 @@ public class Dendro extends Tile {
         }
 
         // growth
-        for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
-            int newI = adjacent.x();
-            int newJ = adjacent.y();
-            // base chance and multipliers
-            double chance = BASE_GROWTH_CHANCE;
-            if (isNearHydro) {
-                chance *= 2;
-            }
-            if (grid.getTile(newI, newJ) instanceof Ash) {
-                chance *= 2; // burnout: fertile
-            }
-            boolean success = Math.random() < chance;
-            if (success) {
-                newGrid.setTile(newI, newJ, new Dendro());
+        boolean isNearCryo = Grids.doesExistWithinDistance(grid, i, j, width, height, Cryo.class, 1);
+        if (!isNearCryo) { // frost
+            for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
+                int newI = adjacent.x();
+                int newJ = adjacent.y();
+                // base chance and multipliers
+                double chance = BASE_GROWTH_CHANCE;
+                if (isNearHydro) {
+                    chance *= 2;
+                }
+                if (grid.getTile(newI, newJ) instanceof Ash) {
+                    chance *= 2; // burnout: fertile
+                }
+                boolean success = Math.random() < chance;
+                if (success) {
+                    newGrid.setTile(newI, newJ, new Dendro());
+                }
             }
         }
 
