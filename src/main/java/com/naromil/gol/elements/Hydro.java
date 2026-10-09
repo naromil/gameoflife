@@ -34,10 +34,10 @@ public class Hydro extends Tile {
         }
 
         // vaporize
-        for (Point2D adjacent : Grids.getAdjacentCoordinates(i, j, width, height)) {
+        for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
             int newI = i + adjacent.x();
             int newJ = j + adjacent.y();
-            if (Grids.isTileType(tiles, newI, newJ, width, height, Pyro.class) && Math.random() < BASE_VAPORIZE_CHANCE) {
+            if (tiles[newI][newJ] instanceof Pyro && Math.random() < BASE_VAPORIZE_CHANCE) {
                 newTiles[newI][newJ] = null;
                 if (Math.random() < BASE_VAPORIZE_STEAM_CHANCE) {
                     return false; // vaporize: steam

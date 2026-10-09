@@ -6,7 +6,14 @@ import java.util.List;
 public class Grids {
     /* ---- Grid exploration section ---- */
     public static boolean doesExistWithinDistance(Tile[][] tiles, int i, int j, int width, int height, Class<? extends Tile> tileType, int distance) {
-        return nearestTileDistance(tiles, i, j, width, height, tileType) <= distance;
+        for (Point2D adjacent : getNeighbors(i, j, width, height, distance)) {
+            int newI = i + adjacent.x();
+            int newJ = j + adjacent.y();
+            if (tileType.isInstance(tiles[newI][newJ])) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static int nearestTileDistance(Tile[][] tiles, int i, int j, int width, int height, Class<? extends Tile> tileType) {
@@ -24,21 +31,20 @@ public class Grids {
         return minDistance == Integer.MAX_VALUE ? -1 : minDistance;
     }
 
-    public static boolean isTileType(Tile[][] tiles, int i, int j, int width, int height, Class<? extends Tile> tileType) {
-        if (i >= 0 && i < height && j >= 0 && j < width) {
-            return tileType.isInstance(tiles[i][j]);
-        }
-        return false;
+    // valid adjacent Point2Ds after boundary check
+    public static Point2D[] getNeighbors(int i, int j, int width, int height) {
+        return getNeighbors(i, j, width, height, 1);
     }
 
-    // valid adjacent Point2Ds after boundary check
-    public static Point2D[] getAdjacentCoordinates(int i, int j, int width, int height) {
+    public static Point2D[] getNeighbors(int i, int j, int width, int height, int distance) {
         List<Point2D> adjacentCoordinates = new ArrayList<>();
-        for (int[] dir : Tile.DIRECTIONS) {
-            int newI = i + dir[0];
-            int newJ = j + dir[1];
-            if (newI >= 0 && newI < height && newJ >= 0 && newJ < width) {
-                adjacentCoordinates.add(new Point2D(newI, newJ));
+        for (int x = -distance; x <= distance; x++) {
+            for (int y = -distance; y <= distance; y++) {
+                int newI = i + x;
+                int newJ = j + y;
+                if (newI >= 0 && newI < height && newJ >= 0 && newJ < width) {
+                    adjacentCoordinates.add(new Point2D(newI, newJ));
+                }
             }
         }
 
