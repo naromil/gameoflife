@@ -1,6 +1,7 @@
 package com.naromil.gol.elements;
 
 import com.naromil.gol.main.Color;
+import com.naromil.gol.main.Grid;
 
 public class Hydro extends Tile {
     public static final Color DEFAULT_COLOR = Color.similarColor(new Color(76, 194, 241));
@@ -14,17 +15,17 @@ public class Hydro extends Tile {
         super(Color.similarColor(DEFAULT_COLOR));
     }
 
-    public void globalAct(Tile[][] tiles, Tile[][] newTiles, int width, int height) {
+    public void globalAct(Grid grid, Grid newGrid, int width, int height) {
         // rain: spawn
         int rainX = (int) (Math.random() * width);
         int rainY = (int) (Math.random() * height);
-        newTiles[rainY][rainX] = new Hydro();
+        newGrid.setTile(rainY, rainX, new Hydro());
     }
 
     @Override
-    public boolean act(Tile[][] tiles, Tile[][] newTiles, int i, int j, int width, int height) {
+    public boolean act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
         // rain: dry out
-        if (Grids.doesExistWithinDistance(tiles, i, j, width, height, Hydro.class, 1)) {
+        if (Grids.doesExistWithinDistance(grid, i, j, width, height, Hydro.class, 1)) {
             tickRain = 0;
         } else {
             tickRain++;
@@ -37,8 +38,8 @@ public class Hydro extends Tile {
         for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
             int newI = i + adjacent.x();
             int newJ = j + adjacent.y();
-            if (tiles[newI][newJ] instanceof Pyro && Math.random() < BASE_VAPORIZE_CHANCE) {
-                newTiles[newI][newJ] = null;
+            if (grid.getTile(newI, newJ) instanceof Pyro && Math.random() < BASE_VAPORIZE_CHANCE) {
+                newGrid.setTile(newI, newJ, null);
                 if (Math.random() < BASE_VAPORIZE_STEAM_CHANCE) {
                     return false; // vaporize: steam
                 }

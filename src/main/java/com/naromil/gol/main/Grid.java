@@ -3,7 +3,9 @@ package com.naromil.gol.main;
 import java.lang.reflect.Method;
 import com.naromil.gol.elements.Tile;
 import com.naromil.gol.elements.TileFactory;
+import com.naromil.gol.environment.Season;
 
+// responsible for storing the data of the grid state and logics for advancing to the next state
 public class Grid {
     private static final int MAX_HEIGHT = 100;
     private static final int MAX_WIDTH = 100;
@@ -11,7 +13,9 @@ public class Grid {
     /* ---- Grid Properties ---- */
     private int height;
     private int width;
-    private Tile[][] tiles;
+    private final Tile[][] tiles;
+
+    private final Season season;
 
     public Grid() {
         this.height = MAX_HEIGHT;
@@ -23,6 +27,13 @@ public class Grid {
                 tiles[i][j] = null;
             }
         }
+
+        this.season = new Season();
+    }
+
+    public Grid(int height, int width) {
+        this();
+        setSize(width, height);
     }
 
     public Tile[][] getTiles() {
@@ -37,10 +48,39 @@ public class Grid {
         return width;
     }
 
+    public Object getTile(int i, int j) {
+        return tiles[i][j];
+    }
+
+    public void setTile(int i, int j, Tile tile) {
+        tiles[i][j] = tile;
+    }
+
+    /* ---- Grid Management ---- */
     protected void clear() {
         for (int i = 0; i < MAX_HEIGHT; i++) {
             for (int j = 0; j < MAX_WIDTH; j++) {
                 tiles[i][j] = null;
+            }
+        }
+        season.clear();
+    }
+
+    private boolean emptyBoard(Tile[][] tiles) {
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                if (tiles[i][j] != null) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private void initializeRandomBoard() {
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                tiles[i][j] = TileFactory.createRandomTile();
             }
         }
     }
@@ -63,7 +103,8 @@ public class Grid {
         this.height = gridHeight;
     }
 
-    public Color[][] toColorGrid() {
+    /* ---- Color Rendering ---- */
+    public Color[][] getTilesColorGrid() {
         Color[][] colorGrid = new Color[height][width];
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
@@ -78,22 +119,22 @@ public class Grid {
     }
 
     /* ---- Main Logic ---- */
-    public void nextState() {
+    public Grid nextState() {
         // 1. Check if the board is empty and initialize it with random tiles if it is
         if(emptyBoard(tiles)) {
             initializeRandomBoard();
-            return;
+            return this;
         }
 
         // 2. If not empty, act with what is left on the board
-        Tile[][] newTiles = new Tile[MAX_HEIGHT][MAX_WIDTH];
+        Grid newGrid = new Grid(height, width);
 
         // 3. Global actions
         for (Class<? extends Tile> tileClass : TileFactory.TYPES) {
             try {
-                Method globalAct = tileClass.getMethod("globalAct", Tile[][].class, Tile[][].class, int.class, int.class);
+                Method globalAct = tileClass.getMethod("globalAct", Grid.class, Grid.class, int.class, int.class);
                 Tile tile = tileClass.getDeclaredConstructor().newInstance();
-                globalAct.invoke(tile, tiles, newTiles, width, height);
+                globalAct.invoke(tile, this, newGrid, width, height);
             } catch (NoSuchMethodException e) {
                 // element has no global action
             } catch (Exception e) {
@@ -106,7 +147,7 @@ public class Grid {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 if (tiles[i][j] != null) {
-                    boolean isAlive = tiles[i][j].act(tiles, newTiles, i, j, width, height);
+                    boolean isAlive = tiles[i][j].act(this, newGrid, i, j, width, height);
                     aliveState[i][j] = isAlive;
                 }
             }
@@ -115,31 +156,12 @@ public class Grid {
         // 5. Alive ones can continue if not covered already
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                if (aliveState[i][j] && newTiles[i][j] == null) {
-                    newTiles[i][j] = tiles[i][j];
+                if (aliveState[i][j] && newGrid.getTile(i, j) == null) {
+                    newGrid.setTile(i, j, tiles[i][j]);
                 }
             }
         }
 
-        tiles = newTiles;
-    }
-
-    private void initializeRandomBoard() {
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                tiles[i][j] = TileFactory.createRandomTile();
-            }
-        }
-    }
-
-    private boolean emptyBoard(Tile[][] tiles2) {
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                if (tiles2[i][j] != null) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return newGrid;
     }
 }

@@ -1,6 +1,7 @@
 package com.naromil.gol.elements;
 
 import com.naromil.gol.main.Color;
+import com.naromil.gol.main.Grid;
 
 public class Ash extends Tile {
     public static final Color DEFAULT_COLOR = Color.similarColor(new Color(105, 105, 105));
@@ -13,7 +14,7 @@ public class Ash extends Tile {
     }
 
     @Override
-    public boolean act(Tile[][] tiles, Tile[][] newTiles, int i, int j, int width, int height) {
+    public boolean act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
         // burnout: die
         tick++;
         if (tick >= MAX_TICKS) {

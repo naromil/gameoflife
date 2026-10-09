@@ -1,6 +1,7 @@
 package com.naromil.gol.elements;
 
 import com.naromil.gol.main.Color;
+import com.naromil.gol.main.Grid;
 
 public class Dendro extends Tile {
     public static final Color DEFAULT_COLOR = Color.similarColor(new Color(165, 200, 59));
@@ -23,9 +24,9 @@ public class Dendro extends Tile {
     }
 
     @Override
-    public boolean act(Tile[][] tiles, Tile[][] newTiles, int i, int j, int width, int height) {
+    public boolean act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
         // wither
-        boolean isNearHydro = Grids.doesExistWithinDistance(tiles, i, j, width, height, Hydro.class, 1);
+        boolean isNearHydro = Grids.doesExistWithinDistance(grid, i, j, width, height, Hydro.class, 1);
         if (!isNearHydro) {
             tickWithoutHydro++;
             if (tickWithoutHydro >= MAX_TICKS_WITHOUT_HYDRO) {
@@ -44,17 +45,17 @@ public class Dendro extends Tile {
             if (isNearHydro) {
                 chance *= 2;
             }
-            if (tiles[newI][newJ] instanceof Ash) {
+            if (grid.getTile(newI, newJ) instanceof Ash) {
                 chance *= 2; // burnout: fertile
             }
             boolean success = Math.random() < chance;
             if (success) {
-                newTiles[newI][newJ] = new Dendro();
+                newGrid.setTile(newI, newJ, new Dendro());
             }
         }
 
         // bloom
-        if (Grids.doesExistWithinDistance(tiles, i, j, width, height, Hydro.class, 1)) {
+        if (Grids.doesExistWithinDistance(grid, i, j, width, height, Hydro.class, 1)) {
             if (Math.random() < BASE_BLOOM_CHANCE) {
                 hasDendroCore = true;
                 tickDendroCore = 0;
@@ -69,8 +70,8 @@ public class Dendro extends Tile {
                 for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
                     int newI = adjacent.x();
                     int newJ = adjacent.y();
-                    if (newTiles[newI][newJ] == null) {
-                        newTiles[newI][newJ] = new Dendro();
+                    if (newGrid.getTile(newI, newJ) == null) {
+                        newGrid.setTile(newI, newJ, new Dendro());
                     }
                 }
             }

@@ -20,9 +20,10 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
+// responsible for coordinating the main application logic and UI
 public class MainController {
 
-    private final Grid grid = new Grid();
+    private Grid grid = new Grid();
 
     @FXML
     private Canvas gridDisplay;
@@ -57,7 +58,7 @@ public class MainController {
 
     // Put the grid on the canvas
     private void displayGrid() {
-        Color[][] colorGrid = grid.toColorGrid();
+        Color[][] colorGrid = grid.getTilesColorGrid();
         GraphicsContext gc = gridDisplay.getGraphicsContext2D();
         int rows = colorGrid.length;
         int cols = rows == 0 ? 0 : colorGrid[0].length;
@@ -198,7 +199,7 @@ public class MainController {
         // A zero-length frame would stop the timeline instead of running it.
         Duration period = Duration.millis(Math.max(1, getInterval()));
         Timeline timeline = new Timeline(new KeyFrame(period, event -> {
-            grid.nextState();
+            grid = grid.nextState();
             displayGrid();
         }));
         timeline.setCycleCount(Animation.INDEFINITE);

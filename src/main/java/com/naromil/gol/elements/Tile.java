@@ -1,6 +1,7 @@
 package com.naromil.gol.elements;
 
 import com.naromil.gol.main.Color;
+import com.naromil.gol.main.Grid;
 
 public abstract class Tile {
     public static final Color DEFAULT_COLOR = null;
@@ -19,5 +20,5 @@ public abstract class Tile {
     /**
      * @return whether the original tile itself survives or not. 
      */
-    public abstract boolean act(Tile[][] tiles, Tile[][] newTiles, int i, int j, int width, int height);
+    public abstract boolean act(Grid grid, Grid newGrid, int i, int j, int width, int height);
 }

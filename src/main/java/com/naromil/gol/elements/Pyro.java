@@ -1,6 +1,7 @@
 package com.naromil.gol.elements;
 
 import com.naromil.gol.main.Color;
+import com.naromil.gol.main.Grid;
 
 public class Pyro extends Tile {
     public static final Color DEFAULT_COLOR = Color.similarColor(new Color(239, 121, 56));
@@ -14,11 +15,11 @@ public class Pyro extends Tile {
     }
 
     @Override
-    public boolean act(Tile[][] tiles, Tile[][] newTiles, int i, int j, int width, int height) {
+    public boolean act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
         // burnout: become ash
         tickBurnout++;
         if (tickBurnout >= MAX_TICKS_BURNOUT) {
-            newTiles[i][j] = new Ash();
+            newGrid.setTile(i, j, new Ash());
             return false;
         }
 
@@ -26,8 +27,8 @@ public class Pyro extends Tile {
         for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
             int newI = i + adjacent.x();
             int newJ = j + adjacent.y();
-            if (tiles[newI][newJ] instanceof Dendro && Math.random() < BASE_BURNING_CHANCE) {
-                newTiles[newI][newJ] = new Pyro();
+            if (grid.getTile(newI, newJ) instanceof Dendro && Math.random() < BASE_BURNING_CHANCE) {
+                newGrid.setTile(newI, newJ, new Pyro());
             }
         }
 
@@ -35,13 +36,13 @@ public class Pyro extends Tile {
         for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
             int newI = i + adjacent.x();
             int newJ = j + adjacent.y();
-            if (tiles[newI][newJ] instanceof Dendro && ((Dendro) tiles[newI][newJ]).hasDendroCore()) {
+            if (grid.getTile(newI, newJ) instanceof Dendro && ((Dendro) grid.getTile(newI, newJ)).hasDendroCore()) {
                 // burgeon: ignite
                 for (Point2D adjacent2 : Grids.getNeighbors(newI, newJ, width, height, 2)) {
                     int newI2 = i + adjacent2.x();
                     int newJ2 = j + adjacent2.y();
-                    if (tiles[newI2][newJ2] instanceof Dendro) {
-                        newTiles[newI2][newJ2] = new Pyro();
+                    if (grid.getTile(newI2, newJ2) instanceof Dendro) {
+                        newGrid.setTile(newI2, newJ2, new Pyro());
                     }
                 }
             }
