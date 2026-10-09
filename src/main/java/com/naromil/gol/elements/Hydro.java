@@ -15,6 +15,15 @@ public class Hydro extends Tile {
         super(Color.similarColor(DEFAULT_COLOR));
     }
 
+    // lake status
+    public Color getStatusColor() {
+        if (tickRain == 0) {
+            return DEFAULT_COLOR;
+        } else {
+            return null;
+        }
+    }
+
     public void globalAct(Grid grid, Grid newGrid, int width, int height) {
         // rain: spawn
         int rainX = (int) (Math.random() * width);
@@ -27,7 +36,7 @@ public class Hydro extends Tile {
         boolean flg = true;
 
         // rain: dry out
-        if (Grids.doesExistWithinDistance(grid, i, j, width, height, Hydro.class, 1)) {
+        if (Grids.countTilesWithinDistance(grid, i, j, width, height, Hydro.class, 1) > 1) {
             tickRain = 0;
         } else {
             tickRain++;

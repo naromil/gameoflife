@@ -45,8 +45,9 @@ public class MainController {
         gridHeightSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, GRID_DEFAULT_HEIGHT));
 
         // Listeners
+        intervalScroll.setValue(DISPLAY_DEFAULT_INTERVAL);
+        updateInterval(intervalScroll.getValue());
         intervalScroll.valueProperty().addListener((observable, oldValue, newValue) -> updateInterval(newValue.doubleValue()));
-        updateInterval(DISPLAY_DEFAULT_INTERVAL);
         gridWidthSpinner.valueProperty().addListener((observable, oldValue, newValue) -> onGridSizeChanged());
         gridHeightSpinner.valueProperty().addListener((observable, oldValue, newValue) -> onGridSizeChanged());
 
@@ -197,6 +198,7 @@ public class MainController {
     @FXML
     private Label intervalLabel;
     
+    // update the interval label and restart the simulation
     private void updateInterval(double value) {
         intervalLabel.setText("Interval: " + (int) value + " ms");
         if (isRunning()) {
