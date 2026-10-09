@@ -39,7 +39,7 @@ public class Hydro extends Tile {
             int newI = i + adjacent.x();
             int newJ = j + adjacent.y();
             if (grid.getTile(newI, newJ) instanceof Pyro && Math.random() < BASE_VAPORIZE_CHANCE) {
-                newGrid.setTile(newI, newJ, null);
+                newGrid.setTile(newI, newJ, new Empty());
                 if (Math.random() < BASE_VAPORIZE_STEAM_CHANCE) {
                     return false; // vaporize: steam
                 }

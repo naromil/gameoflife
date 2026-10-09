@@ -13,7 +13,8 @@ public class TileFactory {
         Dendro.class,
         Hydro.class,
         Pyro.class,
-        Cryo.class
+        Cryo.class,
+        Ash.class
     );
 
     public static int getTypeSize() {

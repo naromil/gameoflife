@@ -1,6 +1,8 @@
 package com.naromil.gol.main;
 
 import java.lang.reflect.Method;
+
+import com.naromil.gol.elements.Empty;
 import com.naromil.gol.elements.Tile;
 import com.naromil.gol.elements.TileFactory;
 import com.naromil.gol.environment.Season;
@@ -31,7 +33,7 @@ public class Grid {
         // Initialize the grid with some initial state
         for (int i = 0; i < MAX_HEIGHT; i++) {
             for (int j = 0; j < MAX_WIDTH; j++) {
-                tiles[i][j] = null;
+                tiles[i][j] = new Empty();
             }
         }
 
@@ -50,7 +52,7 @@ public class Grid {
         return width;
     }
 
-    public Object getTile(int i, int j) {
+    public Tile getTile(int i, int j) {
         return tiles[i][j];
     }
 
@@ -66,7 +68,7 @@ public class Grid {
     protected void clear() {
         for (int i = 0; i < MAX_HEIGHT; i++) {
             for (int j = 0; j < MAX_WIDTH; j++) {
-                tiles[i][j] = null;
+                tiles[i][j] = new Empty();
             }
         }
         season.clear();
@@ -75,7 +77,7 @@ public class Grid {
     private boolean emptyBoard(Tile[][] tiles) {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                if (tiles[i][j] != null) {
+                if (!(tiles[i][j] instanceof Empty)) {
                     return false;
                 }
             }
@@ -97,12 +99,12 @@ public class Grid {
         }
         for (int i = this.width; i < gridWidth; i++) {
             for (int j = 0; j < this.height; j++) {
-                tiles[j][i] = null;
+                tiles[j][i] = new Empty();
             }
         }
         for (int i = 0; i < this.width; i++) {
             for (int j = this.height; j < gridHeight; j++) {
-                tiles[j][i] = null;
+                tiles[j][i] = new Empty();
             }
         }
         this.width = gridWidth;
@@ -114,7 +116,7 @@ public class Grid {
         Color[][] colorGrid = new Color[height][width];
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                if (tiles[i][j] != null) {
+                if (!(tiles[i][j] instanceof Empty)) {
                     colorGrid[i][j] = tiles[i][j].getColor();
                 } else {
                     colorGrid[i][j] = new Color(255, 255, 255); // Example: All tiles are white
@@ -136,6 +138,7 @@ public class Grid {
         Grid newGrid = new Grid(height, width, season.nextState());
 
         // 2. Global actions
+        // For each tile type, check if it has a globalAct method and invoke it
         for (Class<? extends Tile> tileClass : TileFactory.TYPES) {
             try {
                 Method globalAct = tileClass.getMethod("globalAct", Grid.class, Grid.class, int.class, int.class);
@@ -152,7 +155,7 @@ public class Grid {
         boolean[][] aliveState = new boolean[height][width];
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                if (tiles[i][j] != null) {
+                if (!(tiles[i][j] instanceof Empty)) {
                     boolean isAlive = tiles[i][j].act(this, newGrid, i, j, width, height);
                     aliveState[i][j] = isAlive;
                 }
@@ -162,7 +165,7 @@ public class Grid {
         // 4. Alive ones can continue if not covered already
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                if (aliveState[i][j] && newGrid.getTile(i, j) == null) {
+                if (aliveState[i][j] && newGrid.getTile(i, j) instanceof Empty) {
                     newGrid.setTile(i, j, tiles[i][j]);
                 }
             }

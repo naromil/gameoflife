@@ -3,6 +3,7 @@ package com.naromil.gol.main;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.naromil.gol.elements.Empty;
 import com.naromil.gol.elements.Tile;
 import com.naromil.gol.elements.TileFactory;
 
@@ -91,7 +92,7 @@ public class MainController {
         Set<Class<? extends Tile>> present = new HashSet<>();
         for (int i = 0; i < grid.getHeight(); i++) {
             for (int j = 0; j < grid.getWidth(); j++) {
-                if (tiles[i][j] != null) {
+                if (!(tiles[i][j] instanceof Empty)) {
                     present.add(tiles[i][j].getClass());
                 }
             }
@@ -99,6 +100,7 @@ public class MainController {
 
         double rowHeight = 20;
         double y = rowHeight;
+        // Draw legend entries for each tile type present on the board
         for (Class<? extends Tile> type : TileFactory.TYPES) {
             if (!present.contains(type)) {
                 continue;

@@ -70,7 +70,7 @@ public class Dendro extends Tile {
                 for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
                     int newI = adjacent.x();
                     int newJ = adjacent.y();
-                    if (newGrid.getTile(newI, newJ) == null) {
+                    if (newGrid.getTile(newI, newJ) instanceof Empty) {
                         newGrid.setTile(newI, newJ, new Dendro());
                     }
                 }
