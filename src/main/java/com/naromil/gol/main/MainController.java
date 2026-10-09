@@ -24,6 +24,10 @@ import javafx.util.Duration;
 // responsible for coordinating the main application logic and UI
 public class MainController {
 
+    private static final int GRID_DEFAULT_WIDTH = 64;
+    private static final int GRID_DEFAULT_HEIGHT = 40;
+    private static final int DISPLAY_DEFAULT_INTERVAL = 200;
+
     private Grid grid = new Grid();
 
     @FXML
@@ -37,12 +41,12 @@ public class MainController {
     @FXML
     public void initialize() {
         // Initialize grid
-        gridWidthSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 16));
-        gridHeightSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 10));
+        gridWidthSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, GRID_DEFAULT_WIDTH));
+        gridHeightSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, GRID_DEFAULT_HEIGHT));
 
         // Listeners
         intervalScroll.valueProperty().addListener((observable, oldValue, newValue) -> updateInterval(newValue.doubleValue()));
-        updateInterval(intervalScroll.getValue());
+        updateInterval(DISPLAY_DEFAULT_INTERVAL);
         gridWidthSpinner.valueProperty().addListener((observable, oldValue, newValue) -> onGridSizeChanged());
         gridHeightSpinner.valueProperty().addListener((observable, oldValue, newValue) -> onGridSizeChanged());
 
