@@ -6,6 +6,7 @@ public class Hydro extends Tile {
     public static final Color DEFAULT_COLOR = Color.similarColor(new Color(76, 194, 241));
     public static final int MAX_TICKS_RAIN = 15;
     public static final double BASE_VAPORIZE_CHANCE = 0.50;
+    public static final double BASE_VAPORIZE_STEAM_CHANCE = 0.30;
 
     private int tickRain = 0;
 
@@ -21,15 +22,14 @@ public class Hydro extends Tile {
     }
 
     @Override
-    public void act(Tile[][] tiles, Tile[][] newTiles, int i, int j, int width, int height) {
+    public boolean act(Tile[][] tiles, Tile[][] newTiles, int i, int j, int width, int height) {
         // rain: dry out
         if (Grids.doesExistWithinDistance(tiles, i, j, width, height, Hydro.class, 1)) {
             tickRain = 0;
         } else {
             tickRain++;
             if (tickRain >= MAX_TICKS_RAIN) {
-                newTiles[i][j] = null;
-                return;
+                return false;
             }
         }
 
@@ -39,7 +39,11 @@ public class Hydro extends Tile {
             int newJ = j + adjacent.y();
             if (Grids.isTileType(tiles, newI, newJ, width, height, Pyro.class) && Math.random() < BASE_VAPORIZE_CHANCE) {
                 newTiles[newI][newJ] = null;
+                if (Math.random() < BASE_VAPORIZE_STEAM_CHANCE) {
+                    return false; // vaporize: steam
+                }
             }
         }
+        return true;
     }
 }

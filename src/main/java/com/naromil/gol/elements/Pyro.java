@@ -14,12 +14,12 @@ public class Pyro extends Tile {
     }
 
     @Override
-    public void act(Tile[][] tiles, Tile[][] newTiles, int i, int j, int width, int height) {
+    public boolean act(Tile[][] tiles, Tile[][] newTiles, int i, int j, int width, int height) {
         // burnout: become ash
         tickBurnout++;
         if (tickBurnout >= MAX_TICKS_BURNOUT) {
             newTiles[i][j] = new Ash();
-            return;
+            return false;
         }
 
         // burning
@@ -30,5 +30,7 @@ public class Pyro extends Tile {
                 newTiles[newI][newJ] = new Pyro();
             }
         }
+        
+        return true;
     }
 }

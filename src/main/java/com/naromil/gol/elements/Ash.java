@@ -13,12 +13,13 @@ public class Ash extends Tile {
     }
 
     @Override
-    public void act(Tile[][] tiles, Tile[][] newTiles, int i, int j, int width, int height) {
+    public boolean act(Tile[][] tiles, Tile[][] newTiles, int i, int j, int width, int height) {
         // burnout: die
         tick++;
         if (tick >= MAX_TICKS) {
-            newTiles[i][j] = null;
-            return;
+            return false;
         }
+
+        return true;
     }
 }

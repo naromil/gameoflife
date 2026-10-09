@@ -10,7 +10,7 @@ public class Cryo extends Tile {
     }
 
     @Override
-    public void act(Tile[][] tiles, Tile[][] newTiles, int i, int j, int width, int height) {
+    public boolean act(Tile[][] tiles, Tile[][] newTiles, int i, int j, int width, int height) {
         // Example: spread to random direction
         int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
         for (int[] dir : directions) {
@@ -21,5 +21,6 @@ public class Cryo extends Tile {
                 newTiles[newI][newJ] = new Cryo();
             }
         }
+        return true;
     }
 }

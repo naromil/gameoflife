@@ -16,5 +16,8 @@ public abstract class Tile {
         return color;
     }
 
-    public abstract void act(Tile[][] tiles, Tile[][] newTiles, int i, int j, int width, int height);
+    /**
+     * @return whether the original tile itself survives or not. 
+     */
+    public abstract boolean act(Tile[][] tiles, Tile[][] newTiles, int i, int j, int width, int height);
 }

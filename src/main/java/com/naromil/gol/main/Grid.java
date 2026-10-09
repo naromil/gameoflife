@@ -1,7 +1,6 @@
 package com.naromil.gol.main;
 
 import java.lang.reflect.Method;
-
 import com.naromil.gol.elements.Tile;
 import com.naromil.gol.elements.TileFactory;
 
@@ -80,20 +79,16 @@ public class Grid {
 
     /* ---- Main Logic ---- */
     public void nextState() {
-        // Check if the board is empty and initialize it with random tiles if it is
+        // 1. Check if the board is empty and initialize it with random tiles if it is
         if(emptyBoard(tiles)) {
             initializeRandomBoard();
             return;
         }
 
-        // If not empty, act with what is left on the board
+        // 2. If not empty, act with what is left on the board
         Tile[][] newTiles = new Tile[MAX_HEIGHT][MAX_WIDTH];
-        // Assume all survived
-        for (int i = 0; i < height; i++) {
-            System.arraycopy(tiles[i], 0, newTiles[i], 0, width);
-        }
 
-        // Global actions
+        // 3. Global actions
         for (Class<? extends Tile> tileClass : TileFactory.TYPES) {
             try {
                 Method globalAct = tileClass.getMethod("globalAct", Tile[][].class, Tile[][].class, int.class, int.class);
@@ -106,11 +101,22 @@ public class Grid {
             }
         }
         
-        // Each tile act according to their own rules
+        // 4. Each tile act according to their own rules
+        boolean[][] aliveState = new boolean[height][width];
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 if (tiles[i][j] != null) {
-                    tiles[i][j].act(tiles, newTiles, i, j, width, height);
+                    boolean isAlive = tiles[i][j].act(tiles, newTiles, i, j, width, height);
+                    aliveState[i][j] = isAlive;
+                }
+            }
+        }
+
+        // 5. Alive ones can continue if not covered already
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                if (aliveState[i][j] && newTiles[i][j] == null) {
+                    newTiles[i][j] = tiles[i][j];
                 }
             }
         }

@@ -14,14 +14,13 @@ public class Dendro extends Tile {
     private int tickWithoutHydro = 0;
   
     @Override
-    public void act(Tile[][] tiles, Tile[][] newTiles, int i, int j, int width, int height) {
+    public boolean act(Tile[][] tiles, Tile[][] newTiles, int i, int j, int width, int height) {
         // wither
         boolean isNearHydro = Grids.doesExistWithinDistance(tiles, i, j, width, height, Hydro.class, 1);
         if (!isNearHydro) {
             tickWithoutHydro++;
             if (tickWithoutHydro >= MAX_TICKS_WITHOUT_HYDRO) {
-                newTiles[i][j] = null;
-                return;
+                return false;
             }
         } else {
             tickWithoutHydro = 0;
@@ -44,5 +43,7 @@ public class Dendro extends Tile {
                 newTiles[newI][newJ] = new Dendro();
             }
         }
+
+        return true;
     }
 }
