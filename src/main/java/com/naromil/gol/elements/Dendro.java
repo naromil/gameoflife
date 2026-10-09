@@ -28,10 +28,10 @@ public class Dendro extends Tile {
         }
 
         // growth
-        int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
-        for (int[] dir : directions) {
-            int newI = i + dir[0];
-            int newJ = j + dir[1];
+        for (Point2D adjacent : Grids.getAdjacentCoordinates(i, j, width, height)) {
+            int newI = adjacent.x();
+            int newJ = adjacent.y();
+            // base chance and multipliers
             double chance = BASE_GROWTH_CHANCE;
             if (isNearHydro) {
                 chance *= 2;
@@ -40,7 +40,7 @@ public class Dendro extends Tile {
                 chance *= 2; // burnout: fertile
             }
             boolean success = Math.random() < chance;
-            if (success && newI >= 0 && newI < height && newJ >= 0 && newJ < width) {
+            if (success) {
                 newTiles[newI][newJ] = new Dendro();
             }
         }

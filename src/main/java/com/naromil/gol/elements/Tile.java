@@ -4,6 +4,7 @@ import com.naromil.gol.main.Color;
 
 public abstract class Tile {
     public static final Color DEFAULT_COLOR = null;
+    public final static int[][] DIRECTIONS = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
 
     protected final Color color;
 

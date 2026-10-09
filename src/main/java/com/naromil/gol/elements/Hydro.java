@@ -5,6 +5,7 @@ import com.naromil.gol.main.Color;
 public class Hydro extends Tile {
     public static final Color DEFAULT_COLOR = Color.similarColor(new Color(76, 194, 241));
     public static final int MAX_TICKS_RAIN = 15;
+    public static final double BASE_VAPORIZE_CHANCE = 0.50;
 
     private int tickRain = 0;
 
@@ -32,6 +33,13 @@ public class Hydro extends Tile {
             }
         }
 
-        
+        // vaporize
+        for (Point2D adjacent : Grids.getAdjacentCoordinates(i, j, width, height)) {
+            int newI = i + adjacent.x();
+            int newJ = j + adjacent.y();
+            if (Grids.isTileType(tiles, newI, newJ, width, height, Pyro.class) && Math.random() < BASE_VAPORIZE_CHANCE) {
+                newTiles[newI][newJ] = null;
+            }
+        }
     }
 }
