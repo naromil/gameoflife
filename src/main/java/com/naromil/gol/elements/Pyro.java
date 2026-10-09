@@ -4,6 +4,9 @@ import com.naromil.gol.main.Color;
 
 public class Pyro extends Tile {
     public static final Color DEFAULT_COLOR = Color.similarColor(new Color(239, 121, 56));
+    public static final int MAX_TICKS_BURNOUT = 3;
+
+    private int tickBurnout = 0;
 
     public Pyro() {
         super(Color.similarColor(DEFAULT_COLOR));
@@ -11,15 +14,11 @@ public class Pyro extends Tile {
 
     @Override
     public void act(Tile[][] tiles, Tile[][] newTiles, int i, int j, int width, int height) {
-        // Example: spread to random direction
-        int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
-        for (int[] dir : directions) {
-            int newI = i + dir[0];
-            int newJ = j + dir[1];
-            boolean success = Math.random() < 0.25;
-            if (success && newI >= 0 && newI < height && newJ >= 0 && newJ < width) {
-                newTiles[newI][newJ] = new Pyro();
-            }
+        // burnout: become ash
+        tickBurnout++;
+        if (tickBurnout >= MAX_TICKS_BURNOUT) {
+            newTiles[i][j] = new Ash();
+            return;
         }
     }
 }

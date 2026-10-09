@@ -28,11 +28,18 @@ public class Dendro extends Tile {
         }
 
         // growth
-        int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+        int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
         for (int[] dir : directions) {
             int newI = i + dir[0];
             int newJ = j + dir[1];
-            boolean success = Math.random() < (BASE_GROWTH_CHANCE * (isNearHydro ? 2 : 1));
+            double chance = BASE_GROWTH_CHANCE;
+            if (isNearHydro) {
+                chance *= 2;
+            }
+            if (Grids.isTileType(tiles, newI, newJ, width, height, Ash.class)) {
+                chance *= 2; // burnout: fertile
+            }
+            boolean success = Math.random() < chance;
             if (success && newI >= 0 && newI < height && newJ >= 0 && newJ < width) {
                 newTiles[newI][newJ] = new Dendro();
             }

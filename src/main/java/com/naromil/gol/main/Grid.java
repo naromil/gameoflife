@@ -1,5 +1,7 @@
 package com.naromil.gol.main;
 
+import java.lang.reflect.Method;
+
 import com.naromil.gol.elements.Tile;
 import com.naromil.gol.elements.TileFactory;
 
@@ -83,12 +85,27 @@ public class Grid {
             initializeRandomBoard();
             return;
         }
+
         // If not empty, act with what is left on the board
         Tile[][] newTiles = new Tile[MAX_HEIGHT][MAX_WIDTH];
         // Assume all survived
         for (int i = 0; i < height; i++) {
             System.arraycopy(tiles[i], 0, newTiles[i], 0, width);
         }
+
+        // Global actions
+        for (Class<? extends Tile> tileClass : TileFactory.TYPES) {
+            try {
+                Method globalAct = tileClass.getMethod("globalAct", Tile[][].class, Tile[][].class, int.class, int.class);
+                Tile tile = tileClass.getDeclaredConstructor().newInstance();
+                globalAct.invoke(tile, tiles, newTiles, width, height);
+            } catch (NoSuchMethodException e) {
+                // element has no global action
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        
         // Each tile act according to their own rules
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
