@@ -42,7 +42,7 @@ public class Season {
     }
 
     public void clear() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'clear'");
+        currentSeason = SeasonType.SPRING;
+        currentSeasonTick = 0;
     }
 }
