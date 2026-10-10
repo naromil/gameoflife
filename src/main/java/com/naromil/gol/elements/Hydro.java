@@ -9,6 +9,7 @@ public class Hydro extends Tile {
     public static final double BASE_VAPORIZE_CHANCE = 0.50;
     public static final double BASE_VAPORIZE_STEAM_CHANCE = 0.30;
 
+    private boolean isLake = false;
     private int tickRain = 0;
 
     public Hydro() {
@@ -17,7 +18,7 @@ public class Hydro extends Tile {
 
     // lake status
     public Color getStatusColor() {
-        if (tickRain == 0) {
+        if (isLake) {
             return DEFAULT_COLOR;
         } else {
             return null;
@@ -36,8 +37,10 @@ public class Hydro extends Tile {
         // rain: dry out
         if (Grids.countTilesWithinDistance(grid,
                 i, j, width, height, Hydro.class, 1) > 1) {
+            isLake = true;
             tickRain = 0;
         } else {
+            isLake = false;
             tickRain++;
             if (tickRain >= MAX_TICKS_RAIN) {
                 newGrid.softReplace(i, j, new Empty(), this);
