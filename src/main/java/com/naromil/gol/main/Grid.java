@@ -136,7 +136,7 @@ public class Grid {
     }
 
     /* ---- Environment operations ---- */
-    public double[] getWindDirection() {
+    public int[] getWindDirection() {
         return season.getWindDirection();
     }
 

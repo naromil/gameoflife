@@ -4,9 +4,14 @@ package com.naromil.gol.environment;
 public class Season {
     private final int SEASON_DURATION = 100;
 
+    // wind blows in one of the 8 integer directions {di, dj}
+    private static final int[][] WIND_DIRECTIONS = {
+        {-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}
+    };
+
     private SeasonType currentSeason;
     private int currentSeasonTick;
-    private double[] windDirection; // 2d vector length 1
+    private int[] windDirection;
 
     // default with SPRING and random wind direction
     public Season() {
@@ -14,7 +19,7 @@ public class Season {
     }
 
     // comprehensive
-    public Season(SeasonType currentSeason, int currentSeasonTick, double[] windDirection) {
+    public Season(SeasonType currentSeason, int currentSeasonTick, int[] windDirection) {
         this.currentSeason = currentSeason;
         this.currentSeasonTick = currentSeasonTick;
         this.windDirection = windDirection;
@@ -33,13 +38,12 @@ public class Season {
         return currentSeasonTick;
     }
 
-    public double[] getWindDirection() {
+    public int[] getWindDirection() {
         return windDirection;
     }
 
-    public static double[] generateRandomWindDirection() {
-        double angle = Math.random() * 2 * Math.PI;
-        return new double[]{Math.cos(angle), Math.sin(angle)};
+    public static int[] generateRandomWindDirection() {
+        return WIND_DIRECTIONS[(int) (Math.random() * WIND_DIRECTIONS.length)];
     }
 
     // reset the season to default values

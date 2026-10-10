@@ -31,17 +31,17 @@ public class Anemo extends Tile {
     // the probability doesn't exclude anemo and electro but will not replace them
     public void globalAct(Grid grid, Grid newGrid, int width, int height) {
         // winds: spawn
-        double[] windDirections = newGrid.getWindDirection();
-        double windX = windDirections[0];
-        double windY = windDirections[1];
+        int[] windDirections = newGrid.getWindDirection();
+        int windI = windDirections[0];
+        int windJ = windDirections[1];
 
         if (Math.random() < BASE_WIND_CHANCE) {
             // find the tiles that are the first in the current direction
             List<Point2D> firstTiles = new ArrayList<>();
             for (int i = 0; i < height; i++) {
                 for (int j = 0; j < width; j++) {
-                    int prevI = (int) (i + 0.5 - windX);
-                    int prevJ = (int) (j + 0.5 - windY);
+                    int prevI = i - windI;
+                    int prevJ = j - windJ;
                     if (Grids.isOutOfBounds(prevI, prevJ, width, height)) {
                         firstTiles.add(new Point2D(i, j));
                     }
@@ -77,11 +77,11 @@ public class Anemo extends Tile {
         newGrid.softReplace(i, j, freedTile, this);
 
         // goes in the fixed direction of current seasonal wind
-        double[] windDirections = newGrid.getWindDirection();
-        double windX = windDirections[0];
-        double windY = windDirections[1];
-        int newI = (int) (i + 0.5 + windX);
-        int newJ = (int) (j + 0.5 + windY);
+        int[] windDirections = newGrid.getWindDirection();
+        int windI = windDirections[0];
+        int windJ = windDirections[1];
+        int newI = i + windI;
+        int newJ = j + windJ;
 
         if (!Grids.isOutOfBounds(newI, newJ, width, height)
                 && !(newGrid.getTile(newI, newJ) instanceof Electro
