@@ -60,6 +60,10 @@ public class Grid {
         tiles[i][j] = tile;
     }
 
+    public boolean doesTileExist(int i, int j) {
+        return i >= 0 && i < height && j >= 0 && j < width && tiles[i][j] != null && !(tiles[i][j] instanceof Empty);
+    }
+
     public SeasonType getCurrentSeason() {
         return season.getCurrentSeason();
     }
@@ -141,6 +145,13 @@ public class Grid {
     }
 
     /* ---- Main Logic ---- */
+    /**
+     * Advances the grid to the next state based on the rules of the game.
+     * First updates the environment and global actions since some tiles rely on them.
+     * Then each tile acts individually.
+     * Last reuse the older tile if it is still alive and not covered.
+     * @return a new Grid object representing the next state.
+     */
     public Grid nextState() {
         // 1. Check if the board is empty and initialize it with random tiles if it is
         // If not empty, act with what is left on the board

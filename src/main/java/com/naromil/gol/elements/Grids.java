@@ -62,4 +62,13 @@ public class Grids {
         }
         return result;
     }
+
+    public static Point2D getRandomNeighbor(int i, int j, int width, int height) {
+        Point2D[] neighbors = getNeighbors(i, j, width, height);
+        if (neighbors.length == 0) {
+            return null;
+        }
+        int randomIndex = (int) (Math.random() * neighbors.length);
+        return neighbors[randomIndex];
+    }
 }

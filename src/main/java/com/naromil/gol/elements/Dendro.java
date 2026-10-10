@@ -14,6 +14,11 @@ public class Dendro extends Tile {
         super(Color.similarColor(DEFAULT_COLOR));
     }
 
+    @Override
+    public Color getStatusColor() {
+        return hasDendroCore() ? DEFAULT_COLOR : null;
+    }
+
     private int tickWithoutHydro = 0;
 
     private boolean hasDendroCore;
