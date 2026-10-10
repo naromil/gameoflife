@@ -33,6 +33,7 @@ public class Electro extends Tile {
         return containedTile != null ? containedTile.getColor() : null;
     }
 
+    // the probability doesn't exclude anemo and electro but will not replace them
     public void globalAct(Grid grid, Grid newGrid, int width, int height) {
         // storms: spawn
         double chance = BASE_STORM_CHANCE;
@@ -60,11 +61,14 @@ public class Electro extends Tile {
         }
 
         // contained tile act
+        if (containedTile instanceof Anemo || containedTile instanceof Electro) {
+            throw new IllegalStateException("Electro cannot contain another Anemo or Electro tile.");
+        }
         if (containedTile != null) {
             containedTile.act(grid, newGrid, i, j, width, height);
         }
 
-        // storm moves
+        // storm: moves
         newGrid.softReplace(i, j, freedTile, this);
 
         // random neighbor excluding electro and anemo

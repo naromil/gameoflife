@@ -39,6 +39,10 @@ public class Grids {
         return count;
     }
 
+    public static boolean isOutOfBounds(int i, int j, int width, int height) {
+        return i < 0 || i >= height || j < 0 || j >= width;
+    }
+
     // valid adjacent Point2D coordinates after boundary check
     public static Point2D[] getNeighbors(int i, int j, int width, int height) {
         return getNeighbors(i, j, width, height, 1);

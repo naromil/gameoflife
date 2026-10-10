@@ -67,7 +67,7 @@ public class Grid {
         season.clear();
     }
 
-    private boolean emptyBoard(Tile[][] tiles) {
+    private boolean isEmptyBoard(Tile[][] tiles) {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 if (!(tiles[i][j] instanceof Empty)) {
@@ -113,6 +113,10 @@ public class Grid {
         return tiles[i][j];
     }
 
+    public boolean isEmptyTile(int i, int j) {
+        return tiles[i][j] == null || tiles[i][j] instanceof Empty;
+    }
+
     public void setTile(int i, int j, Tile tile) {
         tiles[i][j] = tile;
     }
@@ -132,6 +136,10 @@ public class Grid {
     }
 
     /* ---- Environment operations ---- */
+    public double[] getWindDirection() {
+        return season.getWindDirection();
+    }
+
     public SeasonType getCurrentSeason() {
         return season.getCurrentSeason();
     }
@@ -176,7 +184,7 @@ public class Grid {
     public Grid nextState() {
         // 1. Check if the board is empty and initialize it with random tiles if it is
         // If not empty, act with what is left on the board
-        if(emptyBoard(tiles)) {
+        if(isEmptyBoard(tiles)) {
             initializeRandomBoard();
             return this;
         }
