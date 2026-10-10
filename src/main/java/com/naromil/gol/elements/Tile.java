@@ -21,8 +21,5 @@ public abstract class Tile {
         return null; // default no color so not rendered at all
     }
 
-    /**
-     * @return whether the original tile itself survives or not. 
-     */
-    public abstract boolean act(Grid grid, Grid newGrid, int i, int j, int width, int height);
+    public abstract void act(Grid grid, Grid newGrid, int i, int j, int width, int height);
 }

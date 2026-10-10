@@ -1,5 +1,8 @@
 package com.naromil.gol.elements;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.naromil.gol.environment.SeasonType;
 import com.naromil.gol.main.Color;
 import com.naromil.gol.main.Grid;
@@ -35,12 +38,13 @@ public class Electro extends Tile {
     }
 
     @Override
-    public boolean act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
+    public void act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
         // storm: disappear
+        Tile freedTile = containedTile != null ? containedTile : new Empty();
         stormTicks++;
         if (stormTicks >= MAX_STORM_TICKS) {
-            newGrid.setTile(i, j, containedTile != null ? containedTile : new Empty());
-            return false;
+            newGrid.softReplace(i, j, freedTile, this);
+            return;
         }
 
         // contained tile act
@@ -49,15 +53,19 @@ public class Electro extends Tile {
         }
 
         // storm moves
-        if (grid.getTile(i, j) == this) {
-            newGrid.setTile(i, j, containedTile != null ? containedTile : new Empty());
-            Point2D randomNeighbor = Grids.getRandomNeighbor(i, j, width, height);
-            int newI = randomNeighbor.x();
-            int newJ = randomNeighbor.y();
-            containedTile = (newGrid.doesTileExist(newI, newJ) ? newGrid : grid).getTile(newI, newJ); // absorb the newer tile
-            newGrid.setTile(newI, newJ, this);
+        newGrid.softReplace(i, j, freedTile, this);
+        // random neighbor excluding electro
+        List<Point2D> neighbors = Arrays.asList(Grids.getNeighbors(i, j, width, height)).stream()
+                .filter(p -> !(newGrid.getTile(p.x(), p.y()) instanceof Electro)).toList();
+        if (neighbors.isEmpty()) {
+            return;
         }
-
-        return false;
+        Point2D randomNeighbor = neighbors.get((int) (Math.random() * neighbors.size()));
+        int newI = randomNeighbor.x();
+        int newJ = randomNeighbor.y();
+        // storm: absorb
+        Tile absorbedTile = newGrid.getTile(newI, newJ);
+        containedTile = absorbedTile instanceof Empty ? null : absorbedTile;
+        newGrid.setTile(newI, newJ, this); // guaranteed replacing the newest state
     }
 }

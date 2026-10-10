@@ -32,33 +32,35 @@ public class Hydro extends Tile {
     }
 
     @Override
-    public boolean act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
-        boolean flg = true;
-
+    public void act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
         // rain: dry out
-        if (Grids.countTilesWithinDistance(grid, i, j, width, height, Hydro.class, 1) > 1) {
+        if (Grids.countTilesWithinDistance(grid,
+                i, j, width, height, Hydro.class, 1) > 1) {
             tickRain = 0;
         } else {
             tickRain++;
             if (tickRain >= MAX_TICKS_RAIN) {
-                return false;
+                newGrid.softReplace(i, j, new Empty(), this);
+                return;
             }
         }
 
         // vaporize
+        boolean vaporized = false;
         for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
             int newI = adjacent.x();
             int newJ = adjacent.y();
-            if (grid.getTile(newI, newJ) instanceof Pyro && Math.random() < BASE_VAPORIZE_CHANCE) {
-                if (newGrid.getTile(newI, newJ) instanceof Pyro) {
-                    newGrid.setTile(newI, newJ, new Empty());
-                }
+            if (newGrid.getTile(newI, newJ) instanceof Pyro
+                    && Math.random() < BASE_VAPORIZE_CHANCE) {
+                newGrid.setTile(newI, newJ, new Empty());
                 if (Math.random() < BASE_VAPORIZE_STEAM_CHANCE) {
-                    flg = false; // vaporize: steam
+                    vaporized = true; // vaporize: steam
                 }
             }
         }
-        
-        return flg;
+
+        if (vaporized) {
+            newGrid.softReplace(i, j, new Empty(), this);
+        }
     }
 }

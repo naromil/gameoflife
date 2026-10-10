@@ -10,9 +10,8 @@ public class Empty extends Tile {
         super(DEFAULT_COLOR);
     }
 
-    // In this case, it returns whether it is not replaced by another tile.
+    // do nothing
     @Override
-    public boolean act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
-        return true;
+    public void act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
     }
 }

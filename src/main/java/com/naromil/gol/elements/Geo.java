@@ -25,7 +25,7 @@ public class Geo extends Tile {
     }
 
     @Override
-    public boolean act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
+    public void act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
         // crystallize: countdown
         boolean hasShield = shieldDuration > 0;
         if (hasShield) {
@@ -33,15 +33,19 @@ public class Geo extends Tile {
         }
 
         // mountains
-        int adjacentGeoCount = Grids.countTilesWithinDistance(grid, i, j, width, height, Geo.class, 1);
-        if (adjacentGeoCount < 2 && !hasShield) { // crystallize: protection from erosion
-            return false; // erode
+        int adjacentGeoCount = Grids.countTilesWithinDistance(grid,
+                i, j, width, height, Geo.class, 1);
+        if (adjacentGeoCount < 2 && !hasShield) { // crystallize: protect
+            newGrid.softReplace(i, j, new Empty(), this); // erode
+            return;
         }
         for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
             int newI = adjacent.x();
             int newJ = adjacent.y();
-            int neighborAdjacentGeoCount = Grids.countTilesWithinDistance(grid, newI, newJ, width, height, Geo.class, 1);
-            if (neighborAdjacentGeoCount >= 5 && Math.random() < BASE_MOUNTAINS_CHANCE) {
+            int neighborAdjacentGeoCount = Grids.countTilesWithinDistance(grid,
+                    newI, newJ, width, height, Geo.class, 1);
+            if (neighborAdjacentGeoCount >= 5
+                    && Math.random() < BASE_MOUNTAINS_CHANCE) {
                 newGrid.setTile(newI, newJ, new Geo()); // grow
             }
         }
@@ -51,12 +55,12 @@ public class Geo extends Tile {
             int newI = adjacent.x();
             int newJ = adjacent.y();
             Tile adjacentTile = grid.getTile(newI, newJ);
-            if (adjacentTile instanceof Pyro || adjacentTile instanceof Hydro || adjacentTile instanceof Cryo || adjacentTile instanceof Electro) {
+            if (adjacentTile instanceof Pyro || adjacentTile instanceof Hydro
+                    || adjacentTile instanceof Cryo
+                    || adjacentTile instanceof Electro) {
                 shieldDuration = INITIAL_SHIELD_DURATION;
                 break;
             }
         }
-
-        return true;
     }
 }

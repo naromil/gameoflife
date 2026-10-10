@@ -13,27 +13,37 @@ public class Grid {
     private static final int MAX_HEIGHT = 100;
     private static final int MAX_WIDTH = 100;
 
-    /* ---- Grid Properties ---- */
+    /* ---- Properties ---- */
     private int height;
     private int width;
     private final Tile[][] tiles;
 
     private final Season season;
 
-    // default constructor; starts with fresh state
-    public Grid() {
-        this(MAX_HEIGHT, MAX_WIDTH, new Season());
-    }
     /* ---- Grid operations ---- */
-    // the comprehensive constructor used to create the next state of the current
-    private Grid(int height, int width, Season season) {
-        this.height = height;
-        this.width = width;
+    // default constructor with fresh states
+    public Grid() {
+        this.height = MAX_HEIGHT;
+        this.width = MAX_WIDTH;
         this.tiles = new Tile[MAX_HEIGHT][MAX_WIDTH];
         // Initialize the grid with some initial state
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 tiles[i][j] = new Empty();
+            }
+        }
+
+        this.season = new Season();
+    }
+
+    // the copy used to advance a state
+    private Grid(Grid old, Season season) {
+        this.height = old.height;
+        this.width = old.width;
+        this.tiles = new Tile[MAX_HEIGHT][MAX_WIDTH];
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                tiles[i][j] = old.tiles[i][j];
             }
         }
 
@@ -121,10 +131,6 @@ public class Grid {
         }
     }
 
-    public boolean doesTileExist(int i, int j) {
-        return i >= 0 && i < height && j >= 0 && j < width && tiles[i][j] != null && !(tiles[i][j] instanceof Empty);
-    }
-
     /* ---- Environment operations ---- */
     public SeasonType getCurrentSeason() {
         return season.getCurrentSeason();
@@ -163,8 +169,8 @@ public class Grid {
     /**
      * Advances the grid to the next state based on the rules of the game.
      * First updates the environment and global actions since some tiles rely on them.
-     * Then each tile acts individually.
-     * Last reuse the older tile if it is still alive and not covered.
+     * Each tile gets a chance to act without being affected by the actions of other tiles.
+     * Each tile acts individually on a copy of the current state, so each sees the newest state.
      * @return a new Grid object representing the next state.
      */
     public Grid nextState() {
@@ -175,9 +181,10 @@ public class Grid {
             return this;
         }
 
-        Grid newGrid = new Grid(height, width, season.nextState());
+        // 2. Start from a copy of the current grid
+        Grid newGrid = new Grid(this, season.nextState());
 
-        // 2. Global actions
+        // 3. Global actions
         // For each tile type, check if it has a globalAct method and invoke it
         for (Class<? extends Tile> tileClass : TileFactory.TYPES) {
             try {
@@ -191,22 +198,11 @@ public class Grid {
             }
         }
         
-        // 3. Each tile act according to their own rules
-        boolean[][] aliveState = new boolean[height][width];
+        // 4. Each tile act according to their own rules
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 if (!(tiles[i][j] instanceof Empty)) {
-                    boolean isAlive = tiles[i][j].act(this, newGrid, i, j, width, height);
-                    aliveState[i][j] = isAlive;
-                }
-            }
-        }
-
-        // 4. Alive ones can continue if not covered already
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                if (aliveState[i][j] && newGrid.getTile(i, j) instanceof Empty) {
-                    newGrid.setTile(i, j, tiles[i][j]);
+                    tiles[i][j].act(this, newGrid, i, j, width, height);
                 }
             }
         }

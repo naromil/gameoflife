@@ -29,20 +29,23 @@ public class Dendro extends Tile {
     }
 
     @Override
-    public boolean act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
+    public void act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
         // wither
-        boolean isNearHydro = Grids.doesExistWithinDistance(grid, i, j, width, height, Hydro.class, 1);
+        boolean isNearHydro = Grids.doesExistWithinDistance(grid,
+                i, j, width, height, Hydro.class, 1);
         if (!isNearHydro) {
             tickWithoutHydro++;
             if (tickWithoutHydro >= MAX_TICKS_WITHOUT_HYDRO) {
-                return false;
+                newGrid.softReplace(i, j, new Empty(), this);
+                return;
             }
         } else {
             tickWithoutHydro = 0;
         }
 
         // growth
-        boolean isNearCryo = Grids.doesExistWithinDistance(grid, i, j, width, height, Cryo.class, 1);
+        boolean isNearCryo = Grids.doesExistWithinDistance(grid,
+                i, j, width, height, Cryo.class, 1);
         if (!isNearCryo) { // frost
             for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
                 int newI = adjacent.x();
@@ -52,18 +55,18 @@ public class Dendro extends Tile {
                 if (isNearHydro) {
                     chance *= 2;
                 }
-                if (grid.getTile(newI, newJ) instanceof Ash) {
+                if (newGrid.getTile(newI, newJ) instanceof Ash) {
                     chance *= 2; // burnout: fertile
                 }
-                boolean success = Math.random() < chance;
-                if (success) {
+                if (Math.random() < chance) {
                     newGrid.setTile(newI, newJ, new Dendro());
                 }
             }
         }
 
         // bloom
-        if (Grids.doesExistWithinDistance(grid, i, j, width, height, Hydro.class, 1)) {
+        if (Grids.doesExistWithinDistance(grid,
+                i, j, width, height, Hydro.class, 1)) {
             if (Math.random() < BASE_BLOOM_CHANCE) {
                 hasDendroCore = true;
                 tickDendroCore = 0;
@@ -78,13 +81,9 @@ public class Dendro extends Tile {
                 for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
                     int newI = adjacent.x();
                     int newJ = adjacent.y();
-                    if (newGrid.getTile(newI, newJ) instanceof Empty) {
-                        newGrid.setTile(newI, newJ, new Dendro());
-                    }
+                    newGrid.softReplace(newI, newJ, new Dendro());
                 }
             }
         }
-
-        return true;
     }
 }

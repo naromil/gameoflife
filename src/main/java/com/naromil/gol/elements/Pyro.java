@@ -15,21 +15,20 @@ public class Pyro extends Tile {
     }
 
     @Override
-    public boolean act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
-        boolean flg = true;
-
+    public void act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
         // burnout: become ash
         tickBurnout++;
         if (tickBurnout >= MAX_TICKS_BURNOUT) {
-            newGrid.setTile(i, j, new Ash());
-            return false;
+            newGrid.softReplace(i, j, new Ash(), this);
+            return;
         }
 
         // burning
         for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
             int newI = adjacent.x();
             int newJ = adjacent.y();
-            if (grid.getTile(newI, newJ) instanceof Dendro && Math.random() < BASE_BURNING_CHANCE) {
+            if (newGrid.getTile(newI, newJ) instanceof Dendro
+                    && Math.random() < BASE_BURNING_CHANCE) {
                 newGrid.setTile(newI, newJ, new Pyro());
             }
         }
@@ -38,12 +37,14 @@ public class Pyro extends Tile {
         for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
             int newI = adjacent.x();
             int newJ = adjacent.y();
-            if (grid.getTile(newI, newJ) instanceof Dendro && ((Dendro) grid.getTile(newI, newJ)).hasDendroCore()) {
+            if (grid.getTile(newI, newJ) instanceof Dendro
+                    && ((Dendro) grid.getTile(newI, newJ)).hasDendroCore()) {
                 // burgeon: ignite
-                for (Point2D adjacent2 : Grids.getNeighbors(newI, newJ, width, height, 2)) {
+                for (Point2D adjacent2 : Grids.getNeighbors(newI, newJ,
+                        width, height, 2)) {
                     int newI2 = adjacent2.x();
                     int newJ2 = adjacent2.y();
-                    if (grid.getTile(newI2, newJ2) instanceof Dendro) {
+                    if (newGrid.getTile(newI2, newJ2) instanceof Dendro) {
                         newGrid.setTile(newI2, newJ2, new Pyro());
                     }
                 }
@@ -51,17 +52,18 @@ public class Pyro extends Tile {
         }
 
         // melt
+        boolean goneOut = false;
         for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
             int newI = adjacent.x();
             int newJ = adjacent.y();
-            if (grid.getTile(newI, newJ) instanceof Cryo) {
-                if(newGrid.getTile(newI, newJ) instanceof Cryo) {
-                    newGrid.setTile(newI, newJ, new Hydro());
-                }
-                flg = false; // melt: goes out
+            if (newGrid.getTile(newI, newJ) instanceof Cryo) {
+                newGrid.setTile(newI, newJ, new Hydro());
+                goneOut = true; // melt: goes out
             }
         }
 
-        return flg;
+        if (goneOut) {
+            newGrid.softReplace(i, j, new Empty(), this);
+        }
     }
 }

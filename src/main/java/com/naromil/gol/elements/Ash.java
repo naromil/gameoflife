@@ -14,13 +14,11 @@ public class Ash extends Tile {
     }
 
     @Override
-    public boolean act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
+    public void act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
         // burnout: die
         tick++;
         if (tick >= MAX_TICKS) {
-            return false;
+            newGrid.softReplace(i, j, new Empty(), this);
         }
-
-        return true;
     }
 }
