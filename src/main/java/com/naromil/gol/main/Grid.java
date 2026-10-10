@@ -24,7 +24,7 @@ public class Grid {
     public Grid() {
         this(MAX_HEIGHT, MAX_WIDTH, new Season());
     }
-
+    /* ---- Grid operations ---- */
     // the comprehensive constructor used to create the next state of the current
     private Grid(int height, int width, Season season) {
         this.height = height;
@@ -40,10 +40,6 @@ public class Grid {
         this.season = season;
     }
 
-    public Tile[][] getTiles() {
-        return tiles;
-    }
-
     public int getHeight() {
         return height;
     }
@@ -52,23 +48,6 @@ public class Grid {
         return width;
     }
 
-    public Tile getTile(int i, int j) {
-        return tiles[i][j];
-    }
-
-    public void setTile(int i, int j, Tile tile) {
-        tiles[i][j] = tile;
-    }
-
-    public boolean doesTileExist(int i, int j) {
-        return i >= 0 && i < height && j >= 0 && j < width && tiles[i][j] != null && !(tiles[i][j] instanceof Empty);
-    }
-
-    public SeasonType getCurrentSeason() {
-        return season.getCurrentSeason();
-    }
-
-    /* ---- Grid Management ---- */
     protected void clear() {
         for (int i = 0; i < MAX_HEIGHT; i++) {
             for (int j = 0; j < MAX_WIDTH; j++) {
@@ -113,6 +92,42 @@ public class Grid {
         }
         this.width = gridWidth;
         this.height = gridHeight;
+    }
+
+    /* ---- Tile operations ---- */
+    public Tile[][] getTiles() {
+        return tiles;
+    }
+
+    public Tile getTile(int i, int j) {
+        return tiles[i][j];
+    }
+
+    public void setTile(int i, int j, Tile tile) {
+        tiles[i][j] = tile;
+    }
+
+    // replace newTile but it can only overwrite oldTile
+    public void softReplace(int i, int j, Tile newTile, Tile oldTile) {
+        if (tiles[i][j] == null || tiles[i][j] instanceof Empty || tiles[i][j] == oldTile) {
+            tiles[i][j] = newTile;
+        }
+    }
+
+    // cannot overwrite any element by default
+    public void softReplace(int i, int j, Tile newTile) {
+        if (tiles[i][j] == null || tiles[i][j] instanceof Empty) {
+            tiles[i][j] = newTile;
+        }
+    }
+
+    public boolean doesTileExist(int i, int j) {
+        return i >= 0 && i < height && j >= 0 && j < width && tiles[i][j] != null && !(tiles[i][j] instanceof Empty);
+    }
+
+    /* ---- Environment operations ---- */
+    public SeasonType getCurrentSeason() {
+        return season.getCurrentSeason();
     }
 
     /* ---- Color Rendering ---- */
