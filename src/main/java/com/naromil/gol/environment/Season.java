@@ -52,6 +52,7 @@ public class Season {
     public Season nextState() {
         // season change
         Season nextSeason = new Season(this);
+        nextSeason.currentSeasonTick++;
 
         if (nextSeason.currentSeasonTick >= SEASON_DURATION) {
             nextSeason.currentSeasonTick = 0;

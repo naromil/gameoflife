@@ -36,6 +36,8 @@ public class MainController {
     private Canvas legendDisplay;
     @FXML
     private Pane gridDisplayPane;
+    @FXML
+    private Label currentSeasonLabel;
 
     // Initialize the application
     @FXML
@@ -103,6 +105,11 @@ public class MainController {
 
         drawTileOutlines(gc, rows, cols, tileWidth, tileHeight);
         displayLegend();
+        displaySeason();
+    }
+
+    private void displaySeason() {
+        currentSeasonLabel.setText("Season: " + grid.getCurrentSeason().toString());
     }
 
     private void drawOutline(GraphicsContext gc, double x, double y, double width, double height) {

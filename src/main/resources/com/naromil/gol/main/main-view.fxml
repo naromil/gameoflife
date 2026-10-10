@@ -9,6 +9,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -55,7 +56,13 @@
                   <Font size="16.0" />
                </font>
             </Label>
-            <Canvas fx:id="legendDisplay" height="200.0" width="150.0" />
+            <Canvas fx:id="legendDisplay" height="180.0" width="150.0" />
+            <Region VBox.vgrow="ALWAYS" />
+            <Label fx:id="currentSeasonLabel" text="Season: ?">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
          </children>
          <BorderPane.margin>
             <Insets top="5.0" />
