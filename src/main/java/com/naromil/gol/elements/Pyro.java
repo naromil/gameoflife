@@ -31,13 +31,15 @@ public class Pyro extends Tile {
             Tile adjDendro = newGrid.getTileOfType(newI, newJ, Dendro.class);
             if (!(adjDendro instanceof Empty)
                     && ((Dendro) adjDendro).hasDendroCore()) {
+                ((Dendro) adjDendro).setDendroCore(false);
                 // burgeon: ignite
                 for (Point2D adjacent2 : Grids.getNeighbors(newI, newJ,
                         width, height, 2)) {
                     int newI2 = adjacent2.x();
                     int newJ2 = adjacent2.y();
-                    if (newGrid.hasType(newI2, newJ2, Dendro.class)) {
-                        newGrid.setTile(newI2, newJ2, new Pyro());
+                    Tile adjDendro2 = newGrid.getTileOfType(newI2, newJ2, Dendro.class);
+                    if (!(adjDendro2 instanceof Empty)) {
+                        newGrid.softReplace(newI2, newJ2, new Pyro(), adjDendro2);
                     }
                 }
             }

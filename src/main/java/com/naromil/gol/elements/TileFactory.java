@@ -15,12 +15,13 @@ public class TileFactory {
         Hydro.class,
         Pyro.class,
         Cryo.class,
-        Ash.class
+        Ash.class,
+        Core.class
     );
 
     // the list of tile types that can contain another one
     public static boolean isComplexTileType(Tile tile) {
-        return tile instanceof Electro || tile instanceof Anemo;
+        return tile instanceof Electro || tile instanceof Anemo || tile instanceof Core;
     }
 
     public static int getTypeSize() {

@@ -1,7 +1,11 @@
 package com.naromil.gol.elements;
 
+import java.util.ArrayDeque;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Queue;
+import java.util.Set;
 
 import com.naromil.gol.environment.SeasonType;
 import com.naromil.gol.main.Color;
@@ -61,6 +65,7 @@ public class Electro extends Tile {
 
         // overloaded
         if (containedTile instanceof Pyro) {
+            newGrid.softReplace(i, j, new Empty(), this);
             //overloaded: explosion
             for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
                 int newI = adjacent.x();
@@ -77,15 +82,26 @@ public class Electro extends Tile {
             int newI = randomNeighbor.x();
             int newJ = randomNeighbor.y();
             newGrid.softReplace(newI, newJ, new Pyro(), newGrid.getTile(newI, newJ));
+            return;
+        }
+
+        // hyperbloom
+        if (containedTile instanceof Dendro && ((Dendro) containedTile).hasDendroCore()) {
+            Dendro dendro = (Dendro) containedTile;
+            dendro.setDendroCore(false);
+            newGrid.softReplace(i, j, new Core(), this);
+            return;
         }
 
         // charged
         if (containedTile instanceof Hydro) {
-            Point2D[] connected = Grids.bfs(newGrid, i, j, width, height,
-                    Hydro.class, MAX_CHARGED_SPREAD);
+            Point2D[] connected = bfs(grid, i, j, width, height); // lake in the previous tick
             for (Point2D neighbor : connected) {
                 int newI = neighbor.x();
                 int newJ = neighbor.y();
+                if (!newGrid.hasType(newI, newJ, Hydro.class)) {
+                    continue; // already replaced by other tile this tick
+                }
                 Hydro lakeHydro = (Hydro) newGrid.getTileOfType(newI, newJ, Hydro.class);
                 lakeHydro.setCharged(true);
             }
@@ -135,5 +151,37 @@ public class Electro extends Tile {
             containedTile = newGrid.getTile(newI, newJ);
             newGrid.setTile(newI, newJ, this); // guaranteed replacing the newest state
         }
+    }
+
+    public static Point2D[] bfs(Grid grid, int startI, int startJ, int width, int height) {
+        Set<Point2D> visited = new HashSet<>();
+        Queue<Point2D> queue = new ArrayDeque<>();
+        if (!grid.hasType(startI, startJ, Hydro.class)) {
+            throw new IllegalArgumentException("Starting tile is not Hydro.");
+        }
+        queue.add(new Point2D(startI, startJ));
+        visited.add(new Point2D(startI, startJ));
+
+        while (!queue.isEmpty()) {
+            Point2D current = queue.remove();
+            int currentI = current.x();
+            int currentJ = current.y();
+            for (Point2D adjacent : Grids.getNeighbors(currentI, currentJ, width, height)) {
+                int newI = adjacent.x();
+                int newJ = adjacent.y();
+                if (grid.hasType(newI, newJ, Hydro.class) && !visited.contains(adjacent)) {
+                    queue.add(adjacent);
+                    visited.add(adjacent);
+                    if (visited.size() >= MAX_CHARGED_SPREAD) {
+                        break;
+                    }
+                }
+            }
+            if (visited.size() >= MAX_CHARGED_SPREAD) {
+                break;
+            }
+        }
+
+        return visited.toArray(Point2D[]::new);
     }
 }
