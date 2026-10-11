@@ -7,6 +7,7 @@ public class Dendro extends Tile {
     public static final Color DEFAULT_COLOR = new Color(165, 200, 59);
     public static final int MAX_TICKS_WITHOUT_HYDRO = 30;
     public static final int MAX_TICKS_DENDRO_CORE = 6;
+    public static final int MAX_TICKS_QUICKENED = 5;
     public static final double BASE_GROWTH_CHANCE = 0.05;
     public static final double BASE_BLOOM_CHANCE = 0.03;
 
@@ -28,8 +29,27 @@ public class Dendro extends Tile {
         return hasDendroCore;
     }
 
+    private int tickQuickened;
+
+    public void setTickQuickened(boolean quickened) {
+        if (quickened) {
+            tickQuickened = MAX_TICKS_QUICKENED;
+        } else {
+            tickQuickened = 0;
+        }
+    }
+
+    public boolean isQuickened() {
+        return tickQuickened > 0;
+    }
+
     @Override
     public void act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
+        // quicken: timer
+        if (isQuickened()) {
+            tickQuickened--;
+        }
+
         // wither
         boolean isNearHydro = Grids.doesExistWithinDistance(grid,
                 i, j, width, height, Hydro.class, 1);
@@ -52,12 +72,9 @@ public class Dendro extends Tile {
                 int newJ = adjacent.y();
                 // base chance and multipliers
                 double chance = BASE_GROWTH_CHANCE;
-                if (isNearHydro) {
-                    chance *= 2;
-                }
-                if (newGrid.hasType(newI, newJ, Ash.class)) {
-                    chance *= 2; // burnout: fertile
-                }
+                if (isNearHydro) { chance *= 2; }
+                if (newGrid.hasType(newI, newJ, Ash.class)) { chance *= 2; } // burnout: fertile
+                if (isQuickened()) { chance *= 3; }
                 if (Math.random() < chance) {
                     newGrid.setTile(newI, newJ, new Dendro());
                 }

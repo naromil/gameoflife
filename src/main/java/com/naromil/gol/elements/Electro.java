@@ -12,6 +12,7 @@ public class Electro extends Tile {
     public static final Color DEFAULT_COLOR = new Color(211, 118, 240);
     public static final double BASE_STORM_CHANCE = 0.05;
     public static final int MAX_STORM_TICKS = 15;
+    public static final int MAX_CHARGED_SPREAD = 30;
 
     // the tile that is currently being affected by the storm, Empty if none
     private Tile containedTile = new Empty();
@@ -56,6 +57,44 @@ public class Electro extends Tile {
         if (stormTicks >= MAX_STORM_TICKS) {
             newGrid.softReplace(i, j, containedTile, this);
             return;
+        }
+
+        // overloaded
+        if (containedTile instanceof Pyro) {
+            //overloaded: explosion
+            for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
+                int newI = adjacent.x();
+                int newJ = adjacent.y();
+                newGrid.softReplace(newI, newJ, new Empty(), newGrid.getTile(newI, newJ));
+            }
+            // overloaded: throw away
+            List<Point2D> neighbors1 = Arrays.asList(Grids.getNeighbors(i, j, width, height));
+            List<Point2D> neighbors2 = Arrays.asList(
+                    Grids.getNeighbors(i, j, width, height, 2)).stream()
+                    .filter(adjacent -> !neighbors1.contains(adjacent)).toList();
+            int randomIndex = (int) (Math.random() * neighbors2.size());
+            Point2D randomNeighbor = neighbors2.get(randomIndex);
+            int newI = randomNeighbor.x();
+            int newJ = randomNeighbor.y();
+            newGrid.softReplace(newI, newJ, new Pyro(), newGrid.getTile(newI, newJ));
+        }
+
+        // charged
+        if (containedTile instanceof Hydro) {
+            Point2D[] connected = Grids.bfs(newGrid, i, j, width, height,
+                    Hydro.class, MAX_CHARGED_SPREAD);
+            for (Point2D neighbor : connected) {
+                int newI = neighbor.x();
+                int newJ = neighbor.y();
+                Hydro lakeHydro = (Hydro) newGrid.getTileOfType(newI, newJ, Hydro.class);
+                lakeHydro.setCharged(true);
+            }
+        }
+
+        // quickened
+        if (containedTile instanceof Dendro) {
+            Dendro dendro = (Dendro) containedTile;
+            dendro.setTickQuickened(true);
         }
 
         // contained tile act, Empty does nothing

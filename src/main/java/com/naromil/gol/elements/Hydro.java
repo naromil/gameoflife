@@ -12,17 +12,34 @@ public class Hydro extends Tile {
     private boolean isLake = false;
     private int tickRain = 0;
 
+    // allow other tiles to interact with electro if it is charged
+    private Tile containedTile = new Empty();
+
     public Hydro() {
         super(Color.similarColor(DEFAULT_COLOR));
     }
 
     // lake status
     public Color getStatusColor() {
-        if (isLake) {
+        if (isCharged()) {
+            return Electro.DEFAULT_COLOR;
+        } else if (isLake) {
             return DEFAULT_COLOR;
         } else {
             return null;
         }
+    }
+
+	public void setCharged(boolean charged) {
+        if (charged) {
+            containedTile = new Electro();
+        } else {
+            containedTile = new Empty();
+        }
+	}
+
+    public boolean isCharged() {
+        return containedTile instanceof Electro;
     }
 
     public void globalAct(Grid grid, Grid newGrid, int width, int height) {
