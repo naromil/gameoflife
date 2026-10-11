@@ -114,25 +114,19 @@ public class Grid {
     }
 
     public boolean hasType(int i, int j, Class<? extends Tile> tileType) {
-        return getTileOfType(i, j, tileType) != null;
+        return tiles[i][j].hasType(tileType);
     }
 
-    // get tile at a position if it or its contained tileis the specified type, otherwise return null.
-    // do not use Empty type to check here. use isEmptyTile instead.
+    // get tile at a position if it or its contained tile is the specified type
+    // otherwise return an Empty tile.
     public Tile getTileOfType(int i, int j, Class<? extends Tile> tileType) {
         Tile tile = tiles[i][j];
-        if (tile == null) {
-            return null;
-        } else if (tileType.isInstance(tile)) {
+        if (tileType.isInstance(tile)) {
             return tile;
-        } else if (tile.getContainedTile() != null && tileType.isInstance(tile.getContainedTile())) {
+        } else if (tileType.isInstance(tile.getContainedTile())) {
             return tile.getContainedTile();
         }
-        return null;
-    }
-
-    public boolean isEmptyTile(int i, int j) {
-        return tiles[i][j] == null || tiles[i][j] instanceof Empty;
+        return new Empty();
     }
 
     public boolean isComplexTileType(int i, int j) {
@@ -143,13 +137,16 @@ public class Grid {
         tiles[i][j] = tile;
     }
 
-    // replace newTile but it can only overwrite oldTile.
-    // can replace contained tiles as well.
-    // the preferred wrapper to replace a tile.
+    /**
+     * replace newTile but it can only overwrite oldTile.
+     * can replace contained tiles as well, but only if non-empty before.
+     * the preferred wrapper to replace a tile.
+     * @param oldTile do not use Empty, omit it instead.
+     */
     public void softReplace(int i, int j, Tile newTile, Tile oldTile) {
-        if (tiles[i][j] == null || tiles[i][j] instanceof Empty || tiles[i][j] == oldTile) {
+        if (tiles[i][j] instanceof Empty || tiles[i][j] == oldTile) {
             tiles[i][j] = newTile;
-        } else if (tiles[i][j].getContainedTile() != null && tiles[i][j].getContainedTile() == oldTile) {
+        } else if (tiles[i][j].getContainedTile() == oldTile) {
             tiles[i][j].setContainedTile(newTile);
         }
     }
@@ -157,7 +154,7 @@ public class Grid {
     // cannot overwrite any element by default
     // cannot replace contained tiles
     public void softReplace(int i, int j, Tile newTile) {
-        if (tiles[i][j] == null || tiles[i][j] instanceof Empty) {
+        if (tiles[i][j] instanceof Empty) {
             tiles[i][j] = newTile;
         }
     }
@@ -190,10 +187,8 @@ public class Grid {
         Color[][] statusGrid = new Color[height][width];
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                if (tiles[i][j] != null && !(tiles[i][j] instanceof Empty)) {
+                if (!(tiles[i][j] instanceof Empty)) {
                     statusGrid[i][j] = tiles[i][j].getStatusColor(); // could be null
-                } else {
-                    statusGrid[i][j] = null;
                 }
             }
         }

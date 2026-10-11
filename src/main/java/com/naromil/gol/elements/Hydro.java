@@ -54,7 +54,7 @@ public class Hydro extends Tile {
             int newI = adjacent.x();
             int newJ = adjacent.y();
             Tile adjPyro = newGrid.getTileOfType(newI, newJ, Pyro.class);
-            if (adjPyro != null
+            if (!(adjPyro instanceof Empty)
                     && Math.random() < BASE_VAPORIZE_CHANCE) {
                 newGrid.softReplace(newI, newJ, new Empty(), adjPyro);
                 if (Math.random() < BASE_VAPORIZE_STEAM_CHANCE) {

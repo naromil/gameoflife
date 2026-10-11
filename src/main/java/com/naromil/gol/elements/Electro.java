@@ -13,9 +13,8 @@ public class Electro extends Tile {
     public static final double BASE_STORM_CHANCE = 0.05;
     public static final int MAX_STORM_TICKS = 15;
 
-    // the tile that is currently being affected by the storm
-    // prefer to be null if none. Empty acceptable.
-    private Tile containedTile = null;
+    // the tile that is currently being affected by the storm, Empty if none
+    private Tile containedTile = new Empty();
 
     private int stormTicks = 0;
 
@@ -25,13 +24,12 @@ public class Electro extends Tile {
 
     private Electro(Tile containedTile) {
         this();
-        this.containedTile = (containedTile == null
-                || containedTile instanceof Empty) ? null : containedTile;
+        this.containedTile = containedTile;
     }
 
     @Override
     public Color getStatusColor() {
-        return containedTile != null ? containedTile.getColor() : null;
+        return containedTile.getColor(); // Empty has none
     }
 
     // the probability doesn't exclude complex tiles but will not replace them
@@ -54,24 +52,21 @@ public class Electro extends Tile {
     @Override
     public void act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
         // storm: disappear
-        Tile freedTile = containedTile != null ? containedTile : new Empty();
         stormTicks++;
         if (stormTicks >= MAX_STORM_TICKS) {
-            newGrid.softReplace(i, j, freedTile, this);
+            newGrid.softReplace(i, j, containedTile, this);
             return;
         }
 
-        // contained tile act
+        // contained tile act, Empty does nothing
         if (TileFactory.isComplexTileType(containedTile)) {
             throw new IllegalStateException(
                     "Electro cannot contain another complex tile.");
         }
-        if (containedTile != null) {
-            containedTile.act(grid, newGrid, i, j, width, height);
-        }
+        containedTile.act(grid, newGrid, i, j, width, height);
 
         // storm: moves
-        newGrid.softReplace(i, j, freedTile, this);
+        newGrid.softReplace(i, j, containedTile, this);
 
         // random neighbor excluding electro and anemo
         List<Point2D> neighbors = Arrays.asList(Grids.getNeighbors(i, j, width, height))
@@ -83,8 +78,7 @@ public class Electro extends Tile {
             int newI = randomNeighbor.x();
             int newJ = randomNeighbor.y();
             // storm: absorb
-            Tile absorbedTile = newGrid.getTile(newI, newJ);
-            containedTile = newGrid.isEmptyTile(newI, newJ) ? null : absorbedTile;
+            containedTile = newGrid.getTile(newI, newJ);
             newGrid.setTile(newI, newJ, this); // guaranteed replacing the newest state
         }
     }

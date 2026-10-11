@@ -10,9 +10,8 @@ public class Anemo extends Tile {
     public static final Color DEFAULT_COLOR = new Color(117, 194, 170);
     public static final double BASE_WIND_CHANCE = 0.20;
 
-    // the tile that is currently being affected by the storm
-    // prefer to be null if none. Empty acceptable.
-    private Tile containedTile = null;
+    // the tile that is currently being affected by the storm, Empty if none
+    private Tile containedTile = new Empty();
 
     public Anemo() {
         super(Color.similarColor(DEFAULT_COLOR));
@@ -20,13 +19,12 @@ public class Anemo extends Tile {
 
     private Anemo(Tile containedTile) {
         this();
-        this.containedTile = (containedTile == null
-                || containedTile instanceof Empty) ? null : containedTile;
+        this.containedTile = containedTile;
     }
 
     @Override
     public Color getStatusColor() {
-        return containedTile != null ? containedTile.getColor() : null;
+        return containedTile.getColor(); // Empty has none
     }
 
     // the probability doesn't exclude complex tiles but will not replace them
@@ -64,18 +62,14 @@ public class Anemo extends Tile {
 
     @Override
     public void act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
-        Tile freedTile = containedTile != null ? containedTile : new Empty();
-
-        // contained tile act
+        // contained tile act, Empty tile does nothing
         if (TileFactory.isComplexTileType(containedTile)) {
             throw new IllegalStateException("Anemo cannot contain another complex tile.");
         }
-        if (containedTile != null) {
-            containedTile.act(grid, newGrid, i, j, width, height);
-        }
+        containedTile.act(grid, newGrid, i, j, width, height);
 
         // wind: moves
-        newGrid.softReplace(i, j, freedTile, this);
+        newGrid.softReplace(i, j, containedTile, this);
 
         // goes in the fixed direction of current seasonal wind
         int[] windDirections = newGrid.getWindDirection();
@@ -88,8 +82,7 @@ public class Anemo extends Tile {
                 && !(newGrid.getTile(newI, newJ).hasType(Electro.class)
                 || newGrid.getTile(newI, newJ).hasType(Anemo.class))) {
             // wind: absorb
-            Tile absorbedTile = newGrid.getTile(newI, newJ);
-            containedTile = newGrid.isEmptyTile(newI, newJ) ? null : absorbedTile;
+            containedTile = newGrid.getTile(newI, newJ);
             newGrid.setTile(newI, newJ, this); // guaranteed replacing the newest state
         }
     }

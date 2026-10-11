@@ -49,7 +49,7 @@ public class TileFactory {
             return (Tile) getTypeAt(type).getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return new Empty();
         }
     }
 }

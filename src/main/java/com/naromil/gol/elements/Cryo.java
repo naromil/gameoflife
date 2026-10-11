@@ -33,7 +33,7 @@ public class Cryo extends Tile {
             int newI = adjacent.x();
             int newJ = adjacent.y();
             Tile adjHydro = newGrid.getTileOfType(newI, newJ, Hydro.class);
-            if (adjHydro != null
+            if (!(adjHydro instanceof Empty)
                     && Grids.countTilesWithinDistance(grid, newI, newJ,
                     width, height, Cryo.class, 1) >= 2) {
                 double frozenChance = (currentSeason == SeasonType.WINTER)

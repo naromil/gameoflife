@@ -28,9 +28,9 @@ public class Pyro extends Tile {
         for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
             int newI = adjacent.x();
             int newJ = adjacent.y();
-            Dendro adjDendro = (Dendro) newGrid.getTileOfType(newI, newJ, Dendro.class);
-            if (adjDendro != null
-                    && adjDendro.hasDendroCore()) {
+            Tile adjDendro = newGrid.getTileOfType(newI, newJ, Dendro.class);
+            if (!(adjDendro instanceof Empty)
+                    && ((Dendro) adjDendro).hasDendroCore()) {
                 // burgeon: ignite
                 for (Point2D adjacent2 : Grids.getNeighbors(newI, newJ,
                         width, height, 2)) {
@@ -48,7 +48,7 @@ public class Pyro extends Tile {
             int newI = adjacent.x();
             int newJ = adjacent.y();
             Tile adjDendro = newGrid.getTileOfType(newI, newJ, Dendro.class);
-            if (adjDendro != null
+            if (!(adjDendro instanceof Empty)
                     && Math.random() < BASE_BURNING_CHANCE) {
                 newGrid.softReplace(newI, newJ, new Pyro(), adjDendro);
             }

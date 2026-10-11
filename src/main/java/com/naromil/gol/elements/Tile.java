@@ -8,10 +8,12 @@ public abstract class Tile {
     public final static int[][] DIRECTIONS = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
 
     protected final Color color;
-    protected Tile containedTile = null;
+    protected Tile containedTile;
 
     public Tile(Color color) {
         this.color = color;
+        // Empty is null object
+        this.containedTile = this instanceof Empty ? this : new Empty();
     }
 
     public Color getColor() {
@@ -27,7 +29,7 @@ public abstract class Tile {
 
     // whether this tile is or contains a tile of the specified type. do not use it to check for Empty tiles.
     public boolean hasType(Class<? extends Tile> tileType) {
-        return tileType.isInstance(this) || (containedTile != null && tileType.isInstance(containedTile));
+        return tileType.isInstance(this) || tileType.isInstance(containedTile);
     }
 
     public Color getStatusColor() {
