@@ -55,7 +55,7 @@ public class Dendro extends Tile {
                 if (isNearHydro) {
                     chance *= 2;
                 }
-                if (newGrid.getTile(newI, newJ) instanceof Ash) {
+                if (newGrid.hasType(newI, newJ, Ash.class)) {
                     chance *= 2; // burnout: fertile
                 }
                 if (Math.random() < chance) {

@@ -54,10 +54,10 @@ public class Geo extends Tile {
         for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
             int newI = adjacent.x();
             int newJ = adjacent.y();
-            Tile adjacentTile = grid.getTile(newI, newJ);
-            if (adjacentTile instanceof Pyro || adjacentTile instanceof Hydro
-                    || adjacentTile instanceof Cryo
-                    || adjacentTile instanceof Electro) {
+            if (grid.hasType(newI, newJ, Pyro.class)
+                    || grid.hasType(newI, newJ, Hydro.class)
+                    || grid.hasType(newI, newJ, Cryo.class)
+                    || grid.hasType(newI, newJ, Electro.class)) {
                 shieldDuration = INITIAL_SHIELD_DURATION;
                 break;
             }

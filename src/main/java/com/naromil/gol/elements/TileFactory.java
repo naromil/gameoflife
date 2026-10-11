@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.naromil.gol.main.Color;
 
+// responsible for Tile type management
 public class TileFactory {
 
     public final static List<Class<? extends Tile>> TYPES = List.of(
@@ -16,6 +17,11 @@ public class TileFactory {
         Cryo.class,
         Ash.class
     );
+
+    // the list of tile types that can contain another one
+    public static boolean isComplexTileType(Tile tile) {
+        return tile instanceof Electro || tile instanceof Anemo;
+    }
 
     public static int getTypeSize() {
         return TYPES.size();

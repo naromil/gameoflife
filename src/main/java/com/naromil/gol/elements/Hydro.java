@@ -27,9 +27,9 @@ public class Hydro extends Tile {
 
     public void globalAct(Grid grid, Grid newGrid, int width, int height) {
         // rain: spawn
-        int rainX = (int) (Math.random() * width);
-        int rainY = (int) (Math.random() * height);
-        newGrid.setTile(rainY, rainX, new Hydro());
+        int rainX = (int) (Math.random() * height);
+        int rainY = (int) (Math.random() * width);
+        newGrid.setTile(rainX, rainY, new Hydro());
     }
 
     @Override
@@ -53,9 +53,10 @@ public class Hydro extends Tile {
         for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
             int newI = adjacent.x();
             int newJ = adjacent.y();
-            if (newGrid.getTile(newI, newJ) instanceof Pyro
+            Tile adjPyro = newGrid.getTileOfType(newI, newJ, Pyro.class);
+            if (adjPyro != null
                     && Math.random() < BASE_VAPORIZE_CHANCE) {
-                newGrid.setTile(newI, newJ, new Empty());
+                newGrid.softReplace(newI, newJ, new Empty(), adjPyro);
                 if (Math.random() < BASE_VAPORIZE_STEAM_CHANCE) {
                     vaporized = true; // vaporize: steam
                 }

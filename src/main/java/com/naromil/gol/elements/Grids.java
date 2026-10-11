@@ -11,28 +11,12 @@ public class Grids {
         return countTilesWithinDistance(grid, i, j, width, height, tileType, distance) > 0;
     }
 
-    // O(n^2) search
-    public static int nearestTileDistance(Grid grid, int i, int j, int width, int height, Class<? extends Tile> tileType) {
-        int minDistance = Integer.MAX_VALUE;
-        for (int x = 0; x < height; x++) {
-            for (int y = 0; y < width; y++) {
-                if (tileType.isInstance(grid.getTile(x, y))) {
-                    int distance = Math.max(Math.abs(i - x), Math.abs(j - y));
-                    if (distance < minDistance) {
-                        minDistance = distance;
-                    }
-                }
-            }
-        }
-        return minDistance == Integer.MAX_VALUE ? -1 : minDistance;
-    }
-
     public static int countTilesWithinDistance(Grid grid, int i, int j, int width, int height, Class<? extends Tile> tileType, int distance) {
         int count = 0;
         for (Point2D adjacent : getNeighbors(i, j, width, height, distance)) {
             int newI = adjacent.x();
             int newJ = adjacent.y();
-            if (tileType.isInstance(grid.getTile(newI, newJ))) {
+            if (grid.getTile(newI, newJ).hasType(tileType)) {
                 count++;
             }
         }

@@ -14,6 +14,7 @@ public class Electro extends Tile {
     public static final int MAX_STORM_TICKS = 15;
 
     // the tile that is currently being affected by the storm
+    // prefer to be null if none. Empty acceptable.
     private Tile containedTile = null;
 
     private int stormTicks = 0;
@@ -33,7 +34,7 @@ public class Electro extends Tile {
         return containedTile != null ? containedTile.getColor() : null;
     }
 
-    // the probability doesn't exclude anemo and electro but will not replace them
+    // the probability doesn't exclude complex tiles but will not replace them
     public void globalAct(Grid grid, Grid newGrid, int width, int height) {
         // storms: spawn
         double chance = BASE_STORM_CHANCE;
@@ -41,11 +42,11 @@ public class Electro extends Tile {
             chance *= 1.5;
         }
         if (Math.random() < chance) {
-            int newX = (int) (Math.random() * width);
-            int newY = (int) (Math.random() * height);
-            Tile oldTile = newGrid.getTile(newY, newX);
-            if (!(oldTile instanceof Electro || oldTile instanceof Anemo)) {
-                newGrid.setTile(newY, newX, new Electro(oldTile));
+            int newX = (int) (Math.random() * height);
+            int newY = (int) (Math.random() * width);
+            Tile oldTile = newGrid.getTile(newX, newY);
+            if (!TileFactory.isComplexTileType(oldTile)) {
+                newGrid.setTile(newX, newY, new Electro(oldTile));
             }
         }
     }
@@ -61,8 +62,9 @@ public class Electro extends Tile {
         }
 
         // contained tile act
-        if (containedTile instanceof Anemo || containedTile instanceof Electro) {
-            throw new IllegalStateException("Electro cannot contain another Anemo or Electro tile.");
+        if (TileFactory.isComplexTileType(containedTile)) {
+            throw new IllegalStateException(
+                    "Electro cannot contain another complex tile.");
         }
         if (containedTile != null) {
             containedTile.act(grid, newGrid, i, j, width, height);
@@ -73,8 +75,8 @@ public class Electro extends Tile {
 
         // random neighbor excluding electro and anemo
         List<Point2D> neighbors = Arrays.asList(Grids.getNeighbors(i, j, width, height))
-                .stream().filter(p -> !(newGrid.getTile(p.x(), p.y()) instanceof Electro
-                || newGrid.getTile(p.x(), p.y()) instanceof Anemo)).toList();
+                .stream().filter(p -> !newGrid.hasType(p.x(), p.y(), Electro.class)
+                && !newGrid.hasType(p.x(), p.y(), Anemo.class)).toList();
 
         if (!neighbors.isEmpty()) {
             Point2D randomNeighbor = neighbors.get((int) (Math.random() * neighbors.size()));
@@ -82,7 +84,7 @@ public class Electro extends Tile {
             int newJ = randomNeighbor.y();
             // storm: absorb
             Tile absorbedTile = newGrid.getTile(newI, newJ);
-            containedTile = absorbedTile instanceof Empty ? null : absorbedTile;
+            containedTile = newGrid.isEmptyTile(newI, newJ) ? null : absorbedTile;
             newGrid.setTile(newI, newJ, this); // guaranteed replacing the newest state
         }
     }

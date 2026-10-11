@@ -4,7 +4,7 @@ import com.naromil.gol.main.Color;
 import com.naromil.gol.main.Grid;
 
 public class Empty extends Tile {
-    public static final Color DEFAULT_COLOR = new Color(255, 255, 255);
+    public static final Color DEFAULT_COLOR = null;
 
     public Empty() {
         super(DEFAULT_COLOR);

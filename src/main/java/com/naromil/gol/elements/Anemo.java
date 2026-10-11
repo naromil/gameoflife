@@ -11,6 +11,7 @@ public class Anemo extends Tile {
     public static final double BASE_WIND_CHANCE = 0.20;
 
     // the tile that is currently being affected by the storm
+    // prefer to be null if none. Empty acceptable.
     private Tile containedTile = null;
 
     public Anemo() {
@@ -28,7 +29,7 @@ public class Anemo extends Tile {
         return containedTile != null ? containedTile.getColor() : null;
     }
 
-    // the probability doesn't exclude anemo and electro but will not replace them
+    // the probability doesn't exclude complex tiles but will not replace them
     public void globalAct(Grid grid, Grid newGrid, int width, int height) {
         // winds: spawn
         int[] windDirections = newGrid.getWindDirection();
@@ -54,7 +55,7 @@ public class Anemo extends Tile {
                 int newX = randomTile.y();
                 int newY = randomTile.x();
                 Tile oldTile = newGrid.getTile(newY, newX);
-                if (!(oldTile instanceof Electro || oldTile instanceof Anemo)) {
+                if (!(TileFactory.isComplexTileType(oldTile))) {
                     newGrid.setTile(newY, newX, new Anemo(oldTile));
                 }
             }
@@ -66,8 +67,8 @@ public class Anemo extends Tile {
         Tile freedTile = containedTile != null ? containedTile : new Empty();
 
         // contained tile act
-        if (containedTile instanceof Anemo || containedTile instanceof Electro) {
-            throw new IllegalStateException("Anemo cannot contain another Anemo or Electro tile.");
+        if (TileFactory.isComplexTileType(containedTile)) {
+            throw new IllegalStateException("Anemo cannot contain another complex tile.");
         }
         if (containedTile != null) {
             containedTile.act(grid, newGrid, i, j, width, height);
@@ -84,11 +85,11 @@ public class Anemo extends Tile {
         int newJ = j + windJ;
 
         if (!Grids.isOutOfBounds(newI, newJ, width, height)
-                && !(newGrid.getTile(newI, newJ) instanceof Electro
-                || newGrid.getTile(newI, newJ) instanceof Anemo)) {
+                && !(newGrid.getTile(newI, newJ).hasType(Electro.class)
+                || newGrid.getTile(newI, newJ).hasType(Anemo.class))) {
             // wind: absorb
             Tile absorbedTile = newGrid.getTile(newI, newJ);
-            containedTile = absorbedTile instanceof Empty ? null : absorbedTile;
+            containedTile = newGrid.isEmptyTile(newI, newJ) ? null : absorbedTile;
             newGrid.setTile(newI, newJ, this); // guaranteed replacing the newest state
         }
     }

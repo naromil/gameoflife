@@ -23,31 +23,34 @@ public class Pyro extends Tile {
             return;
         }
 
-        // burning
-        for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
-            int newI = adjacent.x();
-            int newJ = adjacent.y();
-            if (newGrid.getTile(newI, newJ) instanceof Dendro
-                    && Math.random() < BASE_BURNING_CHANCE) {
-                newGrid.setTile(newI, newJ, new Pyro());
-            }
-        }
-
+        // burgeon before burning because it is stricter
         // burgeon
         for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
             int newI = adjacent.x();
             int newJ = adjacent.y();
-            if (grid.getTile(newI, newJ) instanceof Dendro
-                    && ((Dendro) grid.getTile(newI, newJ)).hasDendroCore()) {
+            Dendro adjDendro = (Dendro) newGrid.getTileOfType(newI, newJ, Dendro.class);
+            if (adjDendro != null
+                    && adjDendro.hasDendroCore()) {
                 // burgeon: ignite
                 for (Point2D adjacent2 : Grids.getNeighbors(newI, newJ,
                         width, height, 2)) {
                     int newI2 = adjacent2.x();
                     int newJ2 = adjacent2.y();
-                    if (newGrid.getTile(newI2, newJ2) instanceof Dendro) {
+                    if (newGrid.hasType(newI2, newJ2, Dendro.class)) {
                         newGrid.setTile(newI2, newJ2, new Pyro());
                     }
                 }
+            }
+        }
+
+        // burning
+        for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
+            int newI = adjacent.x();
+            int newJ = adjacent.y();
+            Tile adjDendro = newGrid.getTileOfType(newI, newJ, Dendro.class);
+            if (adjDendro != null
+                    && Math.random() < BASE_BURNING_CHANCE) {
+                newGrid.softReplace(newI, newJ, new Pyro(), adjDendro);
             }
         }
 
@@ -56,7 +59,7 @@ public class Pyro extends Tile {
         for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
             int newI = adjacent.x();
             int newJ = adjacent.y();
-            if (newGrid.getTile(newI, newJ) instanceof Cryo) {
+            if (newGrid.hasType(newI, newJ, Cryo.class)) {
                 newGrid.setTile(newI, newJ, new Hydro());
                 goneOut = true; // melt: goes out
             }
