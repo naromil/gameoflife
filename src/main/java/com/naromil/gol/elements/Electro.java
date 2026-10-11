@@ -18,9 +18,6 @@ public class Electro extends Tile {
     public static final int MAX_STORM_TICKS = 15;
     public static final int MAX_CHARGED_SPREAD = 30;
 
-    // the tile that is currently being affected by the storm, Empty if none
-    private Tile containedTile = new Empty();
-
     private int stormTicks = 0;
 
     public Electro() {

@@ -8,6 +8,7 @@ public abstract class Tile {
     public final static int[][] DIRECTIONS = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
 
     protected final Color color;
+    // the tile a complex tile is currently holding, Empty if none
     protected Tile containedTile;
 
     public Tile(Color color) {

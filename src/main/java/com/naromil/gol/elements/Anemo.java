@@ -10,9 +10,6 @@ public class Anemo extends Tile {
     public static final Color DEFAULT_COLOR = new Color(117, 194, 170);
     public static final double BASE_WIND_CHANCE = 0.20;
 
-    // the tile that is currently being affected by the storm, Empty if none
-    private Tile containedTile = new Empty();
-
     public Anemo() {
         super(Color.similarColor(DEFAULT_COLOR));
     }

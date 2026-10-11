@@ -11,8 +11,6 @@ import com.naromil.gol.main.Grid;
 // standalone protectile caused by hyperbloom that hunts down a Pyro
 public class Core extends Dendro {
 
-    private Tile containedTile = new Empty();
-
     public Core() {
         super();
     }

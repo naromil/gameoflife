@@ -12,9 +12,6 @@ public class Hydro extends Tile {
     private boolean isLake = false;
     private int tickRain = 0;
 
-    // allow other tiles to interact with electro if it is charged
-    private Tile containedTile = new Empty();
-
     public Hydro() {
         super(Color.similarColor(DEFAULT_COLOR));
     }
@@ -30,6 +27,7 @@ public class Hydro extends Tile {
         }
     }
 
+    // allow other tiles to interact with electro if it is charged
 	public void setCharged(boolean charged) {
         if (charged) {
             containedTile = new Electro();
