@@ -62,6 +62,15 @@ public class Anemo extends Tile {
 
     @Override
     public void act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
+        // erosion
+        if (containedTile instanceof Geo) {
+            Geo geo = (Geo) containedTile;
+            // shield: protection. brittle: erosion.
+            if (!geo.hasShield() && (geo.isBrittle() || Math.random() < Geo.BASE_EROSION_CHANCE)) {
+                newGrid.softReplace(i, j, new Empty(), containedTile);
+            }
+        }
+
         // contained tile act, Empty tile does nothing
         if (TileFactory.isComplexTileType(containedTile)) {
             throw new IllegalStateException("Anemo cannot contain another complex tile.");

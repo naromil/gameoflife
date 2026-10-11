@@ -97,6 +97,21 @@ public class Electro extends Tile {
             dendro.setTickQuickened(true);
         }
 
+        // superconduct
+        if (containedTile instanceof Cryo) {
+            newGrid.softReplace(i, j, new Empty(), this);
+            // superconduct: brittle
+            for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
+                int newI = adjacent.x();
+                int newJ = adjacent.y();
+                if (newGrid.hasType(newI, newJ, Geo.class)) {
+                    Geo geo = (Geo) newGrid.getTileOfType(newI, newJ, Geo.class);
+                    geo.setBrittle(true);
+                }
+            }
+            return;
+        }
+
         // contained tile act, Empty does nothing
         if (TileFactory.isComplexTileType(containedTile)) {
             throw new IllegalStateException(
