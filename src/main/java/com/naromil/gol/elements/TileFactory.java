@@ -26,7 +26,7 @@ public class TileFactory {
 
     public static boolean isStrongTileType(Tile tile) {
         return tile instanceof Pyro || tile instanceof Hydro
-                || tile instanceof Cryo || tile instanceof Dendro;
+                || tile instanceof Cryo || tile instanceof Electro;
     }
 
     public static int getTypeSize() {

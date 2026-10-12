@@ -65,16 +65,17 @@ public class Geo extends Tile {
         }
 
         // mountains
-        int adjacentGeoCount = Grids.countTilesWithinDistance(grid,
+        int adjacentGeoCount = Grids.countTilesWithinDistance(newGrid,
                 i, j, width, height, Geo.class, 1);
         if (adjacentGeoCount < 2 && !hasShield()) { // crystallize: protect
             newGrid.softReplace(i, j, new Empty(), this); // erode
             return;
         }
+
         for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
             int newI = adjacent.x();
             int newJ = adjacent.y();
-            int neighborAdjacentGeoCount = Grids.countTilesWithinDistance(grid,
+            int neighborAdjacentGeoCount = Grids.countTilesWithinDistance(newGrid,
                     newI, newJ, width, height, Geo.class, 1);
             if (neighborAdjacentGeoCount >= 5
                     && Math.random() < BASE_MOUNTAINS_CHANCE) {
@@ -86,8 +87,10 @@ public class Geo extends Tile {
         for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
             int newI = adjacent.x();
             int newJ = adjacent.y();
-            if (TileFactory.isStrongTileType(grid.getTile(newI, newJ))) {
+            if (TileFactory.isStrongTileType(newGrid.getTile(newI, newJ))) {
                 setShield(true);
+                // crystallize: absorb
+                newGrid.softReplace(newI, newJ, new Empty(), newGrid.getTile(newI, newJ));
                 break;
             }
         }

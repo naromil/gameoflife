@@ -17,7 +17,15 @@ public class Dendro extends Tile {
 
     @Override
     public Color getStatusColor() {
-        return hasDendroCore() ? DEFAULT_COLOR : null;
+        if (hasDendroCore()) {
+            return DEFAULT_COLOR;
+        } else if (isFrost()) {
+            return Cryo.DEFAULT_COLOR;
+        } else if (isQuickened()) {
+            return Electro.DEFAULT_COLOR;
+        } else {
+            return null;
+        }
     }
 
     private int tickWithoutHydro = 0;
@@ -37,8 +45,10 @@ public class Dendro extends Tile {
     }
 
     protected int tickQuickened = 0;
+    private boolean isFrost = false;
 
-    public void setTickQuickened(boolean quickened) {
+    public void setQuickened(boolean quickened) {
+        if (isFrost()) { return; } // frost: inhibit
         if (quickened) {
             tickQuickened = MAX_TICKS_QUICKENED;
         } else {
@@ -48,6 +58,17 @@ public class Dendro extends Tile {
 
     public boolean isQuickened() {
         return tickQuickened > 0;
+    }
+
+    public void setFrost(boolean frost) {
+        if (frost) {
+            setQuickened(false); // frost: inhibit
+        }
+        isFrost = frost;
+    }
+
+    public boolean isFrost() {
+        return isFrost;
     }
 
     @Override
@@ -71,9 +92,8 @@ public class Dendro extends Tile {
         }
 
         // growth
-        boolean isNearCryo = Grids.doesExistWithinDistance(grid,
-                i, j, width, height, Cryo.class, 1);
-        if (!isNearCryo) { // frost
+        setFrost(Grids.doesExistWithinDistance(grid, i, j, width, height, Cryo.class, 1));
+        if (!isFrost()) { // frost
             for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
                 int newI = adjacent.x();
                 int newJ = adjacent.y();

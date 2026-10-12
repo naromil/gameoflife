@@ -39,7 +39,7 @@ public class Electro extends Tile {
         // storms: spawn
         double chance = BASE_STORM_CHANCE;
         if (newGrid.getCurrentSeason() == SeasonType.FALL) {
-            chance *= 1.5;
+            chance *= 3;
         }
         if (Math.random() < chance) {
             int newX = (int) (Math.random() * height);
@@ -67,7 +67,12 @@ public class Electro extends Tile {
             for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
                 int newI = adjacent.x();
                 int newJ = adjacent.y();
-                newGrid.softReplace(newI, newJ, new Empty(), newGrid.getTile(newI, newJ));
+                Tile oldTile = newGrid.getTile(newI, newJ);
+                if (oldTile instanceof Geo && ((Geo) oldTile).hasShield()) {
+                    ((Geo) oldTile).setShield(false); // shield: protection
+                    continue;
+                }
+                newGrid.softReplace(newI, newJ, new Empty(), oldTile);
             }
             // overloaded: throw away
             List<Point2D> neighbors1 = Arrays.asList(Grids.getNeighbors(i, j, width, height));
@@ -107,7 +112,7 @@ public class Electro extends Tile {
         // quickened
         if (containedTile instanceof Dendro) {
             Dendro dendro = (Dendro) containedTile;
-            dendro.setTickQuickened(true);
+            dendro.setQuickened(true);
         }
 
         // superconduct
