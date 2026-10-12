@@ -93,6 +93,7 @@ public class Dendro extends Tile {
 
         // growth
         setFrost(Grids.doesExistWithinDistance(grid, i, j, width, height, Cryo.class, 1));
+
         if (!isFrost()) { // frost
             for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
                 int newI = adjacent.x();
@@ -103,7 +104,7 @@ public class Dendro extends Tile {
                 if (newGrid.hasType(newI, newJ, Ash.class)) { chance *= 2; } // burnout: fertile
                 if (isQuickened()) { chance *= 3; }
                 if (Math.random() < chance) {
-                    newGrid.setTile(newI, newJ, new Dendro());
+                    newGrid.softReplace(newI, newJ, new Dendro());
                 }
             }
         }

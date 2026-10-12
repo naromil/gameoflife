@@ -70,15 +70,16 @@ public class Anemo extends Tile {
             }
         }
 
-        // pollination: plant
-        if (pollinationState == true && containedTile instanceof Empty) {
-            containedTile = new Dendro();
-            pollinationState = false;
-        }
-
         // pollination
         if (containedTile instanceof Dendro) {
             pollinationState = true;
+        }
+
+        // pollination: plant
+        // only one can happen at a time
+        else if (pollinationState == true && containedTile instanceof Empty) {
+            containedTile = new Dendro();
+            pollinationState = false;
         }
 
         // contained tile act, Empty tile does nothing
