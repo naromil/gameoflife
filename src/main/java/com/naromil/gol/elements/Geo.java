@@ -86,10 +86,7 @@ public class Geo extends Tile {
         for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
             int newI = adjacent.x();
             int newJ = adjacent.y();
-            if (grid.hasType(newI, newJ, Pyro.class)
-                    || grid.hasType(newI, newJ, Hydro.class)
-                    || grid.hasType(newI, newJ, Cryo.class)
-                    || grid.hasType(newI, newJ, Electro.class)) {
+            if (TileFactory.isStrongTileType(grid.getTile(newI, newJ))) {
                 setShield(true);
                 break;
             }

@@ -137,8 +137,7 @@ public class Electro extends Tile {
 
         // random neighbor excluding electro and anemo
         List<Point2D> neighbors = Arrays.asList(Grids.getNeighbors(i, j, width, height))
-                .stream().filter(p -> !newGrid.hasType(p.x(), p.y(), Electro.class)
-                && !newGrid.hasType(p.x(), p.y(), Anemo.class)).toList();
+                .stream().filter(p -> !TileFactory.isComplexTileType(newGrid.getTile(p.x(), p.y()))).toList();
 
         if (!neighbors.isEmpty()) {
             Point2D randomNeighbor = neighbors.get((int) (Math.random() * neighbors.size()));

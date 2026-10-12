@@ -24,6 +24,8 @@ public class Anemo extends Tile {
         return containedTile.getColor(); // Empty has none
     }
 
+    private boolean pollinationState = false;
+
     // the probability doesn't exclude complex tiles but will not replace them
     public void globalAct(Grid grid, Grid newGrid, int width, int height) {
         // winds: spawn
@@ -68,11 +70,41 @@ public class Anemo extends Tile {
             }
         }
 
+        // pollination: plant
+        if (pollinationState == true && containedTile instanceof Empty) {
+            containedTile = new Dendro();
+            pollinationState = false;
+        }
+
+        // pollination
+        if (containedTile instanceof Dendro) {
+            pollinationState = true;
+        }
+
         // contained tile act, Empty tile does nothing
         if (TileFactory.isComplexTileType(containedTile)) {
             throw new IllegalStateException("Anemo cannot contain another complex tile.");
         }
         containedTile.act(grid, newGrid, i, j, width, height);
+
+        // swirl
+        if (TileFactory.isStrongTileType(containedTile)) {
+            Point2D[] neighbors = Grids.getNeighbors(i, j, width, height);
+            int randomIndex = (int) (Math.random() * neighbors.length);
+            Point2D randomNeighbor = neighbors[randomIndex];
+            int newI = randomNeighbor.x();
+            int newJ = randomNeighbor.y();
+            Tile tmp;
+            if (TileFactory.isComplexTileType(newGrid.getTile(newI, newJ))) {
+                // swap with inner tile if complex
+                tmp = newGrid.getTile(newI, newJ).getContainedTile();
+            }
+            else {
+                tmp = newGrid.getTile(newI, newJ);
+            }
+            newGrid.softReplace(newI, newJ, containedTile, tmp);
+            containedTile = tmp;
+        }
 
         // wind: moves
         newGrid.softReplace(i, j, containedTile, this);
@@ -85,8 +117,7 @@ public class Anemo extends Tile {
         int newJ = j + windJ;
 
         if (!Grids.isOutOfBounds(newI, newJ, width, height)
-                && !(newGrid.getTile(newI, newJ).hasType(Electro.class)
-                || newGrid.getTile(newI, newJ).hasType(Anemo.class))) {
+                && !TileFactory.isComplexTileType(newGrid.getTile(newI, newJ))) {
             // wind: absorb
             containedTile = newGrid.getTile(newI, newJ);
             newGrid.setTile(newI, newJ, this); // guaranteed replacing the newest state

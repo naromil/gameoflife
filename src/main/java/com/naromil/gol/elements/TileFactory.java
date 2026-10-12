@@ -24,6 +24,11 @@ public class TileFactory {
         return tile instanceof Electro || tile instanceof Anemo || tile instanceof Core;
     }
 
+    public static boolean isStrongTileType(Tile tile) {
+        return tile instanceof Pyro || tile instanceof Hydro
+                || tile instanceof Cryo || tile instanceof Dendro;
+    }
+
     public static int getTypeSize() {
         return TYPES.size();
     }
