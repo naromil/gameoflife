@@ -81,8 +81,8 @@ public class Dendro extends Tile {
 
         // wither
         boolean isNearHydro = Grids.doesExistWithinDistance(grid,
-                i, j, width, height, Hydro.class, 1)
-                || Grids.doesExistWithinDistance(grid, i, j, width, height, Cryo.class, 1);
+                i, j, width, height, Hydro.class, 2)
+                || Grids.doesExistWithinDistance(grid, i, j, width, height, Cryo.class, 2);
         if (!isNearHydro) {
             tickWithoutHydro++;
             if (tickWithoutHydro >= MAX_TICKS_WITHOUT_HYDRO) {

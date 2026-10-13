@@ -20,10 +20,12 @@ public class TileFactory {
     );
 
     // the list of tile types that can contain another one
+    // for outer tile only since this is the definition of complex tile
     public static boolean isComplexTileType(Tile tile) {
         return tile instanceof Electro || tile instanceof Anemo || tile instanceof Core;
     }
 
+    // tiles that support swirl and crystallize
     public static boolean isStrongTileType(Tile tile) {
         return tile instanceof Pyro || tile instanceof Hydro
                 || tile instanceof Cryo || tile instanceof Electro;
@@ -35,7 +37,8 @@ public class TileFactory {
 
     public static Class<? extends Tile> getTypeAt(int index) {
         if (index < 0 || index >= TYPES.size()) {
-            throw new IndexOutOfBoundsException("Index must be between 0 and " + (TYPES.size() - 1));
+            throw new IndexOutOfBoundsException(
+                    "Index must be between 0 and " + (TYPES.size() - 1));
         }
         return TYPES.get(index);
     }

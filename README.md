@@ -31,8 +31,8 @@ Some tiles have special states, displayed as small squares in the center of a ti
 - **Shield (Geo)**: Shielded Geo can't become brittle and can't die in erosion or overloaded. Display Geo color.
 - **Brittle (Geo)**: Brittle Geo are 100% destroyed when encountering wind. Display Cryo color. 
 - **Dendro Core (Dendro)**: Core automatically explodes in 6 ticks and plant Dendro on all nearby Empty tile. Display Dendro color.
-- **Frost (Dendro)**: Can't grow. Display Cryo color if no Core.
-- **Quickened (Dendro)**: Grow faster. Display Electro color if no Core or frost.
+- **Frost (Dendro)**: Can't grow, overwrites quickened. Display Cryo color if no Core.
+- **Quickened (Dendro)**: Grow faster. Display Electro color if no Core.
 - **Lake (Hydro)**: Becomes Lake and persists if connected to at least one other Hydro, otherwise dies in 15 ticks. Display Hydro color.
 
 
@@ -41,11 +41,11 @@ Some tiles have special states, displayed as small squares in the center of a ti
 ### Tiles
 
 1. **Growth**: Dendro spreads to an empty neighbor 5% each tick, doubled if Hydro is within 2 tiles.
-2. **Wither**: Dendro with no Hydro within 2 tiles die in 30 ticks.
+2. **Wither**: Dendro with no Hydro or Cryo within 2 tiles die in 30 ticks.
 3. **Rain**: a random tile becomes Hydro each tick.
 4. **Burnout**: Pyro lasts 3 turns and becomes Ash.
 5. **Thaw**: Cryo becomes Hydro in 3 ticks.
-6. **Mountains**: Empty becomes Geo if adjacent to >=5 Geo. Geo with <2 adjacent Geo dies.
+6. **Mountains**: Any tile becomes Geo if adjacent to >=5 Geo. Geo with <2 adjacent Geo dies.
 7. **Storms**: Electro appears at random place 10% each tick. Go to random adjacent tile each tick, and die in 15 ticks.
 8. **Wind**: Anemo winds appear at a random first tile in the current seasonal wind direction.
 9. **Ash**: die after 10 turns. Dendro grows 2x faster on it.

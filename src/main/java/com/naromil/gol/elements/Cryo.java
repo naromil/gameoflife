@@ -23,7 +23,7 @@ public class Cryo extends Tile {
         if (currentSeason != SeasonType.WINTER) {
             tickWithoutWinter++;
             if (tickWithoutWinter >= MAX_TICKS_WITHOUT_WINTER) {
-                newGrid.softReplace(i, j, new Empty(), this);
+                newGrid.softReplace(i, j, new Hydro(), this);
                 return;
             }
         }

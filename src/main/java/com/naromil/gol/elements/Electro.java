@@ -79,6 +79,9 @@ public class Electro extends Tile {
             List<Point2D> neighbors2 = Arrays.asList(
                     Grids.getNeighbors(i, j, width, height, 2)).stream()
                     .filter(adjacent -> !neighbors1.contains(adjacent)).toList();
+            if (neighbors2.isEmpty()) {
+                return;
+            }
             int randomIndex = (int) (Math.random() * neighbors2.size());
             Point2D randomNeighbor = neighbors2.get(randomIndex);
             int newI = randomNeighbor.x();

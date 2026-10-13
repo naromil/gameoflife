@@ -66,8 +66,8 @@ public class Geo extends Tile {
 
         // mountains
         int adjacentGeoCount = Grids.countTilesWithinDistance(newGrid,
-                i, j, width, height, Geo.class, 1);
-        if (adjacentGeoCount < 2 && !hasShield()) { // crystallize: protect
+                i, j, width, height, Geo.class, 1) - 1;
+        if (adjacentGeoCount < 1 && !hasShield()) { // crystallize: protect
             newGrid.softReplace(i, j, new Empty(), this); // erode
             return;
         }
@@ -76,8 +76,8 @@ public class Geo extends Tile {
             int newI = adjacent.x();
             int newJ = adjacent.y();
             int neighborAdjacentGeoCount = Grids.countTilesWithinDistance(newGrid,
-                    newI, newJ, width, height, Geo.class, 1);
-            if (neighborAdjacentGeoCount >= 3
+                    newI, newJ, width, height, Geo.class, 1) - 1;
+            if (neighborAdjacentGeoCount >= 2
                     && Math.random() < BASE_MOUNTAINS_CHANCE) {
                 newGrid.setTile(newI, newJ, new Geo()); // grow
             }
@@ -87,7 +87,10 @@ public class Geo extends Tile {
         for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
             int newI = adjacent.x();
             int newJ = adjacent.y();
-            if (TileFactory.isStrongTileType(newGrid.getTile(newI, newJ))) {
+            double chance = BASE_CRYSTALLIZE_CHANCE;
+            // if (hasShield()) { chance = 0; } // already have shield
+            if (Math.random() < chance
+                    && TileFactory.isStrongTileType(newGrid.getTile(newI, newJ))) {
                 setShield(true);
                 // crystallize: absorb
                 newGrid.softReplace(newI, newJ, new Empty(), newGrid.getTile(newI, newJ));
