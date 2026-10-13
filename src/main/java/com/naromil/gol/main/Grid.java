@@ -2,6 +2,7 @@ package com.naromil.gol.main;
 
 import java.lang.reflect.Method;
 
+import com.naromil.gol.elements.Ash;
 import com.naromil.gol.elements.Empty;
 import com.naromil.gol.elements.Tile;
 import com.naromil.gol.elements.TileFactory;
@@ -144,7 +145,7 @@ public class Grid {
      * @param oldTile do not use Empty, omit it instead.
      */
     public void softReplace(int i, int j, Tile newTile, Tile oldTile) {
-        if (tiles[i][j] instanceof Empty || tiles[i][j] == oldTile) {
+        if (tiles[i][j] instanceof Empty || tiles[i][j] instanceof Ash || tiles[i][j] == oldTile) {
             tiles[i][j] = newTile;
         } else if (tiles[i][j].getContainedTile() == oldTile) {
             tiles[i][j].setContainedTile(newTile);
@@ -154,7 +155,7 @@ public class Grid {
     // cannot overwrite any element by default
     // cannot replace contained tiles
     public void softReplace(int i, int j, Tile newTile) {
-        if (tiles[i][j] instanceof Empty) {
+        if (tiles[i][j] instanceof Empty || tiles[i][j] instanceof Ash) {
             tiles[i][j] = newTile;
         }
     }

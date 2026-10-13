@@ -5,7 +5,7 @@ import com.naromil.gol.main.Grid;
 
 public class Geo extends Tile {
     public static final Color DEFAULT_COLOR = new Color(248, 186, 78);
-    public static final double BASE_MOUNTAINS_CHANCE = 0.005;
+    public static final double BASE_MOUNTAINS_CHANCE = 0.0005;
     public static final double BASE_CRYSTALLIZE_CHANCE = 0.10;
     public static final double BASE_EROSION_CHANCE = 0.02;
     public static final int INITIAL_SHIELD_DURATION = 20;
@@ -77,7 +77,7 @@ public class Geo extends Tile {
             int newJ = adjacent.y();
             int neighborAdjacentGeoCount = Grids.countTilesWithinDistance(newGrid,
                     newI, newJ, width, height, Geo.class, 1);
-            if (neighborAdjacentGeoCount >= 5
+            if (neighborAdjacentGeoCount >= 3
                     && Math.random() < BASE_MOUNTAINS_CHANCE) {
                 newGrid.setTile(newI, newJ, new Geo()); // grow
             }

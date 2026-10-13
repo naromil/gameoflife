@@ -86,7 +86,7 @@ public class Dendro extends Tile {
         if (!isNearHydro) {
             tickWithoutHydro++;
             if (tickWithoutHydro >= MAX_TICKS_WITHOUT_HYDRO) {
-                newGrid.softReplace(i, j, new Empty(), this);
+                newGrid.softReplace(i, j, new Ash(), this);
                 return;
             }
         } else {
