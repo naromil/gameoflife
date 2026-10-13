@@ -1,5 +1,9 @@
 package com.naromil.gol.elements;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.naromil.gol.environment.SeasonType;
 import com.naromil.gol.main.Color;
 import com.naromil.gol.main.Grid;
 
@@ -7,11 +11,39 @@ public class Pyro extends Tile {
     public static final Color DEFAULT_COLOR = new Color(239, 121, 56);
     public static final int MAX_TICKS_BURNOUT = 3;
     public static final double BASE_BURNING_CHANCE = 0.20;
+    public static final double BASE_SUMMER_BURNING_CHANCE = 0.10;
 
     private int tickBurnout = 0;
 
     public Pyro() {
         super(Color.similarColor(DEFAULT_COLOR));
+    }
+
+    public void globalAct(Grid grid, Grid newGrid, int width, int height) {
+        // fire on random Dendro in summer
+        if (newGrid.getCurrentSeason() != SeasonType.SUMMER) {
+            return;
+        }
+        if (Math.random() >= BASE_SUMMER_BURNING_CHANCE) {
+            return;
+        }
+        List<Point2D> dendroTiles = new ArrayList<>();
+        for (int i = 0; i < height; i++) {
+            for(int j = 0; j < width; j++) {
+                Tile newTile = newGrid.getTileOfType(i, j, Dendro.class);
+                if (newTile instanceof Dendro) {
+                    dendroTiles.add(new Point2D(i, j));
+                }
+            }
+        }
+        if (dendroTiles.isEmpty()) {
+            return;
+        }
+        int randomIndex = (int) (Math.random() * dendroTiles.size());
+        Point2D randomTile = dendroTiles.get(randomIndex);
+        int newI = randomTile.x();
+        int newJ = randomTile.y();
+        newGrid.setTile(newI, newJ, new Pyro());
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.naromil.gol.elements;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.naromil.gol.environment.SeasonType;
 import com.naromil.gol.main.Color;
 import com.naromil.gol.main.Grid;
 
@@ -33,7 +34,11 @@ public class Anemo extends Tile {
         int windI = windDirections[0];
         int windJ = windDirections[1];
 
-        if (Math.random() < BASE_WIND_CHANCE) {
+        double chance = BASE_WIND_CHANCE;
+        if (newGrid.getCurrentSeason() == SeasonType.FALL) {
+            chance *= 2;
+        }
+        if (Math.random() < chance) {
             // find the tiles that are the first in the current direction
             List<Point2D> firstTiles = new ArrayList<>();
             for (int i = 0; i < height; i++) {

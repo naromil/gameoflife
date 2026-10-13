@@ -1,5 +1,6 @@
 package com.naromil.gol.elements;
 
+import com.naromil.gol.environment.SeasonType;
 import com.naromil.gol.main.Color;
 import com.naromil.gol.main.Grid;
 
@@ -44,7 +45,9 @@ public class Hydro extends Tile {
         // rain: spawn
         int rainX = (int) (Math.random() * height);
         int rainY = (int) (Math.random() * width);
-        newGrid.setTile(rainX, rainY, new Hydro());
+        boolean isWinter = newGrid.getCurrentSeason() == SeasonType.WINTER;
+        // directly snows (spawn Cryo) in winter
+        newGrid.setTile(rainX, rainY, isWinter ? new Cryo() : new Hydro());
     }
 
     @Override
@@ -57,7 +60,11 @@ public class Hydro extends Tile {
         } else {
             isLake = false;
             tickRain++;
-            if (tickRain >= MAX_TICKS_RAIN) {
+            int maxTicks = MAX_TICKS_RAIN;
+            if (newGrid.getCurrentSeason() == SeasonType.SUMMER) {
+                maxTicks /= 2;
+            }
+            if (tickRain >= maxTicks) {
                 newGrid.softReplace(i, j, new Empty(), this);
                 return;
             }

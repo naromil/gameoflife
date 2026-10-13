@@ -73,8 +73,8 @@ Some tiles have special states, displayed as small squares in the center of a ti
 
 Each season 100 ticks. Change the seasonal wind to random one of 8 directions when season changes.
 
-- **Spring**.
-- **Summer**.
-- **Fall**: Storms chance x3.
-- **Winter**: Cryo won't thaw. Frozen chance x8.
+- **Spring**: Dendro grow x1.5 faster. Bloom chance x2.
+- **Summer**: 1% fire on random Dendro. Water dry out x2 quicker.
+- **Fall**: Storms chance x3. Wind chance x2.
+- **Winter**: Cryo won't thaw. Frozen chance x8. Dendro don't grow.
 

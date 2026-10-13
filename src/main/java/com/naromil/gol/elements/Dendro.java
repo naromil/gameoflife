@@ -1,5 +1,6 @@
 package com.naromil.gol.elements;
 
+import com.naromil.gol.environment.SeasonType;
 import com.naromil.gol.main.Color;
 import com.naromil.gol.main.Grid;
 
@@ -80,7 +81,8 @@ public class Dendro extends Tile {
 
         // wither
         boolean isNearHydro = Grids.doesExistWithinDistance(grid,
-                i, j, width, height, Hydro.class, 1);
+                i, j, width, height, Hydro.class, 1)
+                || Grids.doesExistWithinDistance(grid, i, j, width, height, Cryo.class, 1);
         if (!isNearHydro) {
             tickWithoutHydro++;
             if (tickWithoutHydro >= MAX_TICKS_WITHOUT_HYDRO) {
@@ -92,7 +94,8 @@ public class Dendro extends Tile {
         }
 
         // growth
-        setFrost(Grids.doesExistWithinDistance(grid, i, j, width, height, Cryo.class, 1));
+        setFrost(newGrid.getCurrentSeason() == SeasonType.WINTER
+                || Grids.doesExistWithinDistance(grid, i, j, width, height, Cryo.class, 1));
 
         if (!isFrost()) { // frost
             for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
@@ -102,6 +105,7 @@ public class Dendro extends Tile {
                 double chance = BASE_GROWTH_CHANCE;
                 if (isNearHydro) { chance *= 2; }
                 if (newGrid.hasType(newI, newJ, Ash.class)) { chance *= 2; } // burnout: fertile
+                if (newGrid.getCurrentSeason() == SeasonType.SPRING) { chance *= 1.5; }
                 if (isQuickened()) { chance *= 3; }
                 if (Math.random() < chance) {
                     newGrid.softReplace(newI, newJ, new Dendro());
@@ -124,7 +128,11 @@ public class Dendro extends Tile {
         // bloom. after plant new Dendro because it should start next tick
         if (Grids.doesExistWithinDistance(grid,
                 i, j, width, height, Hydro.class, 1)) {
-            if (Math.random() < BASE_BLOOM_CHANCE) {
+            double chance = BASE_BLOOM_CHANCE;
+            if (newGrid.getCurrentSeason() == SeasonType.SPRING) {
+                chance *= 2;
+            }
+            if (Math.random() < chance) {
                 setDendroCore(true);
             }
         }
