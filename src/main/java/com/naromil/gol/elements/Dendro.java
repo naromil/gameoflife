@@ -16,6 +16,11 @@ public class Dendro extends Tile {
         super(Color.similarColor(DEFAULT_COLOR));
     }
 
+    private Dendro(int tickWithoutHydro) {
+        this();
+        this.tickWithoutHydro = tickWithoutHydro;
+    }
+
     @Override
     public Color getStatusColor() {
         if (hasDendroCore()) {
@@ -97,7 +102,7 @@ public class Dendro extends Tile {
         setFrost(newGrid.getCurrentSeason() == SeasonType.WINTER
                 || Grids.doesExistWithinDistance(grid, i, j, width, height, Cryo.class, 1));
 
-        if (!isFrost()) { // frost
+        if (!isFrost() && tickWithoutHydro > 1) { // frost
             for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
                 int newI = adjacent.x();
                 int newJ = adjacent.y();
@@ -108,7 +113,7 @@ public class Dendro extends Tile {
                 if (newGrid.getCurrentSeason() == SeasonType.SPRING) { chance *= 1.5; }
                 if (isQuickened()) { chance *= 3; }
                 if (Math.random() < chance) {
-                    newGrid.softReplace(newI, newJ, new Dendro());
+                    newGrid.softReplace(newI, newJ, new Dendro(tickWithoutHydro - 1));
                 }
             }
         }

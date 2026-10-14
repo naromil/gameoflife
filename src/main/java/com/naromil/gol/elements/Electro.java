@@ -15,18 +15,22 @@ import com.naromil.gol.main.Grid;
 public class Electro extends Tile {
     public static final Color DEFAULT_COLOR = new Color(211, 118, 240);
     public static final double BASE_STORM_CHANCE = 0.05;
+    public static final double BASE_MORE_STORM_CHANCE = 0.75;
     public static final int MAX_STORM_TICKS = 15;
     public static final int MAX_CHARGED_SPREAD = 30;
 
     private int stormTicks = 0;
+    private double id;
 
     public Electro() {
         super(Color.similarColor(DEFAULT_COLOR));
+        id = Math.random();
     }
 
-    private Electro(Tile containedTile) {
+    private Electro(Tile containedTile, double id) {
         this();
         this.containedTile = containedTile;
+        this.id = id;
     }
 
     @Override
@@ -34,25 +38,69 @@ public class Electro extends Tile {
         return containedTile.getColor(); // Empty has none
     }
 
+    private boolean hasActed = false;
+    
+    public void setActed(boolean hasActed) {
+        this.hasActed = hasActed;
+    }
+
+    public boolean hasActed() {
+        return hasActed;
+    }
+
     // the probability doesn't exclude complex tiles but will not replace them
     public void globalAct(Grid grid, Grid newGrid, int width, int height) {
+        // storms: initialize
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                Tile tile = newGrid.getTile(i, j);
+                if (tile instanceof Electro) {
+                    ((Electro) tile).setActed(false);
+                }
+            }
+        }
+
         // storms: spawn
         double chance = BASE_STORM_CHANCE;
         if (newGrid.getCurrentSeason() == SeasonType.FALL) {
             chance *= 3;
         }
         if (Math.random() < chance) {
-            int newX = (int) (Math.random() * height);
-            int newY = (int) (Math.random() * width);
-            Tile oldTile = newGrid.getTile(newX, newY);
+            int newI = (int) (Math.random() * height);
+            int newJ = (int) (Math.random() * width);
+            double currentId = Math.random();
+            Tile oldTile = newGrid.getTile(newI, newJ);
             if (!TileFactory.isComplexTileType(oldTile)) {
-                newGrid.setTile(newX, newY, new Electro(oldTile));
+                newGrid.setTile(newI, newJ, new Electro(oldTile, currentId));
+            }
+            while (Math.random() < BASE_MORE_STORM_CHANCE) {
+                Point2D[] neighbors = Grids.getNeighbors(newI, newJ, width, height);
+                int randomIndex = (int) (Math.random() * neighbors.length);
+                int newI2 = neighbors[randomIndex].x();
+                int newJ2 = neighbors[randomIndex].y();
+                Tile oldTile2 = newGrid.getTile(newI2, newJ2);
+                if (!TileFactory.isComplexTileType(oldTile2)) {
+                    newGrid.setTile(newI2, newJ2, new Electro(oldTile2, currentId));
+                    newI = newI2;
+                    newJ = newJ2;
+                }
             }
         }
     }
 
     @Override
     public void act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
+        int directionX = (int) (Math.random() * 3) - 1;
+        int directionY = (int) (Math.random() * 3) - 1;
+        act(grid, newGrid, i, j, width, height, new Point2D(directionX, directionY));
+    }
+
+    public void act(Grid grid, Grid newGrid, int i, int j, int width, int height, Point2D direction) {
+        if (hasActed) {
+            return;
+        }
+        hasActed = true;
+
         // storm: disappear
         stormTicks++;
         if (stormTicks >= MAX_STORM_TICKS) {
@@ -142,18 +190,25 @@ public class Electro extends Tile {
 
         // storm: moves
         newGrid.softReplace(i, j, containedTile, this);
+        int newI = i + direction.x();
+        int newJ = j + direction.y();
+        if (!Grids.isOutOfBounds(newI, newJ, width, height)) {
+            if (TileFactory.isComplexTileType(newGrid.getTile(newI, newJ))) {
+                containedTile = newGrid.getTile(newI, newJ).getContainedTile();
+            } else {
+                containedTile = newGrid.getTile(newI, newJ);
+            }
+            newGrid.setTile(newI, newJ, this); // strongest of the complex tiles
+        }
 
-        // random neighbor excluding electro and anemo
-        List<Point2D> neighbors = Arrays.asList(Grids.getNeighbors(i, j, width, height))
-                .stream().filter(p -> !TileFactory.isComplexTileType(newGrid.getTile(p.x(), p.y()))).toList();
-
-        if (!neighbors.isEmpty()) {
-            Point2D randomNeighbor = neighbors.get((int) (Math.random() * neighbors.size()));
-            int newI = randomNeighbor.x();
-            int newJ = randomNeighbor.y();
-            // storm: absorb
-            containedTile = newGrid.getTile(newI, newJ);
-            newGrid.setTile(newI, newJ, this); // guaranteed replacing the newest state
+        // storm: move together
+        for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
+            int adjI = adjacent.x();
+            int adjJ = adjacent.y();
+            Tile adjTile = newGrid.getTile(adjI, adjJ);
+            if (adjTile instanceof Electro && ((Electro) adjTile).id == this.id) {
+                ((Electro) adjTile).act(grid, newGrid, adjI, adjJ, width, height, direction);
+            }
         }
     }
 
