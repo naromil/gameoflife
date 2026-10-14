@@ -2,6 +2,7 @@ package com.naromil.gol.elements;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Queue;
@@ -87,5 +88,40 @@ public class Grids {
     public static List<Point2D> bfs(Grid grid, Grid newGrid, int startI, int startJ,
             int width, int height, Class<? extends Tile> targetType) {
         return bfs(grid, newGrid, startI, startJ, width, height, targetType, Integer.MAX_VALUE);
+    }
+
+    private record DirectionStore(Point2D current, Point2D direction, int distance) {}
+
+    public static Point2D directionToNearestType(Grid newGrid, int startI, int startJ, int width,
+            int height, Class<? extends Tile> targetType) {
+        Set<Point2D> visited = new HashSet<>();
+        Queue<DirectionStore> queue = new ArrayDeque<>();
+        visited.add(new Point2D(startI, startJ));
+        for (Point2D adjacent : Grids.getNeighbors(startI, startJ, width, height)) {
+            int newI = adjacent.x();
+            int newJ = adjacent.y();
+            if (newI != startI || newJ != startJ) {
+                queue.add(new DirectionStore(adjacent, adjacent, 1));
+                visited.add(adjacent);
+            }
+        }
+
+        while (!queue.isEmpty()) {
+            DirectionStore current = queue.remove();
+            int currentI = current.current().x();
+            int currentJ = current.current().y();
+            if (newGrid.hasType(currentI, currentJ, targetType)) {
+                return current.direction();
+            }
+            for (Point2D adjacent : Grids.getNeighbors(currentI, currentJ, width, height)) {
+                if (!visited.contains(adjacent)) {
+                    queue.add(new DirectionStore(adjacent,
+                            current.direction(), current.distance() + 1));
+                    visited.add(adjacent);
+                }
+            }
+        }
+
+        return null; // no target found 
     }
 }

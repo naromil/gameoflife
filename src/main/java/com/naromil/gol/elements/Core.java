@@ -1,11 +1,6 @@
 package com.naromil.gol.elements;
 
-import java.util.ArrayDeque;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Queue;
-import java.util.Set;
-
 import com.naromil.gol.main.Color;
 import com.naromil.gol.main.Grid;
 
@@ -66,56 +61,23 @@ public class Core extends Dendro {
         newGrid.softReplace(i, j, containedTile, this);
 
         // move one tile towards the nearest Pyro, otherwise self kill
-        Point2D next = directionToPyro(newGrid, i, j, width, height);
+        Point2D next = Grids.directionToNearestType(newGrid, i, j, width, height, Pyro.class);
 
         if (next != null) { // only move if pyro found
-            int newI = next.x();
-            int newJ = next.y();
-            Tile oldTile = newGrid.getTile(newI, newJ);
+            int x = next.x();
+            int y = next.y();
+            Tile oldTile = newGrid.getTile(x, y);
             if (!(TileFactory.isComplexTileType(oldTile))) {
                 containedTile = oldTile;
             }
             // top priority among complex tile types
-            newGrid.softReplace(newI, newJ, this, oldTile);
-        }
+            newGrid.softReplace(x, y, this, oldTile);
 
-        if (times > 1) {
-            // recursion to act multiple times a tick
-            act(grid, newGrid, i, j, width, height, times - 1);
+            if (times > 1) {
+                // recursion to act multiple times a tick
+                act(grid, newGrid, next.x(), next.y(), width, height, times - 1);
+            }
         }
     }
 
-    private record DirectionStore(Point2D current, Point2D direction, int distance) {}
-
-    private Point2D directionToPyro(Grid newGrid, int startI, int startJ, int width, int height) {
-        Set<Point2D> visited = new HashSet<>();
-        Queue<DirectionStore> queue = new ArrayDeque<>();
-        visited.add(new Point2D(startI, startJ));
-        for (Point2D adjacent : Grids.getNeighbors(startI, startJ, width, height)) {
-            int newI = adjacent.x();
-            int newJ = adjacent.y();
-            if (!newGrid.hasType(newI, newJ, Core.class)) {
-                queue.add(new DirectionStore(adjacent, adjacent, 1));
-                visited.add(adjacent);
-            }
-        }
-
-        while (!queue.isEmpty()) {
-            DirectionStore current = queue.remove();
-            int currentI = current.current().x();
-            int currentJ = current.current().y();
-            if (newGrid.hasType(currentI, currentJ, Pyro.class)) {
-                return current.direction();
-            }
-            for (Point2D adjacent : Grids.getNeighbors(currentI, currentJ, width, height)) {
-                if (!visited.contains(adjacent)) {
-                    queue.add(new DirectionStore(adjacent,
-                            current.direction(), current.distance() + 1));
-                    visited.add(adjacent);
-                }
-            }
-        }
-
-        return null; // no pyro found 
-    }
 }

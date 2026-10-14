@@ -46,15 +46,24 @@ public class Hydro extends Tile {
 
     public static void globalAct(Grid grid, Grid newGrid, int width, int height) {
         // rain: spawn
+        boolean isWinter = newGrid.getCurrentSeason() == SeasonType.WINTER;
+
         double expextedTimes = height * width / 2000.0;
         int times = (Math.random() < expextedTimes - Math.floor(expextedTimes))
                 ? (int) Math.ceil(expextedTimes) : (int) Math.floor(expextedTimes);
+
         for (int t = 0; t < times; t++) {
             int rainX = (int) (Math.random() * height);
             int rainY = (int) (Math.random() * width);
-            boolean isWinter = newGrid.getCurrentSeason() == SeasonType.WINTER;
+
+            // rain: affinity (move towards nearest alike to form lake)
+            Point2D next = Grids.directionToNearestType(newGrid, rainX, rainY, width, height,
+                    isWinter ? Cryo.class : Hydro.class);
+            int x = next != null ? next.x() : rainX;
+            int y = next != null ? next.y() : rainY;
+
             // directly snows (spawn Cryo) in winter
-            newGrid.setTile(rainX, rainY, isWinter ? new Cryo() : new Hydro());
+            newGrid.setTile(x, y, isWinter ? new Cryo() : new Hydro());
         }
     }
 
