@@ -1,7 +1,12 @@
 package com.naromil.gol.elements;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Queue;
+import java.util.Set;
+
 import com.naromil.gol.main.Grid;
 
 public class Grids {
@@ -50,5 +55,37 @@ public class Grids {
             result[k] = adjacentCoordinates.get(k);
         }
         return result;
+    }
+
+    public static List<Point2D> bfs(Grid grid, Grid newGrid, int startI, int startJ,
+            int width, int height, Class<? extends Tile> targetType, int maxCount) {
+        Set<Point2D> visited = new LinkedHashSet<>();
+        Queue<Point2D> queue = new ArrayDeque<>();
+        queue.add(new Point2D(startI, startJ));
+        visited.add(new Point2D(startI, startJ));
+
+        while (!queue.isEmpty()) {
+            Point2D current = queue.remove();
+            int currentI = current.x();
+            int currentJ = current.y();
+            for (Point2D adjacent : Grids.getNeighbors(currentI, currentJ, width, height)) {
+                int newI = adjacent.x();
+                int newJ = adjacent.y();
+                if (grid.hasType(newI, newJ, targetType) && !visited.contains(adjacent)) {
+                    queue.add(adjacent);
+                    visited.add(adjacent);
+                }
+                if (visited.size() >= maxCount) {
+                    return new ArrayList<>(visited);
+                }
+            }
+        }
+
+        return new ArrayList<>(visited);
+    }
+
+    public static List<Point2D> bfs(Grid grid, Grid newGrid, int startI, int startJ,
+            int width, int height, Class<? extends Tile> targetType) {
+        return bfs(grid, newGrid, startI, startJ, width, height, targetType, Integer.MAX_VALUE);
     }
 }

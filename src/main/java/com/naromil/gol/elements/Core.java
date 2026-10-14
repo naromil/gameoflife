@@ -2,6 +2,7 @@ package com.naromil.gol.elements;
 
 import java.util.ArrayDeque;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 
@@ -10,6 +11,7 @@ import com.naromil.gol.main.Grid;
 
 // standalone protectile caused by hyperbloom that hunts down a Pyro
 public class Core extends Dendro {
+    private static final int CORE_SPEED_MULTIPLIER = 3;
 
     public Core() {
         super();
@@ -31,6 +33,10 @@ public class Core extends Dendro {
      */
     @Override
     public void act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
+        act(grid, newGrid, i, j, width, height, CORE_SPEED_MULTIPLIER);
+    }
+
+    public void act(Grid grid, Grid newGrid, int i, int j, int width, int height, int times) {
         // quicken: timer
         if (tickQuickened > 0) {
             tickQuickened--;
@@ -38,6 +44,13 @@ public class Core extends Dendro {
 
         // hyperbloom: extinguish
         if (containedTile instanceof Pyro) {
+            // extinguish all
+            List<Point2D> connectedPyro = Grids.bfs(grid, newGrid, i, j, width, height, Pyro.class);
+            for (Point2D pyro : connectedPyro) {
+                int x = pyro.x();
+                int y = pyro.y();
+                newGrid.softReplace(x, y, new Empty(), newGrid.getTileOfType(x, y, Pyro.class));
+            }
             newGrid.softReplace(i, j, new Empty(), this);
             return;
         }
@@ -65,6 +78,11 @@ public class Core extends Dendro {
             // top priority among complex tile types
             newGrid.softReplace(newI, newJ, this, oldTile);
         }
+
+        if (times > 1) {
+            // recursion to act multiple times a tick
+            act(grid, newGrid, i, j, width, height, times - 1);
+        }
     }
 
     private record DirectionStore(Point2D current, Point2D direction, int distance) {}
@@ -91,7 +109,8 @@ public class Core extends Dendro {
             }
             for (Point2D adjacent : Grids.getNeighbors(currentI, currentJ, width, height)) {
                 if (!visited.contains(adjacent)) {
-                    queue.add(new DirectionStore(adjacent, current.direction(), current.distance() + 1));
+                    queue.add(new DirectionStore(adjacent,
+                            current.direction(), current.distance() + 1));
                     visited.add(adjacent);
                 }
             }

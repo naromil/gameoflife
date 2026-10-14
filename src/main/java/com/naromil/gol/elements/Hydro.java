@@ -1,5 +1,7 @@
 package com.naromil.gol.elements;
 
+import java.util.List;
+
 import com.naromil.gol.environment.SeasonType;
 import com.naromil.gol.main.Color;
 import com.naromil.gol.main.Grid;
@@ -9,6 +11,7 @@ public class Hydro extends Tile {
     private static final int MAX_TICKS_RAIN = 15;
     private static final double BASE_VAPORIZE_CHANCE = 0.50;
     private static final double BASE_VAPORIZE_STEAM_CHANCE = 0.50;
+    private static final int MAX_VAPORIZE_TILES = 5;
 
     private boolean isLake = false;
     private int tickRain = 0;
@@ -80,13 +83,18 @@ public class Hydro extends Tile {
         for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
             int newI = adjacent.x();
             int newJ = adjacent.y();
-            Tile adjPyro = newGrid.getTileOfType(newI, newJ, Pyro.class);
-            if (!(adjPyro instanceof Empty)
+            if (newGrid.hasType(newI, newJ, Pyro.class)
                     && Math.random() < BASE_VAPORIZE_CHANCE) {
-                newGrid.softReplace(newI, newJ, new Empty(), adjPyro);
-                // TODO put out all fire
+                // vaporize connected fire
+                List<Point2D> connectedPyro = Grids.bfs(grid, newGrid, newI, newJ, width, height, Pyro.class, MAX_VAPORIZE_TILES);
+                for (Point2D pyro : connectedPyro) {
+                    int x = pyro.x();
+                    int y = pyro.y();
+                    newGrid.softReplace(x, y, new Empty(), newGrid.getTileOfType(x, y, Pyro.class));
+                }
                 if (Math.random() < BASE_VAPORIZE_STEAM_CHANCE) {
                     vaporized = true; // vaporize: steam
+                    break;
                 }
             }
         }
