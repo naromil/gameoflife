@@ -19,14 +19,14 @@ public class Season {
     }
 
     // comprehensive
-    public Season(SeasonType currentSeason, int currentSeasonTick, int[] windDirection) {
+    private Season(SeasonType currentSeason, int currentSeasonTick, int[] windDirection) {
         this.currentSeason = currentSeason;
         this.currentSeasonTick = currentSeasonTick;
         this.windDirection = windDirection;
     }
 
     // copy the state
-    public Season(Season season) {
+    private Season(Season season) {
         this(season.currentSeason, season.currentSeasonTick, season.windDirection);
     }
 
@@ -34,15 +34,11 @@ public class Season {
         return currentSeason;
     }
 
-    public int getCurrentSeasonTick() {
-        return currentSeasonTick;
-    }
-
     public int[] getWindDirection() {
         return windDirection;
     }
 
-    public static int[] generateRandomWindDirection() {
+    private static int[] generateRandomWindDirection() {
         return WIND_DIRECTIONS[(int) (Math.random() * WIND_DIRECTIONS.length)];
     }
 

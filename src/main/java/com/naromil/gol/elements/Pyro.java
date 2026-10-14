@@ -9,9 +9,9 @@ import com.naromil.gol.main.Grid;
 
 public class Pyro extends Tile {
     public static final Color DEFAULT_COLOR = new Color(239, 121, 56);
-    public static final int MAX_TICKS_BURNOUT = 3;
-    public static final double BASE_BURNING_CHANCE = 0.12;
-    public static final double BASE_SUMMER_BURNING_CHANCE = 0.10;
+    private static final int MAX_TICKS_BURNOUT = 3;
+    private static final double BASE_BURNING_CHANCE = 0.12;
+    private static final double BASE_SUMMER_BURNING_CHANCE = 0.10;
 
     private int tickBurnout = 0;
 
@@ -19,7 +19,7 @@ public class Pyro extends Tile {
         super(Color.similarColor(DEFAULT_COLOR));
     }
 
-    public void globalAct(Grid grid, Grid newGrid, int width, int height) {
+    public static void globalAct(Grid grid, Grid newGrid, int width, int height) {
         // fire on random Dendro
         double chance = BASE_SUMMER_BURNING_CHANCE;
         if (newGrid.getCurrentSeason() == SeasonType.SUMMER) {

@@ -208,7 +208,7 @@ public class MainController {
     // update the interval label and restart the simulation
     private void updateInterval(double value) {
         intervalLabel.setText("Interval: " + (int) value + " ms");
-        if (isRunning()) {
+        if (isRunning) {
             startSimulation();
         }
     }
@@ -229,10 +229,6 @@ public class MainController {
             simulation.stop();
             simulation = null;
         }
-    }
-
-    public boolean isRunning() {
-        return isRunning;
     }
 
     private Animation simulation;

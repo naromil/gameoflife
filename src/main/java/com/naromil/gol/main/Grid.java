@@ -130,10 +130,6 @@ public class Grid {
         return new Empty();
     }
 
-    public boolean isComplexTileType(int i, int j) {
-        return TileFactory.isComplexTileType(tiles[i][j]);
-    }
-
     public void setTile(int i, int j, Tile tile) {
         tiles[i][j] = tile;
     }
@@ -220,8 +216,7 @@ public class Grid {
         for (Class<? extends Tile> tileClass : TileFactory.TYPES) {
             try {
                 Method globalAct = tileClass.getMethod("globalAct", Grid.class, Grid.class, int.class, int.class);
-                Tile tile = tileClass.getDeclaredConstructor().newInstance();
-                globalAct.invoke(tile, this, newGrid, width, height);
+                globalAct.invoke(null, this, newGrid, width, height);
             } catch (NoSuchMethodException e) {
                 // element has no global action
             } catch (Exception e) {

@@ -21,7 +21,7 @@ public class Core extends Dendro {
     }
 
     @Override
-    public boolean hasDendroCore() {
+    protected boolean hasDendroCore() {
         return true;
     }
     
@@ -32,7 +32,7 @@ public class Core extends Dendro {
     @Override
     public void act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
         // quicken: timer
-        if (isQuickened()) {
+        if (tickQuickened > 0) {
             tickQuickened--;
         }
 

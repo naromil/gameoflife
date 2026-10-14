@@ -4,10 +4,7 @@ import com.naromil.gol.main.Color;
 import com.naromil.gol.main.Grid;
 
 public abstract class Tile {
-    public static final Color DEFAULT_COLOR = null;
-    public final static int[][] DIRECTIONS = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
-
-    protected final Color color;
+    private final Color color;
     // the tile a complex tile is currently holding, Empty if none
     protected Tile containedTile;
 

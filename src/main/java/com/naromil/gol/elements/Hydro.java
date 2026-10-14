@@ -6,9 +6,9 @@ import com.naromil.gol.main.Grid;
 
 public class Hydro extends Tile {
     public static final Color DEFAULT_COLOR = new Color(76, 194, 241);
-    public static final int MAX_TICKS_RAIN = 15;
-    public static final double BASE_VAPORIZE_CHANCE = 0.50;
-    public static final double BASE_VAPORIZE_STEAM_CHANCE = 0.50;
+    private static final int MAX_TICKS_RAIN = 15;
+    private static final double BASE_VAPORIZE_CHANCE = 0.50;
+    private static final double BASE_VAPORIZE_STEAM_CHANCE = 0.50;
 
     private boolean isLake = false;
     private int tickRain = 0;
@@ -41,7 +41,7 @@ public class Hydro extends Tile {
         return containedTile instanceof Electro;
     }
 
-    public void globalAct(Grid grid, Grid newGrid, int width, int height) {
+    public static void globalAct(Grid grid, Grid newGrid, int width, int height) {
         // rain: spawn
         double expextedTimes = height * width / 2000.0;
         int times = (Math.random() < expextedTimes - Math.floor(expextedTimes))

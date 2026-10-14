@@ -6,11 +6,11 @@ import com.naromil.gol.main.Grid;
 
 public class Dendro extends Tile {
     public static final Color DEFAULT_COLOR = new Color(165, 200, 59);
-    public static final int MAX_TICKS_WITHOUT_HYDRO = 30;
-    public static final int INITIAL_TICKS_DENDRO_CORE = 6;
-    public static final int MAX_TICKS_QUICKENED = 5;
-    public static final double BASE_GROWTH_CHANCE = 0.05;
-    public static final double BASE_BLOOM_CHANCE = 0.03;
+    private static final int MAX_TICKS_WITHOUT_HYDRO = 30;
+    private static final int INITIAL_TICKS_DENDRO_CORE = 6;
+    private static final int MAX_TICKS_QUICKENED = 5;
+    private static final double BASE_GROWTH_CHANCE = 0.05;
+    private static final double BASE_BLOOM_CHANCE = 0.03;
 
     public Dendro() {
         super(Color.similarColor(DEFAULT_COLOR));
@@ -23,11 +23,11 @@ public class Dendro extends Tile {
 
     @Override
     public Color getStatusColor() {
-        if (hasDendroCore()) {
+        if (tickDendroCore > 0) {
             return DEFAULT_COLOR;
-        } else if (isFrost()) {
+        } else if (isFrost) {
             return Cryo.DEFAULT_COLOR;
-        } else if (isQuickened()) {
+        } else if (tickQuickened > 0) {
             return Electro.DEFAULT_COLOR;
         } else {
             return null;
@@ -43,10 +43,9 @@ public class Dendro extends Tile {
         } else {
             tickDendroCore = 0;
         }
-
     }
 
-    public boolean hasDendroCore() {
+    protected boolean hasDendroCore() {
         return tickDendroCore > 0;
     }
 
@@ -54,7 +53,7 @@ public class Dendro extends Tile {
     private boolean isFrost = false;
 
     public void setQuickened(boolean quickened) {
-        if (isFrost()) { return; } // frost: inhibit
+        if (isFrost) { return; } // frost: inhibit
         if (quickened) {
             tickQuickened = MAX_TICKS_QUICKENED;
         } else {
@@ -62,25 +61,17 @@ public class Dendro extends Tile {
         }
     }
 
-    public boolean isQuickened() {
-        return tickQuickened > 0;
-    }
-
-    public void setFrost(boolean frost) {
+    private void setFrost(boolean frost) {
         if (frost) {
             setQuickened(false); // frost: inhibit
         }
         isFrost = frost;
     }
 
-    public boolean isFrost() {
-        return isFrost;
-    }
-
     @Override
     public void act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
         // quicken: timer
-        if (isQuickened()) {
+        if (tickQuickened > 0) {
             tickQuickened--;
         }
 
@@ -102,7 +93,7 @@ public class Dendro extends Tile {
         setFrost(newGrid.getCurrentSeason() == SeasonType.WINTER
                 || Grids.doesExistWithinDistance(grid, i, j, width, height, Cryo.class, 1));
 
-        if (!isFrost() && tickWithoutHydro > 1) { // frost
+        if (!isFrost && tickWithoutHydro + 1 < MAX_TICKS_WITHOUT_HYDRO) { // frost
             for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
                 int newI = adjacent.x();
                 int newJ = adjacent.y();
@@ -111,15 +102,15 @@ public class Dendro extends Tile {
                 if (isNearHydro) { chance *= 2; }
                 if (newGrid.hasType(newI, newJ, Ash.class)) { chance *= 2; } // burnout: fertile
                 if (newGrid.getCurrentSeason() == SeasonType.SPRING) { chance *= 1.5; }
-                if (isQuickened()) { chance *= 3; }
+                if (tickQuickened > 0) { chance *= 3; }
                 if (Math.random() < chance) {
-                    newGrid.softReplace(newI, newJ, new Dendro(tickWithoutHydro - 1));
+                    newGrid.softReplace(newI, newJ, new Dendro(tickWithoutHydro + 1));
                 }
             }
         }
 
         // bloom: plant new Dendro
-        if (hasDendroCore()) {
+        if (tickDendroCore > 0) {
             tickDendroCore--;
             if (tickDendroCore == 0) {
                 for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {

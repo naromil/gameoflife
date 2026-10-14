@@ -12,12 +12,12 @@ import com.naromil.gol.main.Grid;
 
 public class Geo extends Tile {
     public static final Color DEFAULT_COLOR = new Color(248, 186, 78);
-    public static final double BASE_MOUNTAINS_CHANCE = 0.002;
-    public static final double BASE_CRYSTALLIZE_CHANCE = 0.10;
-    public static final double BASE_ABSORB_CHANCE = 0.10;
+    private static final double BASE_MOUNTAINS_CHANCE = 0.002;
+    private static final double BASE_CRYSTALLIZE_CHANCE = 0.10;
+    private static final double BASE_ABSORB_CHANCE = 0.10;
     public static final double BASE_EROSION_CHANCE = 0.002;
-    public static final int INITIAL_SHIELD_DURATION = 20;
-    public static final int INITIAL_BRITTLE_DURATION = 10;
+    private static final int INITIAL_SHIELD_DURATION = 20;
+    private static final int INITIAL_BRITTLE_DURATION = 10;
     
     private int shieldDuration = 0;
     private int brittleDuration = 0;
@@ -63,7 +63,7 @@ public class Geo extends Tile {
         return brittleDuration > 0;
     }
 
-    private List<Point2D> bfs(Grid grid, Grid newGrid, int startI, int startJ,
+    private static List<Point2D> bfs(Grid grid, Grid newGrid, int startI, int startJ,
             int width, int height, Set<Point2D> visited) {
         Queue<Point2D> queue = new ArrayDeque<>();
         List<Point2D> peripheral = new ArrayList<Point2D>();
@@ -90,7 +90,7 @@ public class Geo extends Tile {
         return peripheral;
     }
 
-    public void globalAct(Grid grid, Grid newGrid, int width, int height) {
+    public static void globalAct(Grid grid, Grid newGrid, int width, int height) {
         // mountains
         Set<Point2D> visited = new HashSet<>();
         for (int i = 0; i < height; i++) {

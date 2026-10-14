@@ -31,11 +31,11 @@ public class TileFactory {
                 || tile instanceof Cryo || tile instanceof Electro;
     }
 
-    public static int getTypeSize() {
+    private static int getTypeSize() {
         return TYPES.size();
     }
 
-    public static Class<? extends Tile> getTypeAt(int index) {
+    private static Class<? extends Tile> getTypeAt(int index) {
         if (index < 0 || index >= TYPES.size()) {
             throw new IndexOutOfBoundsException(
                     "Index must be between 0 and " + (TYPES.size() - 1));

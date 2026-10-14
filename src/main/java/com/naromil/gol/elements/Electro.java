@@ -14,10 +14,10 @@ import com.naromil.gol.main.Grid;
 // only exists in storm form
 public class Electro extends Tile {
     public static final Color DEFAULT_COLOR = new Color(211, 118, 240);
-    public static final double BASE_STORM_CHANCE = 0.05;
-    public static final double BASE_MORE_STORM_CHANCE = 0.75;
-    public static final int MAX_STORM_TICKS = 15;
-    public static final int MAX_CHARGED_SPREAD = 30;
+    private static final double BASE_STORM_CHANCE = 0.05;
+    private static final double BASE_MORE_STORM_CHANCE = 0.75;
+    private static final int MAX_STORM_TICKS = 15;
+    private static final int MAX_CHARGED_SPREAD = 5;
 
     private int stormTicks = 0;
     private double id;
@@ -39,23 +39,15 @@ public class Electro extends Tile {
     }
 
     private boolean hasActed = false;
-    
-    public void setActed(boolean hasActed) {
-        this.hasActed = hasActed;
-    }
-
-    public boolean hasActed() {
-        return hasActed;
-    }
 
     // the probability doesn't exclude complex tiles but will not replace them
-    public void globalAct(Grid grid, Grid newGrid, int width, int height) {
+    public static void globalAct(Grid grid, Grid newGrid, int width, int height) {
         // storms: initialize
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 Tile tile = newGrid.getTile(i, j);
                 if (tile instanceof Electro) {
-                    ((Electro) tile).setActed(false);
+                    ((Electro) tile).hasActed = false;
                 }
             }
         }
@@ -100,7 +92,7 @@ public class Electro extends Tile {
         act(grid, newGrid, i, j, width, height, new Point2D(directionX, directionY));
     }
 
-    public void act(Grid grid, Grid newGrid, int i, int j, int width, int height, Point2D direction) {
+    private void act(Grid grid, Grid newGrid, int i, int j, int width, int height, Point2D direction) {
         if (hasActed) {
             return;
         }
@@ -217,7 +209,7 @@ public class Electro extends Tile {
         }
     }
 
-    public static Point2D[] bfs(Grid grid, int startI, int startJ, int width, int height) {
+    private static Point2D[] bfs(Grid grid, int startI, int startJ, int width, int height) {
         Set<Point2D> visited = new HashSet<>();
         Queue<Point2D> queue = new ArrayDeque<>();
         if (!grid.hasType(startI, startJ, Hydro.class)) {

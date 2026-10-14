@@ -6,10 +6,6 @@ import com.naromil.gol.main.Grid;
 
 public class Grids {
     /* ---- Grid exploration section ---- */
-    public static int distance(int i1, int j1, int i2, int j2) {
-        return Math.max(Math.abs(i1 - i2), Math.abs(j1 - j2));
-    }
-
     public static boolean doesExistWithinDistance(Grid grid, int i, int j,
             int width, int height, Class<? extends Tile> tileType, int distance) {
         return countTilesWithinDistance(grid, i, j, width, height, tileType, distance) > 0;

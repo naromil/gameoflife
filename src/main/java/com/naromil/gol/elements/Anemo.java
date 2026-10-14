@@ -9,8 +9,8 @@ import com.naromil.gol.main.Grid;
 
 public class Anemo extends Tile {
     public static final Color DEFAULT_COLOR = new Color(117, 194, 170);
-    public static final double BASE_WIND_CHANCE = 0.20;
-    public static final double BASE_SWIRL_COPY_CHANCE = 0.20;
+    private static final double BASE_WIND_CHANCE = 0.20;
+    private static final double BASE_SWIRL_COPY_CHANCE = 0.20;
 
     public Anemo() {
         super(Color.similarColor(DEFAULT_COLOR));
@@ -29,7 +29,7 @@ public class Anemo extends Tile {
     private boolean pollinationState = false;
 
     // the probability doesn't exclude complex tiles but will not replace them
-    public void globalAct(Grid grid, Grid newGrid, int width, int height) {
+    public static void globalAct(Grid grid, Grid newGrid, int width, int height) {
         // winds: spawn
         int[] windDirections = newGrid.getWindDirection();
         int windI = windDirections[0];

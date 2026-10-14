@@ -6,9 +6,9 @@ import com.naromil.gol.main.Grid;
 
 public class Cryo extends Tile {
     public static final Color DEFAULT_COLOR = new Color(159, 214, 227);
-    public static final int MAX_TICKS_WITHOUT_WINTER = 20;
-    public static final double BASE_FROZEN_NORMAL_CHANCE = 0.05;
-    public static final double BASE_FROZEN_WINTER_CHANCE = 0.40;
+    private static final int MAX_TICKS_WITHOUT_WINTER = 20;
+    private static final double BASE_FROZEN_NORMAL_CHANCE = 0.05;
+    private static final double BASE_FROZEN_WINTER_CHANCE = 0.40;
 
     private int tickWithoutWinter = 0;
     
