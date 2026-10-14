@@ -1,13 +1,21 @@
 package com.naromil.gol.elements;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Queue;
+import java.util.Set;
+
 import com.naromil.gol.main.Color;
 import com.naromil.gol.main.Grid;
 
 public class Geo extends Tile {
     public static final Color DEFAULT_COLOR = new Color(248, 186, 78);
-    public static final double BASE_MOUNTAINS_CHANCE = 0.0005;
+    public static final double BASE_MOUNTAINS_CHANCE = 0.002;
     public static final double BASE_CRYSTALLIZE_CHANCE = 0.10;
-    public static final double BASE_EROSION_CHANCE = 0.02;
+    public static final double BASE_ABSORB_CHANCE = 0.10;
+    public static final double BASE_EROSION_CHANCE = 0.002;
     public static final int INITIAL_SHIELD_DURATION = 20;
     public static final int INITIAL_BRITTLE_DURATION = 10;
     
@@ -55,6 +63,52 @@ public class Geo extends Tile {
         return brittleDuration > 0;
     }
 
+    private List<Point2D> bfs(Grid grid, Grid newGrid, int startI, int startJ,
+            int width, int height, Set<Point2D> visited) {
+        Queue<Point2D> queue = new ArrayDeque<>();
+        List<Point2D> peripheral = new ArrayList<Point2D>();
+        queue.add(new Point2D(startI, startJ));
+        visited.add(new Point2D(startI, startJ));
+
+        while (!queue.isEmpty()) {
+            Point2D current = queue.remove();
+            int currentI = current.x();
+            int currentJ = current.y();
+            for (Point2D adjacent : Grids.getNeighbors(currentI, currentJ, width, height)) {
+                int newI = adjacent.x();
+                int newJ = adjacent.y();
+                if (grid.hasType(newI, newJ, Geo.class) && !visited.contains(adjacent)) {
+                    queue.add(adjacent);
+                    visited.add(adjacent);
+                }
+                else if (!grid.hasType(newI, newJ, Geo.class)) {
+                    peripheral.add(adjacent);
+                }
+            }
+        }
+
+        return peripheral;
+    }
+
+    public void globalAct(Grid grid, Grid newGrid, int width, int height) {
+        // mountains
+        Set<Point2D> visited = new HashSet<>();
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                if (newGrid.hasType(i, j, Geo.class) && !visited.contains(new Point2D(i, j))) {
+                    List<Point2D> peripheral = bfs(grid, newGrid, i, j, width, height, visited);
+                    double chance = BASE_MOUNTAINS_CHANCE;
+                    if (Math.random() < chance) {
+                        int randomIndex = (int) (Math.random() * peripheral.size());
+                        int newI = peripheral.get(randomIndex).x();
+                        int newJ = peripheral.get(randomIndex).y();
+                        newGrid.setTile(newI, newJ, new Geo());
+                    }
+                }
+            }
+        }
+    }
+
     @Override
     public void act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
         // crystallize: countdown
@@ -64,36 +118,19 @@ public class Geo extends Tile {
             brittleDuration--;
         }
 
-        // mountains
-        int adjacentGeoCount = Grids.countTilesWithinDistance(newGrid,
-                i, j, width, height, Geo.class, 1) - 1;
-        if (adjacentGeoCount < 1 && !hasShield()) { // crystallize: protect
-            newGrid.softReplace(i, j, new Empty(), this); // erode
-            return;
-        }
-
-        for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
-            int newI = adjacent.x();
-            int newJ = adjacent.y();
-            int neighborAdjacentGeoCount = Grids.countTilesWithinDistance(newGrid,
-                    newI, newJ, width, height, Geo.class, 1) - 1;
-            if (neighborAdjacentGeoCount >= 2
-                    && Math.random() < BASE_MOUNTAINS_CHANCE) {
-                newGrid.setTile(newI, newJ, new Geo()); // grow
-            }
-        }
-
         // crystallize
         for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
             int newI = adjacent.x();
             int newJ = adjacent.y();
             double chance = BASE_CRYSTALLIZE_CHANCE;
-            // if (hasShield()) { chance = 0; } // already have shield
+            if (hasShield()) { chance = 0; } // already have shield
             if (Math.random() < chance
                     && TileFactory.isStrongTileType(newGrid.getTile(newI, newJ))) {
                 setShield(true);
                 // crystallize: absorb
-                newGrid.softReplace(newI, newJ, new Empty(), newGrid.getTile(newI, newJ));
+                if (Math.random() < BASE_ABSORB_CHANCE) {
+                    newGrid.softReplace(newI, newJ, new Empty(), newGrid.getTile(newI, newJ));
+                }
                 break;
             }
         }

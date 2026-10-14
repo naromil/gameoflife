@@ -45,7 +45,7 @@ Some tiles have special states, displayed as small squares in the center of a ti
 3. **Rain**: a random tile becomes Hydro each tick.
 4. **Burnout**: Pyro lasts 3 turns and becomes Ash.
 5. **Thaw**: Cryo becomes Hydro in 3 ticks.
-6. **Mountains**: Any tile becomes Geo if adjacent to >=5 Geo. Geo with <2 adjacent Geo dies.
+6. **Mountains**: Each connected component of Geo 5% grow one Geo at a random adjacent tile. 
 7. **Storms**: Electro appears at random place 10% each tick. Go to random adjacent tile each tick, and die in 15 ticks.
 8. **Wind**: Anemo winds appear at a random first tile in the current seasonal wind direction.
 9. **Ash**: die after 10 turns. Dendro grows 2x faster on it.

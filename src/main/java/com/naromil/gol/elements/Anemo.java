@@ -69,7 +69,7 @@ public class Anemo extends Tile {
         // erosion
         if (containedTile instanceof Geo) {
             Geo geo = (Geo) containedTile;
-            // shield: protection. brittle: erosion.
+            // shield: protection; brittle: erosion.
             if (!geo.hasShield() && (geo.isBrittle() || Math.random() < Geo.BASE_EROSION_CHANCE)) {
                 newGrid.softReplace(i, j, new Empty(), containedTile);
             }
