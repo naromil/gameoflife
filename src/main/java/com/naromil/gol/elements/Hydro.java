@@ -8,7 +8,7 @@ public class Hydro extends Tile {
     public static final Color DEFAULT_COLOR = new Color(76, 194, 241);
     public static final int MAX_TICKS_RAIN = 15;
     public static final double BASE_VAPORIZE_CHANCE = 0.50;
-    public static final double BASE_VAPORIZE_STEAM_CHANCE = 0.30;
+    public static final double BASE_VAPORIZE_STEAM_CHANCE = 0.50;
 
     private boolean isLake = false;
     private int tickRain = 0;
@@ -43,11 +43,16 @@ public class Hydro extends Tile {
 
     public void globalAct(Grid grid, Grid newGrid, int width, int height) {
         // rain: spawn
-        int rainX = (int) (Math.random() * height);
-        int rainY = (int) (Math.random() * width);
-        boolean isWinter = newGrid.getCurrentSeason() == SeasonType.WINTER;
-        // directly snows (spawn Cryo) in winter
-        newGrid.setTile(rainX, rainY, isWinter ? new Cryo() : new Hydro());
+        double expextedTimes = height * width / 2000.0;
+        int times = (Math.random() < expextedTimes - Math.floor(expextedTimes))
+                ? (int) Math.ceil(expextedTimes) : (int) Math.floor(expextedTimes);
+        for (int t = 0; t < times; t++) {
+            int rainX = (int) (Math.random() * height);
+            int rainY = (int) (Math.random() * width);
+            boolean isWinter = newGrid.getCurrentSeason() == SeasonType.WINTER;
+            // directly snows (spawn Cryo) in winter
+            newGrid.setTile(rainX, rainY, isWinter ? new Cryo() : new Hydro());
+        }
     }
 
     @Override
@@ -79,6 +84,7 @@ public class Hydro extends Tile {
             if (!(adjPyro instanceof Empty)
                     && Math.random() < BASE_VAPORIZE_CHANCE) {
                 newGrid.softReplace(newI, newJ, new Empty(), adjPyro);
+                // TODO put out all fire
                 if (Math.random() < BASE_VAPORIZE_STEAM_CHANCE) {
                     vaporized = true; // vaporize: steam
                 }

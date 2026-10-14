@@ -65,27 +65,32 @@ public class Electro extends Tile {
         if (newGrid.getCurrentSeason() == SeasonType.FALL) {
             chance *= 3;
         }
-        if (Math.random() < chance) {
-            int newI = (int) (Math.random() * height);
-            int newJ = (int) (Math.random() * width);
-            double currentId = Math.random();
-            Tile oldTile = newGrid.getTile(newI, newJ);
-            if (!TileFactory.isComplexTileType(oldTile)) {
-                newGrid.setTile(newI, newJ, new Electro(oldTile, currentId));
-            }
-            while (Math.random() < BASE_MORE_STORM_CHANCE) {
-                Point2D[] neighbors = Grids.getNeighbors(newI, newJ, width, height);
-                int randomIndex = (int) (Math.random() * neighbors.length);
-                int newI2 = neighbors[randomIndex].x();
-                int newJ2 = neighbors[randomIndex].y();
-                Tile oldTile2 = newGrid.getTile(newI2, newJ2);
-                if (!TileFactory.isComplexTileType(oldTile2)) {
-                    newGrid.setTile(newI2, newJ2, new Electro(oldTile2, currentId));
-                    newI = newI2;
-                    newJ = newJ2;
+        double expextedTimes = height * width / 2000.0;
+        int times = (Math.random() < expextedTimes - Math.floor(expextedTimes))
+                ? (int) Math.ceil(expextedTimes) : (int) Math.floor(expextedTimes);
+        for (int t = 0; t < times; t++) {
+            if (Math.random() < chance) {
+                int newI = (int) (Math.random() * height);
+                int newJ = (int) (Math.random() * width);
+                double currentId = Math.random();
+                Tile oldTile = newGrid.getTile(newI, newJ);
+                if (!TileFactory.isComplexTileType(oldTile)) {
+                    newGrid.setTile(newI, newJ, new Electro(oldTile, currentId));
+                }
+                while (Math.random() < BASE_MORE_STORM_CHANCE) {
+                    Point2D[] neighbors = Grids.getNeighbors(newI, newJ, width, height);
+                    int randomIndex = (int) (Math.random() * neighbors.length);
+                    int newI2 = neighbors[randomIndex].x();
+                    int newJ2 = neighbors[randomIndex].y();
+                    Tile oldTile2 = newGrid.getTile(newI2, newJ2);
+                    if (!TileFactory.isComplexTileType(oldTile2)) {
+                        newGrid.setTile(newI2, newJ2, new Electro(oldTile2, currentId));
+                        newI = newI2;
+                        newJ = newJ2;
+                    }
                 }
             }
-        }
+    }
     }
 
     @Override

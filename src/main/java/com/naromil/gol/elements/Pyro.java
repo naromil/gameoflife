@@ -20,30 +20,35 @@ public class Pyro extends Tile {
     }
 
     public void globalAct(Grid grid, Grid newGrid, int width, int height) {
-        // fire on random Dendro in summer
-        if (newGrid.getCurrentSeason() != SeasonType.SUMMER) {
-            return;
+        // fire on random Dendro
+        double chance = BASE_SUMMER_BURNING_CHANCE;
+        if (newGrid.getCurrentSeason() == SeasonType.SUMMER) {
+            chance *= 2;
         }
-        if (Math.random() >= BASE_SUMMER_BURNING_CHANCE) {
-            return;
-        }
-        List<Point2D> dendroTiles = new ArrayList<>();
-        for (int i = 0; i < height; i++) {
-            for(int j = 0; j < width; j++) {
-                Tile newTile = newGrid.getTileOfType(i, j, Dendro.class);
-                if (newTile instanceof Dendro) {
-                    dendroTiles.add(new Point2D(i, j));
+        double expextedTimes = height * width / 2000.0;
+        int times = (Math.random() < expextedTimes - Math.floor(expextedTimes))
+                ? (int) Math.ceil(expextedTimes) : (int) Math.floor(expextedTimes);
+        for (int t = 0; t < times; t++) {
+            if (Math.random() < chance) {
+                List<Point2D> dendroTiles = new ArrayList<>();
+                for (int i = 0; i < height; i++) {
+                    for(int j = 0; j < width; j++) {
+                        Tile newTile = newGrid.getTileOfType(i, j, Dendro.class);
+                        if (newTile instanceof Dendro) {
+                            dendroTiles.add(new Point2D(i, j));
+                        }
+                    }
                 }
+                if (dendroTiles.isEmpty()) {
+                    return;
+                }
+                int randomIndex = (int) (Math.random() * dendroTiles.size());
+                Point2D randomTile = dendroTiles.get(randomIndex);
+                int newI = randomTile.x();
+                int newJ = randomTile.y();
+                newGrid.setTile(newI, newJ, new Pyro());
             }
         }
-        if (dendroTiles.isEmpty()) {
-            return;
-        }
-        int randomIndex = (int) (Math.random() * dendroTiles.size());
-        Point2D randomTile = dendroTiles.get(randomIndex);
-        int newI = randomTile.x();
-        int newJ = randomTile.y();
-        newGrid.setTile(newI, newJ, new Pyro());
     }
 
     @Override

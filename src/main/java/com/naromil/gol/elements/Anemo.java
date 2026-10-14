@@ -10,6 +10,7 @@ import com.naromil.gol.main.Grid;
 public class Anemo extends Tile {
     public static final Color DEFAULT_COLOR = new Color(117, 194, 170);
     public static final double BASE_WIND_CHANCE = 0.20;
+    public static final double BASE_SWIRL_COPY_CHANCE = 0.20;
 
     public Anemo() {
         super(Color.similarColor(DEFAULT_COLOR));
@@ -38,27 +39,32 @@ public class Anemo extends Tile {
         if (newGrid.getCurrentSeason() == SeasonType.FALL) {
             chance *= 2;
         }
-        if (Math.random() < chance) {
-            // find the tiles that are the first in the current direction
-            List<Point2D> firstTiles = new ArrayList<>();
-            for (int i = 0; i < height; i++) {
-                for (int j = 0; j < width; j++) {
-                    int prevI = i - windI;
-                    int prevJ = j - windJ;
-                    if (Grids.isOutOfBounds(prevI, prevJ, width, height)) {
-                        firstTiles.add(new Point2D(i, j));
+        double expextedTimes = height * width / 1000.0;
+        int times = (Math.random() < expextedTimes - Math.floor(expextedTimes))
+                ? (int) Math.ceil(expextedTimes) : (int) Math.floor(expextedTimes);
+        for (int t = 0; t < times; t++) {
+            if (Math.random() < chance) {
+                // find the tiles that are the first in the current direction
+                List<Point2D> firstTiles = new ArrayList<>();
+                for (int i = 0; i < height; i++) {
+                    for (int j = 0; j < width; j++) {
+                        int prevI = i - windI;
+                        int prevJ = j - windJ;
+                        if (Grids.isOutOfBounds(prevI, prevJ, width, height)) {
+                            firstTiles.add(new Point2D(i, j));
+                        }
                     }
                 }
-            }
 
-            if (!firstTiles.isEmpty()) {
-                int randomIndex = (int) (Math.random() * firstTiles.size());
-                Point2D randomTile = firstTiles.get(randomIndex);
-                int newX = randomTile.y();
-                int newY = randomTile.x();
-                Tile oldTile = newGrid.getTile(newY, newX);
-                if (!(TileFactory.isComplexTileType(oldTile))) {
-                    newGrid.setTile(newY, newX, new Anemo(oldTile));
+                if (!firstTiles.isEmpty()) {
+                    int randomIndex = (int) (Math.random() * firstTiles.size());
+                    Point2D randomTile = firstTiles.get(randomIndex);
+                    int newX = randomTile.y();
+                    int newY = randomTile.x();
+                    Tile oldTile = newGrid.getTile(newY, newX);
+                    if (!(TileFactory.isComplexTileType(oldTile))) {
+                        newGrid.setTile(newY, newX, new Anemo(oldTile));
+                    }
                 }
             }
         }
@@ -109,7 +115,16 @@ public class Anemo extends Tile {
                 tmp = newGrid.getTile(newI, newJ);
             }
             newGrid.softReplace(newI, newJ, containedTile, tmp);
-            containedTile = tmp;
+            if (Math.random() < BASE_SWIRL_COPY_CHANCE) {
+                try {
+                    containedTile = containedTile.getClass().getDeclaredConstructor(containedTile.getClass()).newInstance();
+                } catch (Exception e) {
+                    containedTile = tmp;
+                }
+
+            } else { // copy failure, swap
+                containedTile = tmp;
+            }
         }
 
         // wind: moves
