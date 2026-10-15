@@ -79,14 +79,6 @@ public class Grid {
         return true;
     }
 
-    private void initializeRandomBoard() {
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                tiles[i][j] = TileFactory.createRandomTile();
-            }
-        }
-    }
-
     public void setSize(int gridWidth, int gridHeight) {
         if (gridWidth < 1 || gridWidth > MAX_WIDTH || gridHeight < 1 || gridHeight > MAX_HEIGHT) {
             throw new IllegalArgumentException("Grid size must be between 1 and " + MAX_WIDTH + " for width and 1 and " + MAX_HEIGHT + " for height.");
@@ -204,7 +196,7 @@ public class Grid {
         // 1. Check if the board is empty and initialize it with random tiles if it is
         // If not empty, act with what is left on the board
         if(isEmptyBoard(tiles)) {
-            initializeRandomBoard();
+            TileFactory.initializeRandomBoard(tiles, height, width);
             return this;
         }
 

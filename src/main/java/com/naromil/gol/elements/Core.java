@@ -1,15 +1,18 @@
 package com.naromil.gol.elements;
 
 import java.util.List;
+
 import com.naromil.gol.main.Color;
 import com.naromil.gol.main.Grid;
 
 // standalone protectile caused by hyperbloom that hunts down a Pyro
 public class Core extends Dendro {
+    public static final Color DEFAULT_COLOR = new Color(255, 255, 255);
     private static final int CORE_SPEED_MULTIPLIER = 3;
 
     public Core() {
-        super();
+        // no variation
+        super(DEFAULT_COLOR);
     }
 
     @Override

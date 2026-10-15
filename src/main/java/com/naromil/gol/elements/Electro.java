@@ -15,7 +15,7 @@ import com.naromil.gol.main.Grid;
 public class Electro extends Tile {
     public static final Color DEFAULT_COLOR = new Color(211, 118, 240);
     private static final double BASE_STORM_CHANCE = 0.05;
-    private static final double BASE_MORE_STORM_CHANCE = 0.75;
+    private static final double BASE_MORE_STORM_CHANCE = 0.80;
     private static final int MAX_STORM_TICKS = 15;
     private static final int MAX_CHARGED_SPREAD = 5;
 
@@ -57,7 +57,7 @@ public class Electro extends Tile {
         if (newGrid.getCurrentSeason() == SeasonType.FALL) {
             chance *= 3;
         }
-        double expextedTimes = height * width / 2000.0;
+        double expextedTimes = height * width / 1000.0;
         int times = (Math.random() < expextedTimes - Math.floor(expextedTimes))
                 ? (int) Math.ceil(expextedTimes) : (int) Math.floor(expextedTimes);
         for (int t = 0; t < times; t++) {
@@ -109,7 +109,7 @@ public class Electro extends Tile {
         if (containedTile instanceof Pyro) {
             newGrid.softReplace(i, j, new Empty(), this);
             //overloaded: explosion
-            for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
+            for (Point2D adjacent : Grids.getNeighbors(i, j, width, height, 2)) {
                 int newI = adjacent.x();
                 int newJ = adjacent.y();
                 Tile oldTile = newGrid.getTile(newI, newJ);
@@ -120,15 +120,15 @@ public class Electro extends Tile {
                 newGrid.softReplace(newI, newJ, new Empty(), oldTile);
             }
             // overloaded: throw away
-            List<Point2D> neighbors1 = Arrays.asList(Grids.getNeighbors(i, j, width, height));
-            List<Point2D> neighbors2 = Arrays.asList(
-                    Grids.getNeighbors(i, j, width, height, 2)).stream()
-                    .filter(adjacent -> !neighbors1.contains(adjacent)).toList();
-            if (neighbors2.isEmpty()) {
+            List<Point2D> neighbors2 = Arrays.asList(Grids.getNeighbors(i, j, width, height, 2));
+            List<Point2D> neighbors3 = Arrays.asList(
+                    Grids.getNeighbors(i, j, width, height, 3)).stream()
+                    .filter(adjacent -> !neighbors2.contains(adjacent)).toList();
+            if (neighbors3.isEmpty()) {
                 return;
             }
-            int randomIndex = (int) (Math.random() * neighbors2.size());
-            Point2D randomNeighbor = neighbors2.get(randomIndex);
+            int randomIndex = (int) (Math.random() * neighbors3.size());
+            Point2D randomNeighbor = neighbors3.get(randomIndex);
             int newI = randomNeighbor.x();
             int newJ = randomNeighbor.y();
             newGrid.softReplace(newI, newJ, new Pyro(), newGrid.getTile(newI, newJ));

@@ -48,7 +48,7 @@ public class Hydro extends Tile {
         // rain: spawn
         boolean isWinter = newGrid.getCurrentSeason() == SeasonType.WINTER;
 
-        double expextedTimes = height * width / 2000.0;
+        double expextedTimes = height * width / 500.0;
         int times = (Math.random() < expextedTimes - Math.floor(expextedTimes))
                 ? (int) Math.ceil(expextedTimes) : (int) Math.floor(expextedTimes);
 

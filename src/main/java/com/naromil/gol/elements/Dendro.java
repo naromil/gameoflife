@@ -16,6 +16,10 @@ public class Dendro extends Tile {
         super(Color.similarColor(DEFAULT_COLOR));
     }
 
+    protected Dendro(Color color) {
+        super(color);
+    }
+
     private Dendro(int tickWithoutHydro) {
         this();
         this.tickWithoutHydro = tickWithoutHydro;

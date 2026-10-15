@@ -61,4 +61,22 @@ public class TileFactory {
             return new Empty();
         }
     }
+
+    public static void initializeRandomBoard(Tile[][] tiles, int height, int width) {
+
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                // initially random from Dendro or Ash
+                Tile tile = Math.random() < 0.05 ? new Ash() : new Dendro();
+                // then possibly replaced by fixed chance Hydro or Geo
+                if (Math.random() < 0.111) {
+                    tile = new Hydro();
+                } else if (Math.random() < 0.111) {
+                    tile = new Geo();
+                }
+
+                tiles[i][j] = tile;
+            }
+        }
+    }
 }
