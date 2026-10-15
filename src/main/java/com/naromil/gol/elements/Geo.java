@@ -12,7 +12,7 @@ import com.naromil.gol.main.Grid;
 
 public class Geo extends Tile {
     public static final Color DEFAULT_COLOR = new Color(248, 186, 78);
-    private static final double BASE_MOUNTAINS_CHANCE = 0.002;
+    private static final double BASE_MOUNTAINS_CHANCE = 0.005;
     private static final double BASE_CRYSTALLIZE_CHANCE = 0.10;
     private static final double BASE_ABSORB_CHANCE = 0.10;
     public static final double BASE_EROSION_CHANCE = 0.002;

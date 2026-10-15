@@ -48,6 +48,11 @@ public class Core extends Dendro {
                 int x = pyro.x();
                 int y = pyro.y();
                 newGrid.softReplace(x, y, new Empty(), newGrid.getTileOfType(x, y, Pyro.class));
+                // this unconventionally removes the Pyro from the past as well so they can't spread
+                Tile oldTile = grid.getTileOfType(x, y, Pyro.class);
+                if(oldTile instanceof Pyro) {
+                    grid.softReplace(x, y, new Empty(), oldTile);
+                }
             }
             newGrid.softReplace(i, j, new Empty(), this);
             return;
