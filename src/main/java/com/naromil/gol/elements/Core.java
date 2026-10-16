@@ -1,7 +1,5 @@
 package com.naromil.gol.elements;
 
-import java.util.List;
-
 import com.naromil.gol.main.Color;
 import com.naromil.gol.main.Grid;
 
@@ -52,18 +50,15 @@ public class Core extends Dendro {
 
         // hyperbloom: extinguish
         if (containedTile instanceof Pyro) {
-            // extinguish all
-            List<Point2D> connectedPyro = Grids.bfs(grid, newGrid, i, j, width, height, Pyro.class);
-            for (Point2D pyro : connectedPyro) {
-                int x = pyro.x();
-                int y = pyro.y();
-                newGrid.softReplace(x, y, new Empty(), newGrid.getTileOfType(x, y, Pyro.class));
-                // this unconventionally removes the Pyro from the past as well so they can't spread
-                Tile oldTile = grid.getTileOfType(x, y, Pyro.class);
-                if(oldTile instanceof Pyro) {
-                    grid.softReplace(x, y, new Empty(), oldTile);
+            // extinguish all on the grid
+            for (int x = 0; x < height; x++) {
+                for (int y = 0; y < width; y++) {
+                    if (newGrid.hasType(x, y, Pyro.class)) {
+                        newGrid.softReplace(x, y, new Empty(), newGrid.getTileOfType(x, y, Pyro.class));
+                    }
                 }
             }
+            
             newGrid.softReplace(i, j, new Empty(), this);
             return;
         }

@@ -108,14 +108,29 @@ public class Geo extends Tile {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 if (newGrid.hasType(i, j, Geo.class) && !visited.contains(new Point2D(i, j))) {
+
+                    Set<Point2D> oldVisited = new HashSet<>(visited);
                     List<Point2D> peripheral = bfs(grid, newGrid, i, j, width, height, visited);
-                    double chance = BASE_MOUNTAINS_CHANCE;
-                    if (Math.random() < chance) {
-                        int randomIndex = (int) (Math.random() * peripheral.size());
-                        int newI = peripheral.get(randomIndex).x();
-                        int newJ = peripheral.get(randomIndex).y();
-                        newGrid.setTile(newI, newJ, new Geo());
+                    List<Point2D> connected = visited.stream().
+                            filter(p -> !oldVisited.contains(p)).toList();
+                    if (connected.isEmpty()) {
+                        throw new IllegalStateException("Geo: bfs explored connected component must not be empty.");
                     }
+
+                    // mountains: tenacity
+                    int size = connected.size();
+                    int times = size <= 3 ? 5 - size : 1;
+
+                    for (int t = 0; t < times; t++) {
+                        double chance = BASE_MOUNTAINS_CHANCE;
+                        if (Math.random() < chance) {
+                            int randomIndex = (int) (Math.random() * peripheral.size());
+                            int newI = peripheral.get(randomIndex).x();
+                            int newJ = peripheral.get(randomIndex).y();
+                            newGrid.setTile(newI, newJ, new Geo());
+                        }
+                    }
+
                 }
             }
         }
