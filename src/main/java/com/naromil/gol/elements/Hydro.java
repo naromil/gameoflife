@@ -43,7 +43,6 @@ public class Hydro extends Tile {
 
     // allow other tiles to interact with electro if it is charged
 	public void setCharged(boolean charged) {
-        // TODO: make it actually reactive
         if (charged) {
             // they will never act() because they are not storm. only passive reaction.
             containedTile = new Electro();
@@ -60,9 +59,9 @@ public class Hydro extends Tile {
         // rain: spawn
         boolean isWinter = newGrid.getCurrentSeason() == SeasonType.WINTER;
 
-        double expextedTimes = height * width / 500.0;
-        int times = (Math.random() < expextedTimes - Math.floor(expextedTimes))
-                ? (int) Math.ceil(expextedTimes) : (int) Math.floor(expextedTimes);
+        double expectedTimes = height * width / 500.0;
+        int times = (Math.random() < expectedTimes - Math.floor(expectedTimes))
+                ? (int) Math.ceil(expectedTimes) : (int) Math.floor(expectedTimes);
 
         for (int t = 0; t < times; t++) {
             int rainX = (int) (Math.random() * height);

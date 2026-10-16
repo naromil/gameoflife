@@ -57,6 +57,7 @@ public class Electro extends Tile {
             for (int j = 0; j < width; j++) {
                 Tile tile = newGrid.getTile(i, j);
                 if (tile instanceof Electro) {
+                    // ignoring contained Electro that are for special purposes
                     ((Electro) tile).hasActed = false;
                 }
             }

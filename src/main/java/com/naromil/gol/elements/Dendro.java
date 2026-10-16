@@ -90,9 +90,21 @@ public class Dendro extends Tile {
         }
 
         // wither
-        boolean isNearHydro = Grids.doesExistWithinDistance(grid,
-                i, j, width, height, Hydro.class, 2)
-                || Grids.doesExistWithinDistance(grid, i, j, width, height, Cryo.class, 2);
+        boolean isNearHydro = false;
+
+        if (Grids.doesExistWithinDistance(grid, i, j, width, height, Cryo.class, 2)) {
+            isNearHydro = true;
+        }
+        for (Point2D adj : Grids.getNeighbors(i, j, width, height, 2)) {
+            int x = adj.x();
+            int y = adj.y();
+            Tile tile = newGrid.getTileOfType(x, y, Hydro.class);
+            if (tile instanceof Hydro && !((Hydro) tile).isCharged()) { // charged: wither
+                isNearHydro = true;
+                break;
+            }
+        }
+
         if (!isNearHydro) {
             tickWithoutHydro++;
             if (tickWithoutHydro >= MAX_TICKS_WITHOUT_HYDRO) {
