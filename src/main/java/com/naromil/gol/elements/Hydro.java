@@ -31,9 +31,21 @@ public class Hydro extends Tile {
         }
     }
 
+    @Override
+    public boolean isComplexType() {
+        return false;
+    }
+
+    @Override 
+    public boolean isStrongType() {
+        return true;
+    }
+
     // allow other tiles to interact with electro if it is charged
 	public void setCharged(boolean charged) {
+        // TODO: make it actually reactive
         if (charged) {
+            // they will never act() because they are not storm. only passive reaction.
             containedTile = new Electro();
         } else {
             containedTile = new Empty();

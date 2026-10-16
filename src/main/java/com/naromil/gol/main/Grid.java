@@ -210,9 +210,9 @@ public class Grid {
                 Method globalAct = tileClass.getMethod("globalAct", Grid.class, Grid.class, int.class, int.class);
                 globalAct.invoke(null, this, newGrid, width, height);
             } catch (NoSuchMethodException e) {
-                // element has no global action
+                System.err.println("Error: global action not found");
             } catch (Exception e) {
-                e.printStackTrace();
+                System.err.println("Error occurred while invoking global action for " + tileClass.getSimpleName());
             }
         }
         

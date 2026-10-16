@@ -37,6 +37,16 @@ public class Geo extends Tile {
         }
     }
 
+    @Override
+    public boolean isComplexType() {
+        return false;
+    }
+
+    @Override 
+    public boolean isStrongType() {
+        return false;
+    }
+
     public void setShield(boolean shield) {
         if (shield) {
             shieldDuration = INITIAL_SHIELD_DURATION;
@@ -51,8 +61,10 @@ public class Geo extends Tile {
     }
 
     public void setBrittle(boolean brittle) {
-        if (hasShield()) { return; } // shield: protection
-        if (brittle) {
+        if (hasShield()) {
+            // shield: protection
+            setShield(false);
+        } else if (brittle) {
             brittleDuration = INITIAL_BRITTLE_DURATION;
         } else {
             brittleDuration = 0;
@@ -125,7 +137,7 @@ public class Geo extends Tile {
             double chance = BASE_CRYSTALLIZE_CHANCE;
             if (hasShield()) { chance = 0; } // already have shield
             if (Math.random() < chance
-                    && TileFactory.isStrongTileType(newGrid.getTile(newI, newJ))) {
+                    && newGrid.getTile(newI, newJ).isStrongType()) {
                 setShield(true);
                 // crystallize: absorb
                 if (Math.random() < BASE_ABSORB_CHANCE) {

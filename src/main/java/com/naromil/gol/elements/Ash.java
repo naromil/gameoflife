@@ -14,6 +14,16 @@ public class Ash extends Tile {
     }
 
     @Override
+    public boolean isComplexType() {
+        return false;
+    }
+
+    @Override 
+    public boolean isStrongType() {
+        return false;
+    }
+
+    @Override
     public void act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
         // burnout: die
         // tick++;

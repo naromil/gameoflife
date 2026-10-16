@@ -17,6 +17,16 @@ public class Cryo extends Tile {
     }
 
     @Override
+    public boolean isComplexType() {
+        return false;
+    }
+
+    @Override 
+    public boolean isStrongType() {
+        return true;
+    }
+
+    @Override
     public void act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
         // thaw
         SeasonType currentSeason = newGrid.getCurrentSeason();

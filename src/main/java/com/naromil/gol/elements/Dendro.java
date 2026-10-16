@@ -38,6 +38,16 @@ public class Dendro extends Tile {
         }
     }
 
+    @Override
+    public boolean isComplexType() {
+        return false;
+    }
+
+    @Override 
+    public boolean isStrongType() {
+        return false;
+    }
+
     private int tickWithoutHydro = 0;
     private int tickDendroCore = 0;
 

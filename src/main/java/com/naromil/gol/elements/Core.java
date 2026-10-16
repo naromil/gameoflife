@@ -24,6 +24,16 @@ public class Core extends Dendro {
     protected boolean hasDendroCore() {
         return true;
     }
+
+    @Override
+    public boolean isComplexType() {
+        return true;
+    }
+
+    @Override 
+    public boolean isStrongType() {
+        return false;
+    }
     
     /**
      * other can react with this since this is Dendro, but Dendro-side reactions won't happen
@@ -59,7 +69,7 @@ public class Core extends Dendro {
         }
 
         // contained tile act
-        if (TileFactory.isComplexTileType(containedTile)) {
+        if (containedTile.isComplexType()) {
             throw new IllegalStateException(
                     "Core cannot contain another complex tile.");
         }
@@ -75,7 +85,7 @@ public class Core extends Dendro {
             int x = next.x();
             int y = next.y();
             Tile oldTile = newGrid.getTile(x, y);
-            if (!(TileFactory.isComplexTileType(oldTile))) {
+            if (!oldTile.isComplexType()) {
                 containedTile = oldTile;
             }
             // top priority among complex tile types

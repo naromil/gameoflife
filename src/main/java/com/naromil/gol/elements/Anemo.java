@@ -26,6 +26,16 @@ public class Anemo extends Tile {
         return containedTile.getColor(); // Empty has none
     }
 
+    @Override
+    public boolean isComplexType() {
+        return true;
+    }
+
+    @Override 
+    public boolean isStrongType() {
+        return false;
+    }
+
     private boolean pollinationState = false;
 
     // the probability doesn't exclude complex tiles but will not replace them
@@ -62,7 +72,7 @@ public class Anemo extends Tile {
                     int newX = randomTile.y();
                     int newY = randomTile.x();
                     Tile oldTile = newGrid.getTile(newY, newX);
-                    if (!(TileFactory.isComplexTileType(oldTile))) {
+                    if (!oldTile.isComplexType()) {
                         newGrid.setTile(newY, newX, new Anemo(oldTile));
                     }
                 }
@@ -94,20 +104,20 @@ public class Anemo extends Tile {
         }
 
         // contained tile act, Empty tile does nothing
-        if (TileFactory.isComplexTileType(containedTile)) {
+        if (containedTile.isComplexType()) {
             throw new IllegalStateException("Anemo cannot contain another complex tile.");
         }
         containedTile.act(grid, newGrid, i, j, width, height);
 
         // swirl
-        if (TileFactory.isStrongTileType(containedTile)) {
+        if (containedTile.isStrongType()) {
             Point2D[] neighbors = Grids.getNeighbors(i, j, width, height);
             int randomIndex = (int) (Math.random() * neighbors.length);
             Point2D randomNeighbor = neighbors[randomIndex];
             int newI = randomNeighbor.x();
             int newJ = randomNeighbor.y();
             Tile tmp;
-            if (TileFactory.isComplexTileType(newGrid.getTile(newI, newJ))) {
+            if (newGrid.getTile(newI, newJ).isComplexType()) {
                 // swap with inner tile if complex
                 tmp = newGrid.getTile(newI, newJ).getContainedTile();
             }
@@ -138,7 +148,7 @@ public class Anemo extends Tile {
         int newJ = j + windJ;
 
         if (!Grids.isOutOfBounds(newI, newJ, width, height)
-                && !TileFactory.isComplexTileType(newGrid.getTile(newI, newJ))) {
+                && !newGrid.getTile(newI, newJ).isComplexType()) {
             // wind: absorb
             containedTile = newGrid.getTile(newI, newJ);
             newGrid.setTile(newI, newJ, this); // guaranteed replacing the newest state

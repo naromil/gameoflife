@@ -38,6 +38,16 @@ public class Electro extends Tile {
         return containedTile.getColor(); // Empty has none
     }
 
+    @Override
+    public boolean isComplexType() {
+        return true;
+    }
+
+    @Override 
+    public boolean isStrongType() {
+        return true;
+    }
+
     private boolean hasActed = false;
 
     // the probability doesn't exclude complex tiles but will not replace them
@@ -66,7 +76,7 @@ public class Electro extends Tile {
                 int newJ = (int) (Math.random() * width);
                 double currentId = Math.random();
                 Tile oldTile = newGrid.getTile(newI, newJ);
-                if (!TileFactory.isComplexTileType(oldTile)) {
+                if (!oldTile.isComplexType()) {
                     newGrid.setTile(newI, newJ, new Electro(oldTile, currentId));
                 }
                 while (Math.random() < BASE_MORE_STORM_CHANCE) {
@@ -75,7 +85,7 @@ public class Electro extends Tile {
                     int newI2 = neighbors[randomIndex].x();
                     int newJ2 = neighbors[randomIndex].y();
                     Tile oldTile2 = newGrid.getTile(newI2, newJ2);
-                    if (!TileFactory.isComplexTileType(oldTile2)) {
+                    if (!oldTile2.isComplexType()) {
                         newGrid.setTile(newI2, newJ2, new Electro(oldTile2, currentId));
                         newI = newI2;
                         newJ = newJ2;
@@ -179,7 +189,7 @@ public class Electro extends Tile {
         }
 
         // contained tile act, Empty does nothing
-        if (TileFactory.isComplexTileType(containedTile)) {
+        if (containedTile.isComplexType()) {
             throw new IllegalStateException(
                     "Electro cannot contain another complex tile.");
         }
@@ -190,7 +200,7 @@ public class Electro extends Tile {
         int newI = i + direction.x();
         int newJ = j + direction.y();
         if (!Grids.isOutOfBounds(newI, newJ, width, height)) {
-            if (TileFactory.isComplexTileType(newGrid.getTile(newI, newJ))) {
+            if (newGrid.getTile(newI, newJ).isComplexType()) {
                 containedTile = newGrid.getTile(newI, newJ).getContainedTile();
             } else {
                 containedTile = newGrid.getTile(newI, newJ);

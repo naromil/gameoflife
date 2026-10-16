@@ -19,18 +19,6 @@ public class TileFactory {
         Core.class
     );
 
-    // the list of tile types that can contain another one
-    // for outer tile only since this is the definition of complex tile
-    public static boolean isComplexTileType(Tile tile) {
-        return tile instanceof Electro || tile instanceof Anemo || tile instanceof Core;
-    }
-
-    // tiles that support swirl and crystallize
-    public static boolean isStrongTileType(Tile tile) {
-        return tile instanceof Pyro || tile instanceof Hydro
-                || tile instanceof Cryo || tile instanceof Electro;
-    }
-
     private static int getTypeSize() {
         return TYPES.size();
     }

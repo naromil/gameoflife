@@ -10,6 +10,16 @@ public class Empty extends Tile {
         super(DEFAULT_COLOR);
     }
 
+    @Override
+    public boolean isComplexType() {
+        return false;
+    }
+
+    @Override 
+    public boolean isStrongType() {
+        return false;
+    }
+
     // do nothing
     @Override
     public void act(Grid grid, Grid newGrid, int i, int j, int width, int height) {

@@ -34,5 +34,16 @@ public abstract class Tile {
         return null; // default no color so not rendered at all
     }
 
+    // the list of tile types that can contain another one
+    // for outer tile only since this is the definition of complex tile
+    public abstract boolean isComplexType();
+
+    // tiles that support swirl and crystallize
+    public abstract boolean isStrongType();
+
+    public static void globalAct(Grid grid, Grid newGrid, int width, int height) {
+        return;
+    }
+
     public abstract void act(Grid grid, Grid newGrid, int i, int j, int width, int height);
 }

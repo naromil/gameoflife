@@ -19,6 +19,16 @@ public class Pyro extends Tile {
         super(Color.similarColor(DEFAULT_COLOR));
     }
 
+    @Override
+    public boolean isComplexType() {
+        return false;
+    }
+
+    @Override 
+    public boolean isStrongType() {
+        return true;
+    }
+
     public static void globalAct(Grid grid, Grid newGrid, int width, int height) {
         // fire on random Dendro
         double chance = BASE_WILD_FIRE_CHANCE;
