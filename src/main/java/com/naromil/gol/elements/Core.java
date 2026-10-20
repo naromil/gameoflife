@@ -79,7 +79,7 @@ public class Core extends Dendro {
         newGrid.softReplace(i, j, containedTile, this);
 
         // move one tile towards the nearest Pyro, otherwise self kill
-        Point2D next = Grids.directionToNearestType(newGrid, i, j, width, height, Pyro.class);
+        Point next = Grids.directionToNearestType(newGrid, i, j, width, height, Pyro.class);
 
         if (next != null) { // only move if pyro found
             int x = next.x();

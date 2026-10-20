@@ -80,18 +80,18 @@ public class Geo extends Tile {
         return brittleDuration > 0;
     }
 
-    private static List<Point2D> bfs(Grid grid, Grid newGrid, int startI, int startJ,
-            int width, int height, Set<Point2D> visited) {
-        Queue<Point2D> queue = new ArrayDeque<>();
-        List<Point2D> peripheral = new ArrayList<Point2D>();
-        queue.add(new Point2D(startI, startJ));
-        visited.add(new Point2D(startI, startJ));
+    private static List<Point> bfs(Grid grid, Grid newGrid, int startI, int startJ,
+            int width, int height, Set<Point> visited) {
+        Queue<Point> queue = new ArrayDeque<>();
+        List<Point> peripheral = new ArrayList<Point>();
+        queue.add(new Point(startI, startJ));
+        visited.add(new Point(startI, startJ));
 
         while (!queue.isEmpty()) {
-            Point2D current = queue.remove();
+            Point current = queue.remove();
             int currentI = current.x();
             int currentJ = current.y();
-            for (Point2D adjacent : Grids.getNeighbors(currentI, currentJ, width, height)) {
+            for (Point adjacent : Grids.getNeighbors(currentI, currentJ, width, height)) {
                 int newI = adjacent.x();
                 int newJ = adjacent.y();
                 if (grid.hasType(newI, newJ, Geo.class) && !visited.contains(adjacent)) {
@@ -109,14 +109,14 @@ public class Geo extends Tile {
 
     public static void globalAct(Grid grid, Grid newGrid, int width, int height) {
         // mountains
-        Set<Point2D> visited = new HashSet<>();
+        Set<Point> visited = new HashSet<>();
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                if (newGrid.hasType(i, j, Geo.class) && !visited.contains(new Point2D(i, j))) {
+                if (newGrid.hasType(i, j, Geo.class) && !visited.contains(new Point(i, j))) {
 
-                    Set<Point2D> oldVisited = new HashSet<>(visited);
-                    List<Point2D> peripheral = bfs(grid, newGrid, i, j, width, height, visited);
-                    List<Point2D> connected = visited.stream().
+                    Set<Point> oldVisited = new HashSet<>(visited);
+                    List<Point> peripheral = bfs(grid, newGrid, i, j, width, height, visited);
+                    List<Point> connected = visited.stream().
                             filter(p -> !oldVisited.contains(p)).toList();
                     if (connected.isEmpty()) {
                         throw new IllegalStateException("Geo: bfs explored connected component must not be empty.");
@@ -151,7 +151,7 @@ public class Geo extends Tile {
         }
 
         // crystallize
-        for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
+        for (Point adjacent : Grids.getNeighbors(i, j, width, height)) {
             int newI = adjacent.x();
             int newJ = adjacent.y();
             double chance = BASE_CRYSTALLIZE_CHANCE;

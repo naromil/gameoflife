@@ -44,7 +44,7 @@ public class Cryo extends Tile {
         }
 
         // frozen
-        for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
+        for (Point adjacent : Grids.getNeighbors(i, j, width, height)) {
             int newI = adjacent.x();
             int newJ = adjacent.y();
             Tile adjHydro = newGrid.getTileOfType(newI, newJ, Hydro.class);

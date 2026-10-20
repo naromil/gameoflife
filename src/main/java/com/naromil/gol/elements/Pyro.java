@@ -45,12 +45,12 @@ public class Pyro extends Tile {
                 ? (int) Math.ceil(expextedTimes) : (int) Math.floor(expextedTimes);
         for (int t = 0; t < times; t++) {
             if (Math.random() < chance) {
-                List<Point2D> dendroTiles = new ArrayList<>();
+                List<Point> dendroTiles = new ArrayList<>();
                 for (int i = 0; i < height; i++) {
                     for(int j = 0; j < width; j++) {
                         Tile newTile = newGrid.getTileOfType(i, j, Dendro.class);
                         if (newTile instanceof Dendro) {
-                            dendroTiles.add(new Point2D(i, j));
+                            dendroTiles.add(new Point(i, j));
                         }
                     }
                 }
@@ -58,7 +58,7 @@ public class Pyro extends Tile {
                     return;
                 }
                 int randomIndex = (int) (Math.random() * dendroTiles.size());
-                Point2D randomTile = dendroTiles.get(randomIndex);
+                Point randomTile = dendroTiles.get(randomIndex);
                 int newI = randomTile.x();
                 int newJ = randomTile.y();
                 newGrid.softReplace(newI, newJ, new Pyro(), newGrid.getTile(newI, newJ));
@@ -77,7 +77,7 @@ public class Pyro extends Tile {
 
         // burgeon before burning because it is stricter
         // burgeon
-        for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
+        for (Point adjacent : Grids.getNeighbors(i, j, width, height)) {
             int newI = adjacent.x();
             int newJ = adjacent.y();
             Tile adjDendro = newGrid.getTileOfType(newI, newJ, Dendro.class);
@@ -85,7 +85,7 @@ public class Pyro extends Tile {
                     && ((Dendro) adjDendro).hasDendroCore()) {
                 ((Dendro) adjDendro).setDendroCore(false);
                 // burgeon: ignite
-                for (Point2D adjacent2 : Grids.getNeighbors(newI, newJ,
+                for (Point adjacent2 : Grids.getNeighbors(newI, newJ,
                         width, height, 2)) {
                     int newI2 = adjacent2.x();
                     int newJ2 = adjacent2.y();
@@ -98,7 +98,7 @@ public class Pyro extends Tile {
         }
 
         // burning
-        for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
+        for (Point adjacent : Grids.getNeighbors(i, j, width, height)) {
             int newI = adjacent.x();
             int newJ = adjacent.y();
             Tile adjDendro = newGrid.getTileOfType(newI, newJ, Dendro.class);
@@ -110,7 +110,7 @@ public class Pyro extends Tile {
 
         // melt
         boolean hasGoneOut = false;
-        for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
+        for (Point adjacent : Grids.getNeighbors(i, j, width, height)) {
             int newI = adjacent.x();
             int newJ = adjacent.y();
             Tile cryoTile = newGrid.getTileOfType(newI, newJ, Cryo.class);

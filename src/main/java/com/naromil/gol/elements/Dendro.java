@@ -100,7 +100,7 @@ public class Dendro extends Tile {
         if (Grids.doesExistWithinDistance(grid, i, j, width, height, Cryo.class, 2)) {
             isNearHydro = true;
         }
-        for (Point2D adj : Grids.getNeighbors(i, j, width, height, 2)) {
+        for (Point adj : Grids.getNeighbors(i, j, width, height, 2)) {
             int x = adj.x();
             int y = adj.y();
             Tile tile = newGrid.getTileOfType(x, y, Hydro.class);
@@ -125,7 +125,7 @@ public class Dendro extends Tile {
                 || Grids.doesExistWithinDistance(grid, i, j, width, height, Cryo.class, 1));
 
         if (!isFrost && tickWithoutHydro + 1 < MAX_TICKS_WITHOUT_HYDRO) { // frost
-            for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
+            for (Point adjacent : Grids.getNeighbors(i, j, width, height)) {
                 int newI = adjacent.x();
                 int newJ = adjacent.y();
                 // base chance and multipliers
@@ -144,7 +144,7 @@ public class Dendro extends Tile {
         if (tickDendroCore > 0) {
             tickDendroCore--;
             if (tickDendroCore == 0) {
-                for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
+                for (Point adjacent : Grids.getNeighbors(i, j, width, height)) {
                     int newI = adjacent.x();
                     int newJ = adjacent.y();
                     newGrid.softReplace(newI, newJ, new Dendro(), null);

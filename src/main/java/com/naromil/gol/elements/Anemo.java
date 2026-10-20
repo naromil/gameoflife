@@ -60,20 +60,20 @@ public class Anemo extends Tile {
         for (int t = 0; t < times; t++) {
             if (Math.random() < chance) {
                 // find the tiles that are the first in the current direction
-                List<Point2D> firstTiles = new ArrayList<>();
+                List<Point> firstTiles = new ArrayList<>();
                 for (int i = 0; i < height; i++) {
                     for (int j = 0; j < width; j++) {
                         int prevI = i - windI;
                         int prevJ = j - windJ;
                         if (Grids.isOutOfBounds(prevI, prevJ, width, height)) {
-                            firstTiles.add(new Point2D(i, j));
+                            firstTiles.add(new Point(i, j));
                         }
                     }
                 }
 
                 if (!firstTiles.isEmpty()) {
                     int randomIndex = (int) (Math.random() * firstTiles.size());
-                    Point2D randomTile = firstTiles.get(randomIndex);
+                    Point randomTile = firstTiles.get(randomIndex);
                     int newX = randomTile.y();
                     int newY = randomTile.x();
                     Tile oldTile = newGrid.getTile(newY, newX);
@@ -116,9 +116,9 @@ public class Anemo extends Tile {
 
         // swirl
         if (containedTile.isStrongType()) {
-            Point2D[] neighbors = Grids.getNeighbors(i, j, width, height);
+            Point[] neighbors = Grids.getNeighbors(i, j, width, height);
             int randomIndex = (int) (Math.random() * neighbors.length);
-            Point2D randomNeighbor = neighbors[randomIndex];
+            Point randomNeighbor = neighbors[randomIndex];
             int newI = randomNeighbor.x();
             int newJ = randomNeighbor.y();
             Tile tmp;

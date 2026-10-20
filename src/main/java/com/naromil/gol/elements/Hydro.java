@@ -73,7 +73,7 @@ public class Hydro extends Tile {
             int rainY = (int) (Math.random() * width);
 
             // rain: affinity (move towards nearest alike to form lake)
-            Point2D next = Grids.directionToNearestType(newGrid, rainX, rainY, width, height,
+            Point next = Grids.directionToNearestType(newGrid, rainX, rainY, width, height,
                     isWinter ? Cryo.class : Hydro.class);
             int x = next != null ? next.x() : rainX;
             int y = next != null ? next.y() : rainY;
@@ -105,14 +105,14 @@ public class Hydro extends Tile {
 
         // vaporize
         boolean vaporized = false;
-        for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
+        for (Point adjacent : Grids.getNeighbors(i, j, width, height)) {
             int newI = adjacent.x();
             int newJ = adjacent.y();
             if (newGrid.hasType(newI, newJ, Pyro.class)
                     && Math.random() < BASE_VAPORIZE_CHANCE) {
                 // vaporize connected fire
-                List<Point2D> connectedPyro = Grids.bfs(grid, newGrid, newI, newJ, width, height, Pyro.class, MAX_VAPORIZE_TILES);
-                for (Point2D pyro : connectedPyro) {
+                List<Point> connectedPyro = Grids.bfs(grid, newGrid, newI, newJ, width, height, Pyro.class, MAX_VAPORIZE_TILES);
+                for (Point pyro : connectedPyro) {
                     int x = pyro.x();
                     int y = pyro.y();
                     newGrid.softReplace(x, y, new Empty(), newGrid.getTileOfType(x, y, Pyro.class));
