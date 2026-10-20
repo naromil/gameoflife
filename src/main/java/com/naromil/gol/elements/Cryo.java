@@ -17,6 +17,11 @@ public class Cryo extends Tile {
     }
 
     @Override
+    public int getRank() {
+        return 40;
+    }
+
+    @Override
     public boolean isComplexType() {
         return false;
     }

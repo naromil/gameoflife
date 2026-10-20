@@ -27,6 +27,11 @@ public class Geo extends Tile {
     }
 
     @Override
+    public int getRank() {
+        return 60;
+    }
+
+    @Override
     public Color getStatusColor() {
         if (hasShield()) {
             return DEFAULT_COLOR;

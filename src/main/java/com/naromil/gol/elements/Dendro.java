@@ -26,6 +26,11 @@ public class Dendro extends Tile {
     }
 
     @Override
+    public int getRank() {
+        return 70;
+    }
+
+    @Override
     public Color getStatusColor() {
         if (tickDendroCore > 0) {
             return DEFAULT_COLOR;

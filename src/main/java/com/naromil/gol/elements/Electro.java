@@ -34,6 +34,11 @@ public class Electro extends Tile {
     }
 
     @Override
+    public int getRank() {
+        return 10;
+    }
+
+    @Override
     public Color getStatusColor() {
         return containedTile.getColor(); // Empty has none
     }

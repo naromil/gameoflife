@@ -20,6 +20,11 @@ public class Pyro extends Tile {
     }
 
     @Override
+    public int getRank() {
+        return 30;
+    }
+
+    @Override
     public boolean isComplexType() {
         return false;
     }

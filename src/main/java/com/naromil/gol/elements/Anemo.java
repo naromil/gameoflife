@@ -22,6 +22,11 @@ public class Anemo extends Tile {
     }
 
     @Override
+    public int getRank() {
+        return 20;
+    }
+
+    @Override
     public Color getStatusColor() {
         return containedTile.getColor(); // Empty has none
     }

@@ -20,6 +20,11 @@ public class Hydro extends Tile {
         super(Color.similarColor(DEFAULT_COLOR));
     }
 
+    @Override
+    public int getRank() {
+        return 50;
+    }
+
     // lake status
     public Color getStatusColor() {
         if (isCharged()) {

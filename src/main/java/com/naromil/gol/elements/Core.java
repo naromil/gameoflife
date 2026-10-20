@@ -14,6 +14,11 @@ public class Core extends Dendro {
     }
 
     @Override
+    public int getRank() {
+        return 0;
+    }
+
+    @Override
     public Color getStatusColor() {
         return containedTile.getColor();
     }

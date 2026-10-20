@@ -11,6 +11,11 @@ public class Empty extends Tile {
     }
 
     @Override
+    public int getRank() {
+        return 90;
+    }
+
+    @Override
     public boolean isComplexType() {
         return false;
     }

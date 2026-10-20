@@ -3,7 +3,7 @@ package com.naromil.gol.elements;
 import com.naromil.gol.main.Color;
 import com.naromil.gol.main.Grid;
 
-public abstract class Tile {
+public abstract class Tile implements Comparable<Tile> {
     private final Color color;
     // the tile a complex tile is currently holding, Empty if none
     protected Tile containedTile;
@@ -12,6 +12,14 @@ public abstract class Tile {
         this.color = color;
         // Empty is null object
         this.containedTile = this instanceof Empty ? this : new Empty();
+    }
+
+    // the priority of the specific tile class. The lower the more priority.
+    public abstract int getRank();
+
+    @Override 
+    public int compareTo(Tile next) {
+        return getRank() - next.getRank();
     }
 
     public Color getColor() {

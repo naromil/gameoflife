@@ -14,6 +14,11 @@ public class Ash extends Tile {
     }
 
     @Override
+    public int getRank() {
+        return 80;
+    }
+
+    @Override
     public boolean isComplexType() {
         return false;
     }
