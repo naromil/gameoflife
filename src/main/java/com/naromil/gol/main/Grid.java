@@ -1,7 +1,8 @@
 package com.naromil.gol.main;
 
 import java.lang.reflect.Method;
-
+import java.util.ArrayList;
+import java.util.List;
 import com.naromil.gol.elements.Ash;
 import com.naromil.gol.elements.Empty;
 import com.naromil.gol.elements.Tile;
@@ -128,7 +129,7 @@ public class Grid {
      * the preferred wrapper to replace a tile.
      * @param oldTile do not use Empty if no preference, use null instead.
      */
-    public synchronized void softReplace(int i, int j, Tile newTile, Tile oldTile) {
+    public void softReplace(int i, int j, Tile newTile, Tile oldTile) {
         if (tiles[i][j] instanceof Empty || tiles[i][j] instanceof Ash || tiles[i][j] == oldTile) {
             tiles[i][j] = newTile;
         } else if (tiles[i][j].getContainedTile() == oldTile) {
@@ -172,6 +173,13 @@ public class Grid {
         return statusGrid;
     }
 
+    public record TileState(Tile tile, int x, int y) implements Comparable<TileState> {
+        @Override
+        public int compareTo(TileState other) {
+            return this.tile.getRank() - other.tile.getRank();
+        }
+    }
+
     /* ---- Main Logic ---- */
     /**
      * Advances the grid to the next state based on the rules of the game.
@@ -205,12 +213,16 @@ public class Grid {
         }
         
         // 4. Each tile act according to their own rules
+        List<TileState> tileStates = new ArrayList<>();
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                if (!(tiles[i][j] instanceof Empty)) {
-                    tiles[i][j].act(this, newGrid, i, j, width, height);
-                }
+                tileStates.add(new TileState(tiles[i][j], i, j));
             }
+        }
+
+        tileStates.sort(TileState::compareTo);
+        for (TileState tileState : tileStates) {
+            tileState.tile().act(this, newGrid, tileState.x(), tileState.y(), width, height);
         }
 
         return newGrid;
