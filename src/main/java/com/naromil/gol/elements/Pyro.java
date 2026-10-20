@@ -61,7 +61,7 @@ public class Pyro extends Tile {
                 Point2D randomTile = dendroTiles.get(randomIndex);
                 int newI = randomTile.x();
                 int newJ = randomTile.y();
-                newGrid.setTile(newI, newJ, new Pyro());
+                newGrid.softReplace(newI, newJ, new Pyro(), newGrid.getTile(newI, newJ));
             }
         }
     }

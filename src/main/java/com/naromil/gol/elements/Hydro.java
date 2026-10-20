@@ -79,7 +79,7 @@ public class Hydro extends Tile {
             int y = next != null ? next.y() : rainY;
 
             // directly snows (spawn Cryo) in winter
-            newGrid.setTile(x, y, isWinter ? new Cryo() : new Hydro());
+            newGrid.softReplace(x, y, isWinter ? new Cryo() : new Hydro(), newGrid.getTile(x, y));
         }
     }
 

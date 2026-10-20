@@ -35,6 +35,9 @@ Some tiles have special states, displayed as small squares in the center of a ti
 - **Quickened (Dendro)**: Grow faster. Display Electro color if no Core.
 - **Lake (Hydro)**: Becomes Lake and persists if connected to at least one other Hydro, otherwise dies in 15 ticks. Display Hydro color.
 
+### Priorities
+
+Tiles have priorities. Lower priorities can act first and are less likely to be overwritten.
 
 ## Main Rules
 

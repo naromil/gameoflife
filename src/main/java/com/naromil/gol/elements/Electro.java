@@ -83,7 +83,7 @@ public class Electro extends Tile {
                 double currentId = Math.random();
                 Tile oldTile = newGrid.getTile(newI, newJ);
                 if (!oldTile.isComplexType()) {
-                    newGrid.setTile(newI, newJ, new Electro(oldTile, currentId));
+                    newGrid.softReplace(newI, newJ, new Electro(oldTile, currentId), oldTile);
                 }
                 while (Math.random() < BASE_MORE_STORM_CHANCE) {
                     Point2D[] neighbors = Grids.getNeighbors(newI, newJ, width, height);
@@ -92,7 +92,8 @@ public class Electro extends Tile {
                     int newJ2 = neighbors[randomIndex].y();
                     Tile oldTile2 = newGrid.getTile(newI2, newJ2);
                     if (!oldTile2.isComplexType()) {
-                        newGrid.setTile(newI2, newJ2, new Electro(oldTile2, currentId));
+                        newGrid.softReplace(newI2, newJ2, new Electro(oldTile2, currentId),
+                                oldTile2);
                         newI = newI2;
                         newJ = newJ2;
                     }
@@ -108,7 +109,8 @@ public class Electro extends Tile {
         act(grid, newGrid, i, j, width, height, new Point2D(directionX, directionY));
     }
 
-    private void act(Grid grid, Grid newGrid, int i, int j, int width, int height, Point2D direction) {
+    private void act(Grid grid, Grid newGrid, int i, int j, int width, int height,
+            Point2D direction) {
         if (hasActed) {
             return;
         }
@@ -211,7 +213,7 @@ public class Electro extends Tile {
             } else {
                 containedTile = newGrid.getTile(newI, newJ);
             }
-            newGrid.setTile(newI, newJ, this); // strongest of the complex tiles
+            newGrid.softReplace(newI, newJ, this, newGrid.getTile(newI, newJ));
         }
 
         // storm: move together

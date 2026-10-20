@@ -122,29 +122,17 @@ public class Grid {
         return new Empty();
     }
 
-    public void setTile(int i, int j, Tile tile) {
-        tiles[i][j] = tile;
-    }
-
     /**
      * replace newTile but it can only overwrite oldTile.
      * can replace contained tiles as well, but only if non-empty before.
      * the preferred wrapper to replace a tile.
-     * @param oldTile do not use Empty, omit it instead.
+     * @param oldTile do not use Empty if no preference, use null instead.
      */
-    public void softReplace(int i, int j, Tile newTile, Tile oldTile) {
+    public synchronized void softReplace(int i, int j, Tile newTile, Tile oldTile) {
         if (tiles[i][j] instanceof Empty || tiles[i][j] instanceof Ash || tiles[i][j] == oldTile) {
             tiles[i][j] = newTile;
         } else if (tiles[i][j].getContainedTile() == oldTile) {
             tiles[i][j].setContainedTile(newTile);
-        }
-    }
-
-    // cannot overwrite any element by default
-    // cannot replace contained tiles
-    public void softReplace(int i, int j, Tile newTile) {
-        if (tiles[i][j] instanceof Empty || tiles[i][j] instanceof Ash) {
-            tiles[i][j] = newTile;
         }
     }
 

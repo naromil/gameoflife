@@ -78,7 +78,7 @@ public class Anemo extends Tile {
                     int newY = randomTile.x();
                     Tile oldTile = newGrid.getTile(newY, newX);
                     if (!oldTile.isComplexType()) {
-                        newGrid.setTile(newY, newX, new Anemo(oldTile));
+                        newGrid.softReplace(newY, newX, new Anemo(oldTile), oldTile);
                     }
                 }
             }
@@ -156,7 +156,7 @@ public class Anemo extends Tile {
                 && !newGrid.getTile(newI, newJ).isComplexType()) {
             // wind: absorb
             containedTile = newGrid.getTile(newI, newJ);
-            newGrid.setTile(newI, newJ, this); // guaranteed replacing the newest state
+            newGrid.softReplace(newI, newJ, this, newGrid.getTile(newI, newJ));
         }
     }
 }

@@ -132,7 +132,7 @@ public class Geo extends Tile {
                             int randomIndex = (int) (Math.random() * peripheral.size());
                             int newI = peripheral.get(randomIndex).x();
                             int newJ = peripheral.get(randomIndex).y();
-                            newGrid.setTile(newI, newJ, new Geo());
+                            newGrid.softReplace(newI, newJ, new Geo(), newGrid.getTile(newI, newJ));
                         }
                     }
 

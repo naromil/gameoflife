@@ -135,7 +135,7 @@ public class Dendro extends Tile {
                 if (newGrid.getCurrentSeason() == SeasonType.SPRING) { chance *= 1.5; }
                 if (tickQuickened > 0) { chance *= 3; }
                 if (Math.random() < chance) {
-                    newGrid.softReplace(newI, newJ, new Dendro(tickWithoutHydro + 1));
+                    newGrid.softReplace(newI, newJ, new Dendro(tickWithoutHydro + 1), null);
                 }
             }
         }
@@ -147,7 +147,7 @@ public class Dendro extends Tile {
                 for (Point2D adjacent : Grids.getNeighbors(i, j, width, height)) {
                     int newI = adjacent.x();
                     int newJ = adjacent.y();
-                    newGrid.softReplace(newI, newJ, new Dendro());
+                    newGrid.softReplace(newI, newJ, new Dendro(), null);
                 }
             }
         }
