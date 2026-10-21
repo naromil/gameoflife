@@ -58,8 +58,8 @@ public class Core extends Dendro {
             // extinguish all on the grid
             for (int x = 0; x < height; x++) {
                 for (int y = 0; y < width; y++) {
-                    if (newGrid.hasType(x, y, Pyro.class)) {
-                        newGrid.softReplace(x, y, new Empty(), newGrid.getTileOfType(x, y, Pyro.class));
+                    if (grid.hasType(x, y, Pyro.class)) {
+                        newGrid.softReplace(x, y, new Empty(), grid.getTileOfType(x, y, Pyro.class));
                     }
                 }
             }
@@ -79,12 +79,12 @@ public class Core extends Dendro {
         newGrid.softReplace(i, j, containedTile, this);
 
         // move one tile towards the nearest Pyro, otherwise self kill
-        Point next = Grids.directionToNearestType(newGrid, i, j, width, height, Pyro.class);
+        Point next = Grids.directionToNearestType(grid, i, j, width, height, Pyro.class);
 
         if (next != null) { // only move if pyro found
             int x = next.x();
             int y = next.y();
-            Tile oldTile = newGrid.getTile(x, y);
+            Tile oldTile = grid.getTile(x, y);
             if (!oldTile.isComplexType()) {
                 containedTile = oldTile;
             }

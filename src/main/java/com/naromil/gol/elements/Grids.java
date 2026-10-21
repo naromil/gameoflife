@@ -58,7 +58,7 @@ public class Grids {
         return result;
     }
 
-    public static List<Point> bfs(Grid grid, Grid newGrid, int startI, int startJ,
+    public static List<Point> bfs(Grid grid, int startI, int startJ,
             int width, int height, Class<? extends Tile> targetType, int maxCount) {
         Set<Point> visited = new LinkedHashSet<>();
         Queue<Point> queue = new ArrayDeque<>();
@@ -85,14 +85,14 @@ public class Grids {
         return new ArrayList<>(visited);
     }
 
-    public static List<Point> bfs(Grid grid, Grid newGrid, int startI, int startJ,
+    public static List<Point> bfs(Grid grid, int startI, int startJ,
             int width, int height, Class<? extends Tile> targetType) {
-        return bfs(grid, newGrid, startI, startJ, width, height, targetType, Integer.MAX_VALUE);
+        return bfs(grid, startI, startJ, width, height, targetType, Integer.MAX_VALUE);
     }
 
     private record DirectionStore(Point current, Point direction, int distance) {}
 
-    public static Point directionToNearestType(Grid newGrid, int startI, int startJ, int width,
+    public static Point directionToNearestType(Grid grid, int startI, int startJ, int width,
             int height, Class<? extends Tile> targetType) {
         Set<Point> visited = new HashSet<>();
         Queue<DirectionStore> queue = new ArrayDeque<>();
@@ -110,7 +110,7 @@ public class Grids {
             DirectionStore current = queue.remove();
             int currentI = current.current().x();
             int currentJ = current.current().y();
-            if (newGrid.hasType(currentI, currentJ, targetType)) {
+            if (grid.hasType(currentI, currentJ, targetType)) {
                 return current.direction();
             }
             for (Point adjacent : Grids.getNeighbors(currentI, currentJ, width, height)) {

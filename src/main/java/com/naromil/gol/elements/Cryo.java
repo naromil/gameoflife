@@ -34,7 +34,7 @@ public class Cryo extends Tile {
     @Override
     public void act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
         // thaw
-        SeasonType currentSeason = newGrid.getCurrentSeason();
+        SeasonType currentSeason = grid.getCurrentSeason();
         if (currentSeason != SeasonType.WINTER) {
             tickWithoutWinter++;
             if (tickWithoutWinter >= MAX_TICKS_WITHOUT_WINTER) {
@@ -47,7 +47,7 @@ public class Cryo extends Tile {
         for (Point adjacent : Grids.getNeighbors(i, j, width, height)) {
             int newI = adjacent.x();
             int newJ = adjacent.y();
-            Tile adjHydro = newGrid.getTileOfType(newI, newJ, Hydro.class);
+            Tile adjHydro = grid.getTileOfType(newI, newJ, Hydro.class);
             if (!(adjHydro instanceof Empty)
                     && Grids.countTilesWithinDistance(grid, newI, newJ,
                     width, height, Cryo.class, 1) >= 2) {

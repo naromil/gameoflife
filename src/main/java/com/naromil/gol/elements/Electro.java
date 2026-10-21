@@ -60,7 +60,7 @@ public class Electro extends Tile {
         // storms: initialize
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                Tile tile = newGrid.getTile(i, j);
+                Tile tile = grid.getTile(i, j);
                 if (tile instanceof Electro) {
                     // ignoring contained Electro that are for special purposes
                     ((Electro) tile).hasActed = false;
@@ -70,7 +70,7 @@ public class Electro extends Tile {
 
         // storms: spawn
         double chance = BASE_STORM_CHANCE;
-        if (newGrid.getCurrentSeason() == SeasonType.FALL) {
+        if (grid.getCurrentSeason() == SeasonType.FALL) {
             chance *= 3;
         }
         double expextedTimes = height * width / 1000.0;
@@ -81,7 +81,7 @@ public class Electro extends Tile {
                 int newI = (int) (Math.random() * height);
                 int newJ = (int) (Math.random() * width);
                 double currentId = Math.random();
-                Tile oldTile = newGrid.getTile(newI, newJ);
+                Tile oldTile = grid.getTile(newI, newJ);
                 if (!oldTile.isComplexType()) {
                     newGrid.softReplace(newI, newJ, new Electro(oldTile, currentId), oldTile);
                 }
@@ -90,7 +90,7 @@ public class Electro extends Tile {
                     int randomIndex = (int) (Math.random() * neighbors.length);
                     int newI2 = neighbors[randomIndex].x();
                     int newJ2 = neighbors[randomIndex].y();
-                    Tile oldTile2 = newGrid.getTile(newI2, newJ2);
+                    Tile oldTile2 = grid.getTile(newI2, newJ2);
                     if (!oldTile2.isComplexType()) {
                         newGrid.softReplace(newI2, newJ2, new Electro(oldTile2, currentId),
                                 oldTile2);
@@ -130,7 +130,7 @@ public class Electro extends Tile {
             for (Point adjacent : Grids.getNeighbors(i, j, width, height, 2)) {
                 int newI = adjacent.x();
                 int newJ = adjacent.y();
-                Tile oldTile = newGrid.getTile(newI, newJ);
+                Tile oldTile = grid.getTile(newI, newJ);
                 if (oldTile instanceof Geo && ((Geo) oldTile).hasShield()) {
                     ((Geo) oldTile).setShield(false); // shield: protection
                     continue;
@@ -149,7 +149,7 @@ public class Electro extends Tile {
             Point randomNeighbor = neighbors3.get(randomIndex);
             int newI = randomNeighbor.x();
             int newJ = randomNeighbor.y();
-            newGrid.softReplace(newI, newJ, new Pyro(), newGrid.getTile(newI, newJ));
+            newGrid.softReplace(newI, newJ, new Pyro(), grid.getTile(newI, newJ));
             return;
         }
 
@@ -167,10 +167,10 @@ public class Electro extends Tile {
             for (Point neighbor : connected) {
                 int newI = neighbor.x();
                 int newJ = neighbor.y();
-                if (!newGrid.hasType(newI, newJ, Hydro.class)) {
+                if (!grid.hasType(newI, newJ, Hydro.class)) {
                     continue; // already replaced by other tile this tick
                 }
-                Hydro lakeHydro = (Hydro) newGrid.getTileOfType(newI, newJ, Hydro.class);
+                Hydro lakeHydro = (Hydro) grid.getTileOfType(newI, newJ, Hydro.class);
                 lakeHydro.setCharged(true);
             }
         }
@@ -188,8 +188,8 @@ public class Electro extends Tile {
             for (Point adjacent : Grids.getNeighbors(i, j, width, height)) {
                 int newI = adjacent.x();
                 int newJ = adjacent.y();
-                if (newGrid.hasType(newI, newJ, Geo.class)) {
-                    Geo geo = (Geo) newGrid.getTileOfType(newI, newJ, Geo.class);
+                if (grid.hasType(newI, newJ, Geo.class)) {
+                    Geo geo = (Geo) grid.getTileOfType(newI, newJ, Geo.class);
                     geo.setBrittle(true);
                 }
             }
@@ -208,19 +208,19 @@ public class Electro extends Tile {
         int newI = i + direction.x();
         int newJ = j + direction.y();
         if (!Grids.isOutOfBounds(newI, newJ, width, height)) {
-            if (newGrid.getTile(newI, newJ).isComplexType()) {
-                containedTile = newGrid.getTile(newI, newJ).getContainedTile();
+            if (grid.getTile(newI, newJ).isComplexType()) {
+                containedTile = grid.getTile(newI, newJ).getContainedTile();
             } else {
-                containedTile = newGrid.getTile(newI, newJ);
+                containedTile = grid.getTile(newI, newJ);
             }
-            newGrid.softReplace(newI, newJ, this, newGrid.getTile(newI, newJ));
+            newGrid.softReplace(newI, newJ, this, grid.getTile(newI, newJ));
         }
 
         // storm: move together
         for (Point adjacent : Grids.getNeighbors(i, j, width, height)) {
             int adjI = adjacent.x();
             int adjJ = adjacent.y();
-            Tile adjTile = newGrid.getTile(adjI, adjJ);
+            Tile adjTile = grid.getTile(adjI, adjJ);
             if (adjTile instanceof Electro && ((Electro) adjTile).id == this.id) {
                 ((Electro) adjTile).act(grid, newGrid, adjI, adjJ, width, height, direction);
             }

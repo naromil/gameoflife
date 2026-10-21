@@ -37,7 +37,7 @@ public class Pyro extends Tile {
     public static void globalAct(Grid grid, Grid newGrid, int width, int height) {
         // fire on random Dendro
         double chance = BASE_WILD_FIRE_CHANCE;
-        if (newGrid.getCurrentSeason() == SeasonType.SUMMER) {
+        if (grid.getCurrentSeason() == SeasonType.SUMMER) {
             chance *= 2;
         }
         double expextedTimes = height * width / 2000.0;
@@ -48,7 +48,7 @@ public class Pyro extends Tile {
                 List<Point> dendroTiles = new ArrayList<>();
                 for (int i = 0; i < height; i++) {
                     for(int j = 0; j < width; j++) {
-                        Tile newTile = newGrid.getTileOfType(i, j, Dendro.class);
+                        Tile newTile = grid.getTileOfType(i, j, Dendro.class);
                         if (newTile instanceof Dendro) {
                             dendroTiles.add(new Point(i, j));
                         }
@@ -61,7 +61,7 @@ public class Pyro extends Tile {
                 Point randomTile = dendroTiles.get(randomIndex);
                 int newI = randomTile.x();
                 int newJ = randomTile.y();
-                newGrid.softReplace(newI, newJ, new Pyro(), newGrid.getTile(newI, newJ));
+                newGrid.softReplace(newI, newJ, new Pyro(), grid.getTile(newI, newJ));
             }
         }
     }
@@ -80,7 +80,7 @@ public class Pyro extends Tile {
         for (Point adjacent : Grids.getNeighbors(i, j, width, height)) {
             int newI = adjacent.x();
             int newJ = adjacent.y();
-            Tile adjDendro = newGrid.getTileOfType(newI, newJ, Dendro.class);
+            Tile adjDendro = grid.getTileOfType(newI, newJ, Dendro.class);
             if (!(adjDendro instanceof Empty)
                     && ((Dendro) adjDendro).hasDendroCore()) {
                 ((Dendro) adjDendro).setDendroCore(false);
@@ -89,7 +89,7 @@ public class Pyro extends Tile {
                         width, height, 2)) {
                     int newI2 = adjacent2.x();
                     int newJ2 = adjacent2.y();
-                    Tile adjDendro2 = newGrid.getTileOfType(newI2, newJ2, Dendro.class);
+                    Tile adjDendro2 = grid.getTileOfType(newI2, newJ2, Dendro.class);
                     if (!(adjDendro2 instanceof Empty)) {
                         newGrid.softReplace(newI2, newJ2, new Pyro(), adjDendro2);
                     }
@@ -101,7 +101,7 @@ public class Pyro extends Tile {
         for (Point adjacent : Grids.getNeighbors(i, j, width, height)) {
             int newI = adjacent.x();
             int newJ = adjacent.y();
-            Tile adjDendro = newGrid.getTileOfType(newI, newJ, Dendro.class);
+            Tile adjDendro = grid.getTileOfType(newI, newJ, Dendro.class);
             if (!(adjDendro instanceof Empty)
                     && Math.random() < BASE_BURNING_CHANCE) {
                 newGrid.softReplace(newI, newJ, new Pyro(), adjDendro);
@@ -113,7 +113,7 @@ public class Pyro extends Tile {
         for (Point adjacent : Grids.getNeighbors(i, j, width, height)) {
             int newI = adjacent.x();
             int newJ = adjacent.y();
-            Tile cryoTile = newGrid.getTileOfType(newI, newJ, Cryo.class);
+            Tile cryoTile = grid.getTileOfType(newI, newJ, Cryo.class);
             if (cryoTile instanceof Cryo) {
                 newGrid.softReplace(newI, newJ, new Hydro(), cryoTile);
                 hasGoneOut = true; // melt: goes out

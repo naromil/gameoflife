@@ -112,7 +112,7 @@ public class Geo extends Tile {
         Set<Point> visited = new HashSet<>();
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                if (newGrid.hasType(i, j, Geo.class) && !visited.contains(new Point(i, j))) {
+                if (grid.hasType(i, j, Geo.class) && !visited.contains(new Point(i, j))) {
 
                     Set<Point> oldVisited = new HashSet<>(visited);
                     List<Point> peripheral = bfs(grid, newGrid, i, j, width, height, visited);
@@ -132,7 +132,7 @@ public class Geo extends Tile {
                             int randomIndex = (int) (Math.random() * peripheral.size());
                             int newI = peripheral.get(randomIndex).x();
                             int newJ = peripheral.get(randomIndex).y();
-                            newGrid.softReplace(newI, newJ, new Geo(), newGrid.getTile(newI, newJ));
+                            newGrid.softReplace(newI, newJ, new Geo(), grid.getTile(newI, newJ));
                         }
                     }
 
@@ -157,11 +157,11 @@ public class Geo extends Tile {
             double chance = BASE_CRYSTALLIZE_CHANCE;
             if (hasShield()) { chance = 0; } // already have shield
             if (Math.random() < chance
-                    && newGrid.getTile(newI, newJ).isStrongType()) {
+                    && grid.getTile(newI, newJ).isStrongType()) {
                 setShield(true);
                 // crystallize: absorb
                 if (Math.random() < BASE_ABSORB_CHANCE) {
-                    newGrid.softReplace(newI, newJ, new Empty(), newGrid.getTile(newI, newJ));
+                    newGrid.softReplace(newI, newJ, new Empty(), grid.getTile(newI, newJ));
                 }
                 break;
             }

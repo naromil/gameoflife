@@ -62,7 +62,7 @@ public class Hydro extends Tile {
 
     public static void globalAct(Grid grid, Grid newGrid, int width, int height) {
         // rain: spawn
-        boolean isWinter = newGrid.getCurrentSeason() == SeasonType.WINTER;
+        boolean isWinter = grid.getCurrentSeason() == SeasonType.WINTER;
 
         double expectedTimes = height * width / 500.0;
         int times = (Math.random() < expectedTimes - Math.floor(expectedTimes))
@@ -73,18 +73,20 @@ public class Hydro extends Tile {
             int rainY = (int) (Math.random() * width);
 
             // rain: affinity (move towards nearest alike to form lake)
-            Point next = Grids.directionToNearestType(newGrid, rainX, rainY, width, height,
+            Point next = Grids.directionToNearestType(grid, rainX, rainY, width, height,
                     isWinter ? Cryo.class : Hydro.class);
             int x = next != null ? next.x() : rainX;
             int y = next != null ? next.y() : rainY;
 
             // directly snows (spawn Cryo) in winter
-            newGrid.softReplace(x, y, isWinter ? new Cryo() : new Hydro(), newGrid.getTile(x, y));
+            newGrid.softReplace(x, y, isWinter ? new Cryo() : new Hydro(), grid.getTile(x, y));
         }
     }
 
     @Override
     public void act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
+        // TODO: plateau (Geo)
+
         // rain: dry out
         if (Grids.countTilesWithinDistance(grid,
                 i, j, width, height, Hydro.class, 1) > 1) {
@@ -94,7 +96,7 @@ public class Hydro extends Tile {
             isLake = false;
             tickRain++;
             int maxTicks = MAX_TICKS_RAIN;
-            if (newGrid.getCurrentSeason() == SeasonType.SUMMER) {
+            if (grid.getCurrentSeason() == SeasonType.SUMMER) {
                 maxTicks /= 2;
             }
             if (tickRain >= maxTicks) {
@@ -108,14 +110,14 @@ public class Hydro extends Tile {
         for (Point adjacent : Grids.getNeighbors(i, j, width, height)) {
             int newI = adjacent.x();
             int newJ = adjacent.y();
-            if (newGrid.hasType(newI, newJ, Pyro.class)
+            if (grid.hasType(newI, newJ, Pyro.class)
                     && Math.random() < BASE_VAPORIZE_CHANCE) {
                 // vaporize connected fire
-                List<Point> connectedPyro = Grids.bfs(grid, newGrid, newI, newJ, width, height, Pyro.class, MAX_VAPORIZE_TILES);
+                List<Point> connectedPyro = Grids.bfs(grid, newI, newJ, width, height, Pyro.class, MAX_VAPORIZE_TILES);
                 for (Point pyro : connectedPyro) {
                     int x = pyro.x();
                     int y = pyro.y();
-                    newGrid.softReplace(x, y, new Empty(), newGrid.getTileOfType(x, y, Pyro.class));
+                    newGrid.softReplace(x, y, new Empty(), grid.getTileOfType(x, y, Pyro.class));
                 }
                 if (Math.random() < BASE_VAPORIZE_STEAM_CHANCE) {
                     vaporized = true; // vaporize: steam

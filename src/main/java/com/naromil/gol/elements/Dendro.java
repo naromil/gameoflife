@@ -103,7 +103,7 @@ public class Dendro extends Tile {
         for (Point adj : Grids.getNeighbors(i, j, width, height, 2)) {
             int x = adj.x();
             int y = adj.y();
-            Tile tile = newGrid.getTileOfType(x, y, Hydro.class);
+            Tile tile = grid.getTileOfType(x, y, Hydro.class);
             if (tile instanceof Hydro && !((Hydro) tile).isCharged()) { // charged: wither
                 isNearHydro = true;
                 break;
@@ -121,7 +121,7 @@ public class Dendro extends Tile {
         }
 
         // growth
-        setFrost(newGrid.getCurrentSeason() == SeasonType.WINTER
+        setFrost(grid.getCurrentSeason() == SeasonType.WINTER
                 || Grids.doesExistWithinDistance(grid, i, j, width, height, Cryo.class, 1));
 
         if (!isFrost && tickWithoutHydro + 1 < MAX_TICKS_WITHOUT_HYDRO) { // frost
@@ -131,8 +131,8 @@ public class Dendro extends Tile {
                 // base chance and multipliers
                 double chance = BASE_GROWTH_CHANCE;
                 if (isNearHydro) { chance *= 2; }
-                if (newGrid.hasType(newI, newJ, Ash.class)) { chance *= 2; } // burnout: fertile
-                if (newGrid.getCurrentSeason() == SeasonType.SPRING) { chance *= 1.5; }
+                if (grid.hasType(newI, newJ, Ash.class)) { chance *= 2; } // burnout: fertile
+                if (grid.getCurrentSeason() == SeasonType.SPRING) { chance *= 1.5; }
                 if (tickQuickened > 0) { chance *= 3; }
                 if (Math.random() < chance) {
                     newGrid.softReplace(newI, newJ, new Dendro(tickWithoutHydro + 1), null);
@@ -156,7 +156,7 @@ public class Dendro extends Tile {
         if (Grids.doesExistWithinDistance(grid,
                 i, j, width, height, Hydro.class, 1)) {
             double chance = BASE_BLOOM_CHANCE;
-            if (newGrid.getCurrentSeason() == SeasonType.SPRING) {
+            if (grid.getCurrentSeason() == SeasonType.SPRING) {
                 chance *= 2;
             }
             if (Math.random() < chance) {
