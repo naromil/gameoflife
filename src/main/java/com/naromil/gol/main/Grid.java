@@ -3,6 +3,7 @@ package com.naromil.gol.main;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import com.naromil.gol.elements.Ash;
 import com.naromil.gol.elements.Empty;
 import com.naromil.gol.elements.Tile;
@@ -130,11 +131,16 @@ public class Grid {
      * @param oldTile do not use Empty if no preference, use null instead.
      */
     public void softReplace(int i, int j, Tile newTile, Tile oldTile) {
-        if (tiles[i][j] instanceof Empty || tiles[i][j] instanceof Ash || tiles[i][j] == oldTile) {
+        if (tiles[i][j] instanceof Empty || tiles[i][j] instanceof Ash
+                || hasUuid(tiles[i][j], oldTile)) {
             tiles[i][j] = newTile;
-        } else if (tiles[i][j].getContainedTile() == oldTile) {
+        } else if (hasUuid(tiles[i][j].getContainedTile(), oldTile)) {
             tiles[i][j].setContainedTile(newTile);
         }
+    }
+
+    private static boolean hasUuid(Tile tile, Tile oldTile) {
+        return oldTile != null && Objects.equals(tile.getUuid(), oldTile.getUuid());
     }
 
     /* ---- Environment operations ---- */

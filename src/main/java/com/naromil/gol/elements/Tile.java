@@ -1,15 +1,19 @@
 package com.naromil.gol.elements;
 
+import java.util.UUID;
+
 import com.naromil.gol.main.Color;
 import com.naromil.gol.main.Grid;
 
 public abstract class Tile implements Comparable<Tile> {
     private final Color color;
+    private final UUID uuid;
     // the tile a complex tile is currently holding, Empty if none
     protected Tile containedTile;
 
     public Tile(Color color) {
         this.color = color;
+        this.uuid = this instanceof Empty ? null : UUID.randomUUID();
         // Empty is null object
         this.containedTile = this instanceof Empty ? this : new Empty();
     }
@@ -24,6 +28,10 @@ public abstract class Tile implements Comparable<Tile> {
 
     public Color getColor() {
         return color;
+    }
+
+    public UUID getUuid() {
+        return uuid;
     }
 
     public Tile getContainedTile() {
