@@ -16,6 +16,11 @@ public class Cryo extends Tile {
         super(Color.similarColor(DEFAULT_COLOR));
     }
 
+    public Cryo(int tickWithoutWinter) {
+        this();
+        this.tickWithoutWinter = tickWithoutWinter;
+    }
+
     @Override
     public int getRank() {
         return 40;
@@ -41,6 +46,8 @@ public class Cryo extends Tile {
                 newGrid.replace(i, j, new Hydro(), this);
                 return;
             }
+        } else {
+            tickWithoutWinter = 0;
         }
 
         // frozen
@@ -54,7 +61,7 @@ public class Cryo extends Tile {
                 double frozenChance = (currentSeason == SeasonType.WINTER)
                         ? BASE_FROZEN_WINTER_CHANCE : BASE_FROZEN_NORMAL_CHANCE;
                 if (Math.random() < frozenChance) {
-                    newGrid.replace(newI, newJ, new Cryo(), adjHydro);
+                    newGrid.replace(newI, newJ, new Cryo(tickWithoutWinter + 1), adjHydro);
                 }
             }
         }

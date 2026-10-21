@@ -71,6 +71,7 @@ Tiles have priorities. Lower priorities can act first and are less likely to be 
 23. **Frost (Dendro x Cryo)**: Dendro next to Cryo stops growing.
 24. **Pollination (Dendro x Anemo)**: when Anemo above Dendro, Anemo becomes pollinated and plant a new Dendro at a empty tile that it passes.
 25. **Erosion (Geo x Anemo)**: when Anemo above Geo, 2% kills Geo.
+26. **Plateau (Geo x Hydro)**: when Hydro adjacent to Geo, 1% turn into Cryo.
 
 ## Seasons
 

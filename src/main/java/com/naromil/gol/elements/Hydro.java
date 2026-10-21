@@ -11,6 +11,7 @@ public class Hydro extends Tile {
     private static final int MAX_TICKS_RAIN = 15;
     private static final double BASE_VAPORIZE_CHANCE = 0.50;
     private static final double BASE_VAPORIZE_STEAM_CHANCE = 0.50;
+    private static final double BASE_PLATEAU_CHANCE = 0.01;
     private static final int MAX_VAPORIZE_TILES = 5;
 
     private boolean isLake = false;
@@ -85,7 +86,12 @@ public class Hydro extends Tile {
 
     @Override
     public void act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
-        // TODO: plateau (Geo)
+        // plateau
+        if (Math.random() < BASE_PLATEAU_CHANCE && Grids.doesExistWithinDistance(grid,
+                i, j, width, height, Geo.class, 1)) {
+            newGrid.replace(i, j, new Cryo(), this);
+            return;
+        }
 
         // rain: dry out
         if (Grids.countTilesWithinDistance(grid,
@@ -113,7 +119,8 @@ public class Hydro extends Tile {
             if (grid.hasType(newI, newJ, Pyro.class)
                     && Math.random() < BASE_VAPORIZE_CHANCE) {
                 // vaporize connected fire
-                List<Point> connectedPyro = Grids.bfs(grid, newI, newJ, width, height, Pyro.class, MAX_VAPORIZE_TILES);
+                List<Point> connectedPyro = Grids.bfs(grid, newI, newJ, width, height,
+                        Pyro.class, MAX_VAPORIZE_TILES);
                 for (Point pyro : connectedPyro) {
                     int x = pyro.x();
                     int y = pyro.y();
