@@ -78,7 +78,7 @@ public class Anemo extends Tile {
                     int y = randomTile.y();
                     Tile oldTile = grid.getTile(x, y);
                     if (!oldTile.isComplexType()) {
-                        newGrid.softReplace(x, y, new Anemo(oldTile), oldTile);
+                        newGrid.replace(x, y, new Anemo(oldTile), oldTile);
                     }
                 }
             }
@@ -92,7 +92,7 @@ public class Anemo extends Tile {
             Geo geo = (Geo) containedTile;
             // shield: protection; brittle: erosion.
             if (!geo.hasShield() && (geo.isBrittle() || Math.random() < Geo.BASE_EROSION_CHANCE)) {
-                newGrid.softReplace(i, j, new Empty(), containedTile);
+                newGrid.replace(i, j, new Empty(), containedTile);
             }
         }
 
@@ -129,7 +129,7 @@ public class Anemo extends Tile {
             else {
                 tmp = grid.getTile(newI, newJ);
             }
-            newGrid.softReplace(newI, newJ, containedTile, tmp);
+            newGrid.replace(newI, newJ, containedTile, tmp);
             if (Math.random() < BASE_SWIRL_COPY_CHANCE) {
                 try {
                     containedTile = containedTile.getClass().getDeclaredConstructor(containedTile.getClass()).newInstance();
@@ -143,7 +143,7 @@ public class Anemo extends Tile {
         }
 
         // wind: moves
-        newGrid.softReplace(i, j, containedTile, this);
+        newGrid.replace(i, j, containedTile, this);
 
         // goes in the fixed direction of current seasonal wind
         int[] windDirections = grid.getWindDirection();
@@ -156,7 +156,7 @@ public class Anemo extends Tile {
                 && !grid.getTile(newI, newJ).isComplexType()) {
             // wind: absorb
             containedTile = grid.getTile(newI, newJ);
-            newGrid.softReplace(newI, newJ, this, newGrid.getTile(newI, newJ));
+            newGrid.replace(newI, newJ, this, newGrid.getTile(newI, newJ));
         }
     }
 }

@@ -83,7 +83,7 @@ public class Electro extends Tile {
                 double currentId = Math.random();
                 Tile oldTile = grid.getTile(newI, newJ);
                 if (!oldTile.isComplexType()) {
-                    newGrid.softReplace(newI, newJ, new Electro(oldTile, currentId), oldTile);
+                    newGrid.replace(newI, newJ, new Electro(oldTile, currentId), oldTile);
                 }
                 while (Math.random() < BASE_MORE_STORM_CHANCE) {
                     Point[] neighbors = Grids.getNeighbors(newI, newJ, width, height);
@@ -92,7 +92,7 @@ public class Electro extends Tile {
                     int newJ2 = neighbors[randomIndex].y();
                     Tile oldTile2 = grid.getTile(newI2, newJ2);
                     if (!oldTile2.isComplexType()) {
-                        newGrid.softReplace(newI2, newJ2, new Electro(oldTile2, currentId),
+                        newGrid.replace(newI2, newJ2, new Electro(oldTile2, currentId),
                                 oldTile2);
                         newI = newI2;
                         newJ = newJ2;
@@ -119,13 +119,13 @@ public class Electro extends Tile {
         // storm: disappear
         stormTicks++;
         if (stormTicks >= MAX_STORM_TICKS) {
-            newGrid.softReplace(i, j, containedTile, this);
+            newGrid.replace(i, j, containedTile, this);
             return;
         }
 
         // overloaded
         if (containedTile instanceof Pyro) {
-            newGrid.softReplace(i, j, new Empty(), this);
+            newGrid.replace(i, j, new Empty(), this);
             //overloaded: explosion
             for (Point adjacent : Grids.getNeighbors(i, j, width, height, 2)) {
                 int newI = adjacent.x();
@@ -135,7 +135,7 @@ public class Electro extends Tile {
                     ((Geo) oldTile).setShield(false); // shield: protection
                     continue;
                 }
-                newGrid.softReplace(newI, newJ, new Empty(), oldTile);
+                newGrid.replace(newI, newJ, new Empty(), oldTile);
             }
             // overloaded: throw away
             List<Point> neighbors2 = Arrays.asList(Grids.getNeighbors(i, j, width, height, 2));
@@ -149,7 +149,7 @@ public class Electro extends Tile {
             Point randomNeighbor = neighbors3.get(randomIndex);
             int newI = randomNeighbor.x();
             int newJ = randomNeighbor.y();
-            newGrid.softReplace(newI, newJ, new Pyro(), grid.getTile(newI, newJ));
+            newGrid.replace(newI, newJ, new Pyro(), grid.getTile(newI, newJ));
             return;
         }
 
@@ -157,7 +157,7 @@ public class Electro extends Tile {
         if (containedTile instanceof Dendro && ((Dendro) containedTile).hasDendroCore()) {
             Dendro dendro = (Dendro) containedTile;
             dendro.setDendroCore(false);
-            newGrid.softReplace(i, j, new Core(), this);
+            newGrid.replace(i, j, new Core(), this);
             return;
         }
 
@@ -183,7 +183,7 @@ public class Electro extends Tile {
 
         // superconduct
         if (containedTile instanceof Cryo) {
-            newGrid.softReplace(i, j, new Empty(), this);
+            newGrid.replace(i, j, new Empty(), this);
             // superconduct: brittle
             for (Point adjacent : Grids.getNeighbors(i, j, width, height)) {
                 int newI = adjacent.x();
@@ -204,7 +204,7 @@ public class Electro extends Tile {
         containedTile.act(grid, newGrid, i, j, width, height);
 
         // storm: moves
-        newGrid.softReplace(i, j, containedTile, this);
+        newGrid.replace(i, j, containedTile, this);
         int newI = i + direction.x();
         int newJ = j + direction.y();
         if (!Grids.isOutOfBounds(newI, newJ, width, height)) {
@@ -213,7 +213,7 @@ public class Electro extends Tile {
             } else {
                 containedTile = grid.getTile(newI, newJ);
             }
-            newGrid.softReplace(newI, newJ, this, grid.getTile(newI, newJ));
+            newGrid.replace(newI, newJ, this, grid.getTile(newI, newJ));
         }
 
         // storm: move together

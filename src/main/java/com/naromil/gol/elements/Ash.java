@@ -33,7 +33,7 @@ public class Ash extends Tile {
         // burnout: die
         // tick++;
         if (tick >= MAX_TICKS) {
-            newGrid.softReplace(i, j, new Empty(), this);
+            newGrid.replace(i, j, new Empty(), this);
         }
     }
 }

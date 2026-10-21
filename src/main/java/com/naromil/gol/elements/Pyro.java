@@ -61,7 +61,7 @@ public class Pyro extends Tile {
                 Point randomTile = dendroTiles.get(randomIndex);
                 int newI = randomTile.x();
                 int newJ = randomTile.y();
-                newGrid.softReplace(newI, newJ, new Pyro(), grid.getTile(newI, newJ));
+                newGrid.replace(newI, newJ, new Pyro(), grid.getTile(newI, newJ));
             }
         }
     }
@@ -71,7 +71,7 @@ public class Pyro extends Tile {
         // burnout: become ash
         tickBurnout++;
         if (tickBurnout >= MAX_TICKS_BURNOUT) {
-            newGrid.softReplace(i, j, new Ash(), this);
+            newGrid.replace(i, j, new Ash(), this);
             return;
         }
 
@@ -91,7 +91,7 @@ public class Pyro extends Tile {
                     int newJ2 = adjacent2.y();
                     Tile adjDendro2 = grid.getTileOfType(newI2, newJ2, Dendro.class);
                     if (!(adjDendro2 instanceof Empty)) {
-                        newGrid.softReplace(newI2, newJ2, new Pyro(), adjDendro2);
+                        newGrid.replace(newI2, newJ2, new Pyro(), adjDendro2);
                     }
                 }
             }
@@ -104,7 +104,7 @@ public class Pyro extends Tile {
             Tile adjDendro = grid.getTileOfType(newI, newJ, Dendro.class);
             if (!(adjDendro instanceof Empty)
                     && Math.random() < BASE_BURNING_CHANCE) {
-                newGrid.softReplace(newI, newJ, new Pyro(), adjDendro);
+                newGrid.replace(newI, newJ, new Pyro(), adjDendro);
             }
         }
 
@@ -115,13 +115,13 @@ public class Pyro extends Tile {
             int newJ = adjacent.y();
             Tile cryoTile = grid.getTileOfType(newI, newJ, Cryo.class);
             if (cryoTile instanceof Cryo) {
-                newGrid.softReplace(newI, newJ, new Hydro(), cryoTile);
+                newGrid.replace(newI, newJ, new Hydro(), cryoTile);
                 hasGoneOut = true; // melt: goes out
             }
         }
 
         if (hasGoneOut) {
-            newGrid.softReplace(i, j, new Empty(), this);
+            newGrid.replace(i, j, new Empty(), this);
         }
     }
 }

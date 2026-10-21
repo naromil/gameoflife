@@ -27,7 +27,7 @@ public abstract class Tile implements Comparable<Tile> {
     }
 
     public Color getColor() {
-        return color;
+        return color; // TODO: some change color as season changes
     }
 
     public UUID getUuid() {

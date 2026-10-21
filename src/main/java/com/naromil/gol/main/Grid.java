@@ -104,6 +104,7 @@ public class Grid {
         return tiles;
     }
 
+    // this gets the outer tile always.
     public Tile getTile(int i, int j) {
         return tiles[i][j];
     }
@@ -112,8 +113,11 @@ public class Grid {
         return tiles[i][j].hasType(tileType);
     }
 
-    // get tile at a position if it or its contained tile is the specified type
-    // otherwise return an Empty tile.
+    /**
+     * get the tile at a position if it or its contained tile is the specified type.
+     * otherwise, return an Empty tile.
+     * @return The matching tile or an Empty tile if none is found.
+     */
     public Tile getTileOfType(int i, int j, Class<? extends Tile> tileType) {
         Tile tile = tiles[i][j];
         if (tileType.isInstance(tile)) {
@@ -126,20 +130,26 @@ public class Grid {
 
     /**
      * replace newTile but it can only overwrite oldTile.
-     * can replace contained tiles as well, but only if non-empty before.
-     * the preferred wrapper to replace a tile.
+     * can replace contained tiles as well, but only if in a complex tile.
+     * the preferred wrapper to replace tile abstractly.
      * @param oldTile do not use Empty if no preference, use null instead.
      */
-    public void softReplace(int i, int j, Tile newTile, Tile oldTile) {
+    public void replace(int i, int j, Tile newTile, Tile oldTile) {
         if (tiles[i][j] instanceof Empty || tiles[i][j] instanceof Ash
-                || hasUuid(tiles[i][j], oldTile)) {
+                || isSameUuid(tiles[i][j], oldTile)) {
             tiles[i][j] = newTile;
-        } else if (hasUuid(tiles[i][j].getContainedTile(), oldTile)) {
+        } else if (tiles[i][j].isComplexType() && !newTile.isComplexType()
+                && isSameUuid(tiles[i][j].getContainedTile(), oldTile)) {
             tiles[i][j].setContainedTile(newTile);
         }
     }
 
-    private static boolean hasUuid(Tile tile, Tile oldTile) {
+    /**
+     * check for UUID, not whole Object. avoid tile growth making different
+     * any two Empty are equal (shouldn't be used for Empty anyway)
+     * always false when null (meaning no overwriting)
+     */
+    private static boolean isSameUuid(Tile tile, Tile oldTile) {
         return oldTile != null && Objects.equals(tile.getUuid(), oldTile.getUuid());
     }
 

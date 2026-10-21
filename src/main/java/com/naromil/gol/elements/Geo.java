@@ -132,7 +132,7 @@ public class Geo extends Tile {
                             int randomIndex = (int) (Math.random() * peripheral.size());
                             int newI = peripheral.get(randomIndex).x();
                             int newJ = peripheral.get(randomIndex).y();
-                            newGrid.softReplace(newI, newJ, new Geo(), grid.getTile(newI, newJ));
+                            newGrid.replace(newI, newJ, new Geo(), grid.getTile(newI, newJ));
                         }
                     }
 
@@ -161,7 +161,7 @@ public class Geo extends Tile {
                 setShield(true);
                 // crystallize: absorb
                 if (Math.random() < BASE_ABSORB_CHANCE) {
-                    newGrid.softReplace(newI, newJ, new Empty(), grid.getTile(newI, newJ));
+                    newGrid.replace(newI, newJ, new Empty(), grid.getTile(newI, newJ));
                 }
                 break;
             }
