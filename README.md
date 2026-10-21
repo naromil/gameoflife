@@ -5,7 +5,7 @@
 This game of life simulation borrows elements from the video game _Genshin Impact_. These elements are:
 
 - **Anemo (wind)**
-- **Geo (rock)**:
+- **Geo (rock)**
 - **Electro (thunder)**
 - **Dendro (grass)**
 - **Hydro (water)**
@@ -75,7 +75,7 @@ Tiles have priorities. Lower priorities can act first and are less likely to be 
 
 ## Seasons
 
-Each season 100 ticks. Change the seasonal wind to random one of 8 directions when season changes.
+Each season 100 ticks. Change the seasonal wind to random one of 8 directions when season changes. Changes the color of Dendro each season.
 
 - **Spring**: Dendro grow x1.5 faster. Bloom chance x2.
 - **Summer**: 1% fire on random Dendro. Water dry out x2 quicker.

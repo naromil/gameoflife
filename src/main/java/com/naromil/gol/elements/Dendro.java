@@ -25,6 +25,13 @@ public class Dendro extends Tile {
         this.tickWithoutHydro = tickWithoutHydro;
     }
 
+    private int seasonColorModifier = 0;
+
+    @Override 
+    public Color getColor() {
+        return Color.colorSaturate(super.getColor(), seasonColorModifier);
+    }
+
     @Override
     public int getRank() {
         return 70;
@@ -89,6 +96,22 @@ public class Dendro extends Tile {
 
     @Override
     public void act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
+        // season: change color
+        final int colorGoal;
+        switch (grid.getCurrentSeason()) {
+            case SPRING -> colorGoal = 0;
+            case SUMMER -> colorGoal = 20;
+            case FALL -> colorGoal = -10;
+            case WINTER -> colorGoal = -40;
+            default -> colorGoal = 0;
+        }
+
+        if (seasonColorModifier < colorGoal) {
+            seasonColorModifier += 2;
+        } else if (seasonColorModifier > colorGoal) {
+            seasonColorModifier -= 2;
+        }
+
         // quicken: timer
         if (tickQuickened > 0) {
             tickQuickened--;
