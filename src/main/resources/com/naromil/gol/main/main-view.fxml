@@ -46,7 +46,7 @@
                </padding>
             </HBox>
             <Label fx:id="intervalLabel" prefHeight="18.0" prefWidth="140.0" text="Interval: ?" />
-            <ScrollBar fx:id="intervalScroll" max="10000.0" unitIncrement="100.0" value="1000.0">
+            <ScrollBar fx:id="intervalScroll" max="10000.0" unitIncrement="50.0" value="1000.0">
                <VBox.margin>
                   <Insets right="5.0" />
                </VBox.margin>

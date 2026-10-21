@@ -10,7 +10,7 @@ import com.naromil.gol.main.Grid;
 public class Pyro extends Tile {
     public static final Color DEFAULT_COLOR = new Color(239, 121, 56);
     private static final int MAX_TICKS_BURNOUT = 3;
-    private static final double BASE_BURNING_CHANCE = 0.12;
+    private static final double BASE_BURNING_CHANCE = 0.10;
     private static final double BASE_WILD_FIRE_CHANCE = 0.10;
 
     private int tickBurnout = 0;
