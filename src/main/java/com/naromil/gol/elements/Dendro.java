@@ -95,7 +95,9 @@ public class Dendro extends Tile {
     }
 
     @Override
-    public void act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
+    public void act(Grid grid, Grid newGrid, int i, int j) {
+        int width = grid.getWidth();
+        int height = grid.getHeight();
         // season: change color
         final int colorGoal;
         switch (grid.getCurrentSeason()) {
@@ -120,7 +122,7 @@ public class Dendro extends Tile {
         // wither
         boolean isNearHydro = false;
 
-        if (Grids.doesExistWithinDistance(grid, i, j, width, height, Cryo.class, 2)) {
+        if (Grids.doesExistWithinDistance(grid, i, j, Cryo.class, 2)) {
             isNearHydro = true;
         }
         for (Point adj : Grids.getNeighbors(i, j, width, height, 2)) {
@@ -145,7 +147,7 @@ public class Dendro extends Tile {
 
         // growth
         setFrost(grid.getCurrentSeason() == SeasonType.WINTER
-                || Grids.doesExistWithinDistance(grid, i, j, width, height, Cryo.class, 1));
+                || Grids.doesExistWithinDistance(grid, i, j, Cryo.class, 1));
 
         if (!isFrost && tickWithoutHydro + 1 < MAX_TICKS_WITHOUT_HYDRO) { // frost
             for (Point adjacent : Grids.getNeighbors(i, j, width, height)) {
@@ -177,7 +179,7 @@ public class Dendro extends Tile {
 
         // bloom. after plant new Dendro because it should start next tick
         if (Grids.doesExistWithinDistance(grid,
-                i, j, width, height, Hydro.class, 1)) {
+                i, j, Hydro.class, 1)) {
             double chance = BASE_BLOOM_CHANCE;
             if (grid.getCurrentSeason() == SeasonType.SPRING) {
                 chance *= 2;

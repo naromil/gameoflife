@@ -44,7 +44,9 @@ public class Anemo extends Tile {
     private boolean pollinationState = false;
 
     // the probability doesn't exclude complex tiles but will not replace them
-    public static void globalAct(Grid grid, Grid newGrid, int width, int height) {
+    public static void globalAct(Grid grid, Grid newGrid) {
+        int width = grid.getWidth();
+        int height = grid.getHeight();
         // winds: spawn
         int[] windDirections = grid.getWindDirection();
         int windI = windDirections[0];
@@ -86,7 +88,9 @@ public class Anemo extends Tile {
     }
 
     @Override
-    public void act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
+    public void act(Grid grid, Grid newGrid, int i, int j) {
+        int width = grid.getWidth();
+        int height = grid.getHeight();
         // erosion
         if (containedTile instanceof Geo) {
             Geo geo = (Geo) containedTile;
@@ -112,7 +116,7 @@ public class Anemo extends Tile {
         if (containedTile.isComplexType()) {
             throw new IllegalStateException("Anemo cannot contain another complex tile.");
         }
-        containedTile.act(grid, newGrid, i, j, width, height);
+        containedTile.act(grid, newGrid, i, j);
 
         // swirl
         if (containedTile.isStrongType()) {

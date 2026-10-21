@@ -56,7 +56,9 @@ public class Electro extends Tile {
     private boolean hasActed = false;
 
     // the probability doesn't exclude complex tiles but will not replace them
-    public static void globalAct(Grid grid, Grid newGrid, int width, int height) {
+    public static void globalAct(Grid grid, Grid newGrid) {
+        int width = grid.getWidth();
+        int height = grid.getHeight();
         // storms: initialize
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
@@ -103,14 +105,15 @@ public class Electro extends Tile {
     }
 
     @Override
-    public void act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
+    public void act(Grid grid, Grid newGrid, int i, int j) {
         int directionX = (int) (Math.random() * 3) - 1;
         int directionY = (int) (Math.random() * 3) - 1;
-        act(grid, newGrid, i, j, width, height, new Point(directionX, directionY));
+        act(grid, newGrid, i, j, new Point(directionX, directionY));
     }
 
-    private void act(Grid grid, Grid newGrid, int i, int j, int width, int height,
-            Point direction) {
+    private void act(Grid grid, Grid newGrid, int i, int j, Point direction) {
+        int width = grid.getWidth();
+        int height = grid.getHeight();
         if (hasActed) {
             return;
         }
@@ -163,7 +166,7 @@ public class Electro extends Tile {
 
         // charged
         if (containedTile instanceof Hydro) {
-            Point[] connected = bfs(grid, i, j, width, height); // lake in the previous tick
+            Point[] connected = bfs(grid, i, j); // lake in the previous tick
             for (Point neighbor : connected) {
                 int newI = neighbor.x();
                 int newJ = neighbor.y();
@@ -201,7 +204,7 @@ public class Electro extends Tile {
             throw new IllegalStateException(
                     "Electro cannot contain another complex tile.");
         }
-        containedTile.act(grid, newGrid, i, j, width, height);
+        containedTile.act(grid, newGrid, i, j);
 
         // storm: moves
         newGrid.replace(i, j, containedTile, this);
@@ -222,12 +225,14 @@ public class Electro extends Tile {
             int adjJ = adjacent.y();
             Tile adjTile = grid.getTile(adjI, adjJ);
             if (adjTile instanceof Electro && ((Electro) adjTile).id == this.id) {
-                ((Electro) adjTile).act(grid, newGrid, adjI, adjJ, width, height, direction);
+                ((Electro) adjTile).act(grid, newGrid, adjI, adjJ, direction);
             }
         }
     }
 
-    private static Point[] bfs(Grid grid, int startI, int startJ, int width, int height) {
+    private static Point[] bfs(Grid grid, int startI, int startJ) {
+        int width = grid.getWidth();
+        int height = grid.getHeight();
         Set<Point> visited = new HashSet<>();
         Queue<Point> queue = new ArrayDeque<>();
         if (!grid.hasType(startI, startJ, Hydro.class)) {

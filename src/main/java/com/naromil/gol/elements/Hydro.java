@@ -61,7 +61,9 @@ public class Hydro extends Tile {
         return containedTile instanceof Electro;
     }
 
-    public static void globalAct(Grid grid, Grid newGrid, int width, int height) {
+    public static void globalAct(Grid grid, Grid newGrid) {
+        int width = grid.getWidth();
+        int height = grid.getHeight();
         // rain: spawn
         boolean isWinter = grid.getCurrentSeason() == SeasonType.WINTER;
 
@@ -74,7 +76,7 @@ public class Hydro extends Tile {
             int rainY = (int) (Math.random() * width);
 
             // rain: affinity (move towards nearest alike to form lake)
-            Point next = Grids.directionToNearestType(grid, rainX, rainY, width, height,
+            Point next = Grids.directionToNearestType(grid, rainX, rainY,
                     isWinter ? Cryo.class : Hydro.class);
             int x = next != null ? next.x() : rainX;
             int y = next != null ? next.y() : rainY;
@@ -85,17 +87,19 @@ public class Hydro extends Tile {
     }
 
     @Override
-    public void act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
+    public void act(Grid grid, Grid newGrid, int i, int j) {
+        int width = grid.getWidth();
+        int height = grid.getHeight();
         // plateau
         if (Math.random() < BASE_PLATEAU_CHANCE && Grids.doesExistWithinDistance(grid,
-                i, j, width, height, Geo.class, 1)) {
+                i, j, Geo.class, 1)) {
             newGrid.replace(i, j, new Cryo(), this);
             return;
         }
 
         // rain: dry out
         if (Grids.countTilesWithinDistance(grid,
-                i, j, width, height, Hydro.class, 1) > 1) {
+                i, j, Hydro.class, 1) > 1) {
             isLake = true;
             tickRain = 0;
         } else {
@@ -119,7 +123,7 @@ public class Hydro extends Tile {
             if (grid.hasType(newI, newJ, Pyro.class)
                     && Math.random() < BASE_VAPORIZE_CHANCE) {
                 // vaporize connected fire
-                List<Point> connectedPyro = Grids.bfs(grid, newI, newJ, width, height,
+                List<Point> connectedPyro = Grids.bfs(grid, newI, newJ,
                         Pyro.class, MAX_VAPORIZE_TILES);
                 for (Point pyro : connectedPyro) {
                     int x = pyro.x();

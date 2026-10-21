@@ -43,11 +43,13 @@ public class Core extends Dendro {
      * has useless quickened state, won't wither, won't grow, won't bloom
      */
     @Override
-    public void act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
-        act(grid, newGrid, i, j, width, height, CORE_SPEED_MULTIPLIER);
+    public void act(Grid grid, Grid newGrid, int i, int j) {
+        act(grid, newGrid, i, j, CORE_SPEED_MULTIPLIER);
     }
 
-    public void act(Grid grid, Grid newGrid, int i, int j, int width, int height, int times) {
+    public void act(Grid grid, Grid newGrid, int i, int j, int times) {
+        int width = grid.getWidth();
+        int height = grid.getHeight();
         // quicken: timer
         if (tickQuickened > 0) {
             tickQuickened--;
@@ -73,13 +75,13 @@ public class Core extends Dendro {
             throw new IllegalStateException(
                     "Core cannot contain another complex tile.");
         }
-        containedTile.act(grid, newGrid, i, j, width, height);
+        containedTile.act(grid, newGrid, i, j);
 
         // hyperbloom: hunt
         newGrid.replace(i, j, containedTile, this);
 
         // move one tile towards the nearest Pyro, otherwise self kill
-        Point next = Grids.directionToNearestType(grid, i, j, width, height, Pyro.class);
+        Point next = Grids.directionToNearestType(grid, i, j, Pyro.class);
 
         if (next != null) { // only move if pyro found
             int x = next.x();
@@ -93,7 +95,7 @@ public class Core extends Dendro {
 
             if (times > 1) {
                 // recursion to act multiple times a tick
-                act(grid, newGrid, next.x(), next.y(), width, height, times - 1);
+                act(grid, newGrid, next.x(), next.y(), times - 1);
             }
         }
     }

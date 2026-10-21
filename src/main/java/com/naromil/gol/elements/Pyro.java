@@ -34,7 +34,9 @@ public class Pyro extends Tile {
         return true;
     }
 
-    public static void globalAct(Grid grid, Grid newGrid, int width, int height) {
+    public static void globalAct(Grid grid, Grid newGrid) {
+        int width = grid.getWidth();
+        int height = grid.getHeight();
         // fire on random Dendro
         double chance = BASE_WILD_FIRE_CHANCE;
         if (grid.getCurrentSeason() == SeasonType.SUMMER) {
@@ -67,7 +69,9 @@ public class Pyro extends Tile {
     }
 
     @Override
-    public void act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
+    public void act(Grid grid, Grid newGrid, int i, int j) {
+        int width = grid.getWidth();
+        int height = grid.getHeight();
         // burnout: become ash
         tickBurnout++;
         if (tickBurnout >= MAX_TICKS_BURNOUT) {

@@ -27,6 +27,6 @@ public class Empty extends Tile {
 
     // do nothing
     @Override
-    public void act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
+    public void act(Grid grid, Grid newGrid, int i, int j) {
     }
 }

@@ -219,8 +219,8 @@ public class Grid {
         // For each tile type, check if it has a globalAct method and invoke it
         for (Class<? extends Tile> tileClass : TileFactory.TYPES) {
             try {
-                Method globalAct = tileClass.getMethod("globalAct", Grid.class, Grid.class, int.class, int.class);
-                globalAct.invoke(null, this, newGrid, width, height);
+                Method globalAct = tileClass.getMethod("globalAct", Grid.class, Grid.class);
+                globalAct.invoke(null, this, newGrid);
             } catch (NoSuchMethodException e) {
                 System.err.println("Error: global action not found");
             } catch (Exception e) {
@@ -238,7 +238,7 @@ public class Grid {
 
         tileStates.sort(TileState::compareTo);
         for (TileState tileState : tileStates) {
-            tileState.tile().act(this, newGrid, tileState.x(), tileState.y(), width, height);
+            tileState.tile().act(this, newGrid, tileState.x(), tileState.y());
         }
 
         return newGrid;

@@ -81,7 +81,7 @@ public class Geo extends Tile {
     }
 
     private static List<Point> bfs(Grid grid, Grid newGrid, int startI, int startJ,
-            int width, int height, Set<Point> visited) {
+            Set<Point> visited) {
         Queue<Point> queue = new ArrayDeque<>();
         List<Point> peripheral = new ArrayList<Point>();
         queue.add(new Point(startI, startJ));
@@ -91,7 +91,8 @@ public class Geo extends Tile {
             Point current = queue.remove();
             int currentI = current.x();
             int currentJ = current.y();
-            for (Point adjacent : Grids.getNeighbors(currentI, currentJ, width, height)) {
+            for (Point adjacent : Grids.getNeighbors(currentI, currentJ,
+                    grid.getWidth(), grid.getHeight())) {
                 int newI = adjacent.x();
                 int newJ = adjacent.y();
                 if (grid.hasType(newI, newJ, Geo.class) && !visited.contains(adjacent)) {
@@ -107,7 +108,9 @@ public class Geo extends Tile {
         return peripheral;
     }
 
-    public static void globalAct(Grid grid, Grid newGrid, int width, int height) {
+    public static void globalAct(Grid grid, Grid newGrid) {
+        int width = grid.getWidth();
+        int height = grid.getHeight();
         // mountains
         Set<Point> visited = new HashSet<>();
         for (int i = 0; i < height; i++) {
@@ -115,11 +118,12 @@ public class Geo extends Tile {
                 if (grid.hasType(i, j, Geo.class) && !visited.contains(new Point(i, j))) {
 
                     Set<Point> oldVisited = new HashSet<>(visited);
-                    List<Point> peripheral = bfs(grid, newGrid, i, j, width, height, visited);
+                    List<Point> peripheral = bfs(grid, newGrid, i, j, visited);
                     List<Point> connected = visited.stream().
                             filter(p -> !oldVisited.contains(p)).toList();
                     if (connected.isEmpty()) {
-                        throw new IllegalStateException("Geo: bfs explored connected component must not be empty.");
+                        throw new IllegalStateException(
+                                "Geo: bfs explored connected component must not be empty.");
                     }
 
                     // mountains: tenacity
@@ -142,7 +146,9 @@ public class Geo extends Tile {
     }
 
     @Override
-    public void act(Grid grid, Grid newGrid, int i, int j, int width, int height) {
+    public void act(Grid grid, Grid newGrid, int i, int j) {
+        int width = grid.getWidth();
+        int height = grid.getHeight();
         // crystallize: countdown
         if (hasShield()) {
             shieldDuration--;
