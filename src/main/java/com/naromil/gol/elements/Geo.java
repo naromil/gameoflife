@@ -67,11 +67,13 @@ public class Geo extends Tile {
     }
 
     public void setBrittle(boolean brittle) {
-        if (hasShield()) {
-            // shield: protection
-            setShield(false);
-        } else if (brittle) {
-            brittleDuration = INITIAL_BRITTLE_DURATION;
+        if (brittle) {
+            if (hasShield()) {
+                // shield: protection
+                setShield(false);
+            } else {
+                brittleDuration = INITIAL_BRITTLE_DURATION;
+            }
         } else {
             brittleDuration = 0;
         }
