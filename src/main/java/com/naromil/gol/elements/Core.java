@@ -2,6 +2,7 @@ package com.naromil.gol.elements;
 
 import com.naromil.gol.main.Color;
 import com.naromil.gol.main.Grid;
+import com.naromil.gol.main.Point;
 
 // standalone protectile caused by hyperbloom that hunts down a Pyro
 public class Core extends Dendro {

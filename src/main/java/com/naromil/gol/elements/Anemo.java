@@ -6,6 +6,7 @@ import java.util.List;
 import com.naromil.gol.environment.SeasonType;
 import com.naromil.gol.main.Color;
 import com.naromil.gol.main.Grid;
+import com.naromil.gol.main.Point;
 
 public class Anemo extends Tile {
     public static final Color DEFAULT_COLOR = new Color(117, 194, 170);

@@ -3,6 +3,7 @@ package com.naromil.gol.elements;
 import com.naromil.gol.environment.SeasonType;
 import com.naromil.gol.main.Color;
 import com.naromil.gol.main.Grid;
+import com.naromil.gol.main.Point;
 
 public class Cryo extends Tile {
     public static final Color DEFAULT_COLOR = new Color(159, 214, 227);

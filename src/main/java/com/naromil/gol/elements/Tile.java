@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import com.naromil.gol.main.Color;
 import com.naromil.gol.main.Grid;
+import com.naromil.gol.main.Point;
 
 public abstract class Tile implements Comparable<Tile> {
     private final Color color;

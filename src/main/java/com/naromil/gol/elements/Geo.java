@@ -9,6 +9,7 @@ import java.util.Set;
 
 import com.naromil.gol.main.Color;
 import com.naromil.gol.main.Grid;
+import com.naromil.gol.main.Point;
 
 public class Geo extends Tile {
     public static final Color DEFAULT_COLOR = new Color(248, 186, 78);

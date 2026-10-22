@@ -5,6 +5,7 @@ import java.util.List;
 import com.naromil.gol.environment.SeasonType;
 import com.naromil.gol.main.Color;
 import com.naromil.gol.main.Grid;
+import com.naromil.gol.main.Point;
 
 public class Hydro extends Tile {
     public static final Color DEFAULT_COLOR = new Color(76, 194, 241);
@@ -77,7 +78,7 @@ public class Hydro extends Tile {
 
             // rain: affinity (move towards nearest alike to form lake)
             Point next = Grids.directionToNearestType(grid, rain,
-                    isWinter ? Cryo.class : Hydro.class);
+                    isWinter ? Cryo.class : Hydro.class, 2);
             Point target = next != null ? next : rain;
 
             // directly snows (spawn Cryo) in winter
@@ -90,8 +91,8 @@ public class Hydro extends Tile {
         int width = grid.getWidth();
         int height = grid.getHeight();
         // plateau
-        if (Math.random() < BASE_PLATEAU_CHANCE && Grids.doesExistWithinDistance(grid,
-                position, Geo.class, 1)) {
+        if (Math.random() < BASE_PLATEAU_CHANCE
+                    * Grids.countTilesWithinDistance(grid, position, Geo.class, 1)) {
             newGrid.replace(position, this, new Cryo());
             return;
         }

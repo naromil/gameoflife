@@ -2,6 +2,7 @@ package com.naromil.gol.elements;
 
 import com.naromil.gol.main.Color;
 import com.naromil.gol.main.Grid;
+import com.naromil.gol.main.Point;
 
 public class Empty extends Tile {
     public static final Color DEFAULT_COLOR = null;

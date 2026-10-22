@@ -3,6 +3,7 @@ package com.naromil.gol.elements;
 import com.naromil.gol.environment.SeasonType;
 import com.naromil.gol.main.Color;
 import com.naromil.gol.main.Grid;
+import com.naromil.gol.main.Point;
 
 public class Dendro extends Tile {
     public static final Color DEFAULT_COLOR = new Color(165, 200, 59);

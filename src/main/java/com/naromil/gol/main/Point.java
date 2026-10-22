@@ -1,4 +1,4 @@
-package com.naromil.gol.elements;
+package com.naromil.gol.main;
 
 public record Point(int x, int y) {
     public Point plus(int dx, int dy) {

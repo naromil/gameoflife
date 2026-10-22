@@ -9,6 +9,7 @@ import java.util.Queue;
 import java.util.Set;
 
 import com.naromil.gol.main.Grid;
+import com.naromil.gol.main.Point;
 
 public class Grids {
     /* ---- Grid exploration section ---- */
@@ -85,11 +86,21 @@ public class Grids {
 
     public static Point directionToNearestType(Grid grid, Point start,
             Class<? extends Tile> targetType) {
+        return directionToNearestType(grid, start, targetType, 1);
+    }
+
+    /**
+     * this doesn't prioritize closer ones when multiple are within distance
+     * assuming using distance > 1 meaning being able to move there instantly
+     * @param distance the maximum distance allowed for the nextTile returned
+     */
+    public static Point directionToNearestType(Grid grid, Point start,
+            Class<? extends Tile> targetType, int distance) {
         Set<Point> visited = new HashSet<>();
         Queue<DirectionStore> queue = new ArrayDeque<>();
         visited.add(start);
-        for (Point adjacent : Grids.getNeighbors(start,
-                grid.getWidth(), grid.getHeight())) {
+        for (Point adjacent : Grids.getNeighbors(start, grid.getWidth(), grid.getHeight(),
+                    distance)) {
             if (!adjacent.equals(start)) {
                 queue.add(new DirectionStore(adjacent, adjacent, 1));
                 visited.add(adjacent);

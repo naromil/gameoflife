@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Objects;
 import com.naromil.gol.elements.Ash;
 import com.naromil.gol.elements.Empty;
-import com.naromil.gol.elements.Point;
 import com.naromil.gol.elements.Tile;
 import com.naromil.gol.elements.TileFactory;
 import com.naromil.gol.environment.Season;
@@ -196,7 +195,7 @@ public class Grid {
     public record TileState(Tile tile, Point position) implements Comparable<TileState> {
         @Override
         public int compareTo(TileState other) {
-            return this.tile.getRank() - other.tile.getRank();
+            return this.tile.compareTo(other.tile);
         }
     }
 

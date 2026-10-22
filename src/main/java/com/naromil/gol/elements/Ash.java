@@ -2,6 +2,7 @@ package com.naromil.gol.elements;
 
 import com.naromil.gol.main.Color;
 import com.naromil.gol.main.Grid;
+import com.naromil.gol.main.Point;
 
 public class Ash extends Tile {
     public static final Color DEFAULT_COLOR = new Color(155, 155, 155);

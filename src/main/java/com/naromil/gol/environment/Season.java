@@ -1,6 +1,6 @@
 package com.naromil.gol.environment;
 
-import com.naromil.gol.elements.Point;
+import com.naromil.gol.main.Point;
 
 // keeps track of the current season, its duration and seasonal effects
 public class Season {

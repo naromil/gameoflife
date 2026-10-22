@@ -10,6 +10,7 @@ import java.util.Set;
 import com.naromil.gol.environment.SeasonType;
 import com.naromil.gol.main.Color;
 import com.naromil.gol.main.Grid;
+import com.naromil.gol.main.Point;
 
 // only exists in storm form
 public class Electro extends Tile {
