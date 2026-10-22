@@ -55,8 +55,12 @@ public class Geo extends Tile {
 
     public void setShield(boolean shield) {
         if (shield) {
-            shieldDuration = INITIAL_SHIELD_DURATION;
-            setBrittle(false); // shield: protection
+            if (isBrittle()) {
+                setBrittle(false);
+            }
+            else {
+                shieldDuration = INITIAL_SHIELD_DURATION;
+            }
         } else {
             shieldDuration = 0;
         }

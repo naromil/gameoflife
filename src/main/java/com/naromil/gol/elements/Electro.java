@@ -1,7 +1,9 @@
 package com.naromil.gol.elements;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Queue;
@@ -76,30 +78,67 @@ public class Electro extends Tile {
         if (grid.getCurrentSeason() == SeasonType.FALL) {
             chance *= 3;
         }
-        double expextedTimes = height * width / 1000.0;
+
+        double expextedTimes = height * width / 800.0;
         int times = (Math.random() < expextedTimes - Math.floor(expextedTimes))
                 ? (int) Math.ceil(expextedTimes) : (int) Math.floor(expextedTimes);
+
         for (int t = 0; t < times; t++) {
-            if (Math.random() < chance) {
-                Point spawn = new Point((int) (Math.random() * height),
-                        (int) (Math.random() * width));
-                double currentId = Math.random();
-                Tile oldTile = grid.getTile(spawn);
-                if (!oldTile.isComplexType()) {
-                    newGrid.replace(spawn, oldTile, new Electro(oldTile, currentId));
-                }
-                while (Math.random() < BASE_MORE_STORM_CHANCE) {
-                    Point[] neighbors = Grids.getNeighbors(spawn, width, height);
-                    int randomIndex = (int) (Math.random() * neighbors.length);
-                    Point next = neighbors[randomIndex];
-                    Tile oldTile2 = grid.getTile(next);
-                    if (!oldTile2.isComplexType()) {
-                        newGrid.replace(next, oldTile2, new Electro(oldTile2, currentId));
-                        spawn = next;
-                    }
+            if (Math.random() >= chance) { continue; }
+
+            Point spawn = new Point((int) (Math.random() * height),
+                    (int) (Math.random() * width));
+            double currentId = Math.random();
+            Tile oldTile = grid.getTile(spawn);
+            if (!oldTile.isComplexType()) {
+                newGrid.replace(spawn, oldTile, new Electro(oldTile, currentId));
+            }
+
+            List<Point> neighbors = new ArrayList<>(Arrays.asList(
+                        Grids.getNeighbors(spawn, width, height)));
+            Collections.shuffle(neighbors);
+            while (Math.random() < BASE_MORE_STORM_CHANCE) {
+                if (neighbors.isEmpty()) { break; }
+
+                Point next = neighbors.removeLast();
+                Tile oldTile2 = grid.getTile(next);
+                if (!oldTile2.isComplexType()) {
+                    newGrid.replace(next, oldTile2, new Electro(oldTile2, currentId));
                 }
             }
         }
+
+    }
+
+    private static Point[] bfs(Grid grid, Point start, Class<? extends Tile> targetClass) {
+        int width = grid.getWidth();
+        int height = grid.getHeight();
+        Set<Point> visited = new HashSet<>();
+        Queue<Point> queue = new ArrayDeque<>();
+        if (!grid.hasType(start, targetClass)) {
+            throw new IllegalArgumentException("Starting tile is not "
+                    + targetClass.getSimpleName() + ".");
+        }
+        queue.add(start);
+        visited.add(start);
+
+        while (!queue.isEmpty()) {
+            Point current = queue.remove();
+            for (Point adjacent : Grids.getNeighbors(current, width, height)) {
+                if (grid.hasType(adjacent, targetClass) && !visited.contains(adjacent)) {
+                    queue.add(adjacent);
+                    visited.add(adjacent);
+                    if (visited.size() >= MAX_CHARGED_SPREAD) {
+                        break;
+                    }
+                }
+            }
+            if (visited.size() >= MAX_CHARGED_SPREAD) {
+                break;
+            }
+        }
+
+        return visited.toArray(Point[]::new);
     }
 
     @Override
@@ -221,36 +260,5 @@ public class Electro extends Tile {
                 ((Electro) adjTile).act(grid, newGrid, adjacent, direction);
             }
         }
-    }
-
-    private static Point[] bfs(Grid grid, Point start, Class<? extends Tile> targetClass) {
-        int width = grid.getWidth();
-        int height = grid.getHeight();
-        Set<Point> visited = new HashSet<>();
-        Queue<Point> queue = new ArrayDeque<>();
-        if (!grid.hasType(start, targetClass)) {
-            throw new IllegalArgumentException("Starting tile is not "
-                    + targetClass.getSimpleName() + ".");
-        }
-        queue.add(start);
-        visited.add(start);
-
-        while (!queue.isEmpty()) {
-            Point current = queue.remove();
-            for (Point adjacent : Grids.getNeighbors(current, width, height)) {
-                if (grid.hasType(adjacent, targetClass) && !visited.contains(adjacent)) {
-                    queue.add(adjacent);
-                    visited.add(adjacent);
-                    if (visited.size() >= MAX_CHARGED_SPREAD) {
-                        break;
-                    }
-                }
-            }
-            if (visited.size() >= MAX_CHARGED_SPREAD) {
-                break;
-            }
-        }
-
-        return visited.toArray(Point[]::new);
     }
 }
