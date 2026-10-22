@@ -161,7 +161,8 @@ public class Electro extends Tile {
 
         // charged
         if (containedTile instanceof Hydro) {
-            Point[] connected = bfs(grid, position); // lake in the previous tick
+            // lake in the previous tick
+            Point[] connected = bfs(grid, position, Hydro.class);
             for (Point neighbor : connected) {
                 if (!grid.hasType(neighbor, Hydro.class)) {
                     continue; // already replaced by other tile this tick
@@ -179,12 +180,16 @@ public class Electro extends Tile {
 
         // superconduct
         if (containedTile instanceof Cryo) {
-            newGrid.replace(position, this, new Empty());
-            // superconduct: brittle
-            for (Point adjacent : Grids.getNeighbors(position, width, height)) {
-                if (grid.hasType(adjacent, Geo.class)) {
-                    Geo geo = (Geo) grid.getTileOfType(adjacent, Geo.class);
-                    geo.setBrittle(true);
+            // ice lake, use same limit
+            Point[] connected = bfs(grid, position, Cryo.class);
+            for (Point neighbor : connected) {
+                newGrid.replace(neighbor, grid.getTile(neighbor), new Empty());
+                // superconduct: brittle
+                for (Point adjacent : Grids.getNeighbors(neighbor, width, height, 2)) {
+                    Tile geo = grid.getTileOfType(adjacent, Geo.class);
+                    if (geo instanceof Geo) {
+                        ((Geo) geo).setBrittle(true);
+                    }
                 }
             }
             return;
@@ -218,13 +223,14 @@ public class Electro extends Tile {
         }
     }
 
-    private static Point[] bfs(Grid grid, Point start) {
+    private static Point[] bfs(Grid grid, Point start, Class<? extends Tile> targetClass) {
         int width = grid.getWidth();
         int height = grid.getHeight();
         Set<Point> visited = new HashSet<>();
         Queue<Point> queue = new ArrayDeque<>();
-        if (!grid.hasType(start, Hydro.class)) {
-            throw new IllegalArgumentException("Starting tile is not Hydro.");
+        if (!grid.hasType(start, targetClass)) {
+            throw new IllegalArgumentException("Starting tile is not "
+                    + targetClass.getSimpleName() + ".");
         }
         queue.add(start);
         visited.add(start);
@@ -232,7 +238,7 @@ public class Electro extends Tile {
         while (!queue.isEmpty()) {
             Point current = queue.remove();
             for (Point adjacent : Grids.getNeighbors(current, width, height)) {
-                if (grid.hasType(adjacent, Hydro.class) && !visited.contains(adjacent)) {
+                if (grid.hasType(adjacent, targetClass) && !visited.contains(adjacent)) {
                     queue.add(adjacent);
                     visited.add(adjacent);
                     if (visited.size() >= MAX_CHARGED_SPREAD) {
