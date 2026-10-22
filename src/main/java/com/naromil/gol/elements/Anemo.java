@@ -48,9 +48,7 @@ public class Anemo extends Tile {
         int width = grid.getWidth();
         int height = grid.getHeight();
         // winds: spawn
-        int[] windDirections = grid.getWindDirection();
-        int windI = windDirections[0];
-        int windJ = windDirections[1];
+        Point wind = grid.getWindDirection();
 
         double chance = BASE_WIND_CHANCE;
         if (grid.getCurrentSeason() == SeasonType.FALL) {
@@ -65,10 +63,9 @@ public class Anemo extends Tile {
                 List<Point> firstTiles = new ArrayList<>();
                 for (int i = 0; i < height; i++) {
                     for (int j = 0; j < width; j++) {
-                        int prevI = i - windI;
-                        int prevJ = j - windJ;
-                        if (Grids.isOutOfBounds(prevI, prevJ, width, height)) {
-                            firstTiles.add(new Point(i, j));
+                        Point position = new Point(i, j);
+                        if (Grids.isOutOfBounds(position.minus(wind), width, height)) {
+                            firstTiles.add(position);
                         }
                     }
                 }
@@ -76,11 +73,9 @@ public class Anemo extends Tile {
                 if (!firstTiles.isEmpty()) {
                     int randomIndex = (int) (Math.random() * firstTiles.size());
                     Point randomTile = firstTiles.get(randomIndex);
-                    int x = randomTile.x();
-                    int y = randomTile.y();
-                    Tile oldTile = grid.getTile(x, y);
+                    Tile oldTile = grid.getTile(randomTile);
                     if (!oldTile.isComplexType()) {
-                        newGrid.replace(x, y, new Anemo(oldTile), oldTile);
+                        newGrid.replace(randomTile, new Anemo(oldTile), oldTile);
                     }
                 }
             }
@@ -88,7 +83,7 @@ public class Anemo extends Tile {
     }
 
     @Override
-    public void act(Grid grid, Grid newGrid, int i, int j) {
+    public void act(Grid grid, Grid newGrid, Point position) {
         int width = grid.getWidth();
         int height = grid.getHeight();
         // erosion
@@ -96,7 +91,7 @@ public class Anemo extends Tile {
             Geo geo = (Geo) containedTile;
             // shield: protection; brittle: erosion.
             if (!geo.hasShield() && (geo.isBrittle() || Math.random() < Geo.BASE_EROSION_CHANCE)) {
-                newGrid.replace(i, j, new Empty(), containedTile);
+                newGrid.replace(position, new Empty(), containedTile);
             }
         }
 
@@ -116,24 +111,22 @@ public class Anemo extends Tile {
         if (containedTile.isComplexType()) {
             throw new IllegalStateException("Anemo cannot contain another complex tile.");
         }
-        containedTile.act(grid, newGrid, i, j);
+        containedTile.act(grid, newGrid, position);
 
         // swirl
         if (containedTile.isStrongType()) {
-            Point[] neighbors = Grids.getNeighbors(i, j, width, height);
+            Point[] neighbors = Grids.getNeighbors(position, width, height);
             int randomIndex = (int) (Math.random() * neighbors.length);
             Point randomNeighbor = neighbors[randomIndex];
-            int newI = randomNeighbor.x();
-            int newJ = randomNeighbor.y();
             Tile tmp;
-            if (grid.getTile(newI, newJ).isComplexType()) {
+            if (grid.getTile(randomNeighbor).isComplexType()) {
                 // swap with inner tile if complex
-                tmp = grid.getTile(newI, newJ).getContainedTile();
+                tmp = grid.getTile(randomNeighbor).getContainedTile();
             }
             else {
-                tmp = grid.getTile(newI, newJ);
+                tmp = grid.getTile(randomNeighbor);
             }
-            newGrid.replace(newI, newJ, containedTile, tmp);
+            newGrid.replace(randomNeighbor, containedTile, tmp);
             if (Math.random() < BASE_SWIRL_COPY_CHANCE) {
                 try {
                     containedTile = containedTile.getClass().getDeclaredConstructor(containedTile.getClass()).newInstance();
@@ -147,20 +140,16 @@ public class Anemo extends Tile {
         }
 
         // wind: moves
-        newGrid.replace(i, j, containedTile, this);
+        newGrid.replace(position, containedTile, this);
 
         // goes in the fixed direction of current seasonal wind
-        int[] windDirections = grid.getWindDirection();
-        int windI = windDirections[0];
-        int windJ = windDirections[1];
-        int newI = i + windI;
-        int newJ = j + windJ;
+        Point next = position.plus(grid.getWindDirection());
 
-        if (!Grids.isOutOfBounds(newI, newJ, width, height)
-                && !grid.getTile(newI, newJ).isComplexType()) {
+        if (!Grids.isOutOfBounds(next, width, height)
+                && !grid.getTile(next).isComplexType()) {
             // wind: absorb
-            containedTile = grid.getTile(newI, newJ);
-            newGrid.replace(newI, newJ, this, newGrid.getTile(newI, newJ));
+            containedTile = grid.getTile(next);
+            newGrid.replace(next, this, newGrid.getTile(next));
         }
     }
 }

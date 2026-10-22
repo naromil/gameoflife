@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import com.naromil.gol.elements.Ash;
 import com.naromil.gol.elements.Empty;
+import com.naromil.gol.elements.Point;
 import com.naromil.gol.elements.Tile;
 import com.naromil.gol.elements.TileFactory;
 import com.naromil.gol.environment.Season;
@@ -83,7 +84,8 @@ public class Grid {
 
     public void setSize(int gridWidth, int gridHeight) {
         if (gridWidth < 1 || gridWidth > MAX_WIDTH || gridHeight < 1 || gridHeight > MAX_HEIGHT) {
-            throw new IllegalArgumentException("Grid size must be between 1 and " + MAX_WIDTH + " for width and 1 and " + MAX_HEIGHT + " for height.");
+            throw new IllegalArgumentException("Grid size must be between 1 and "
+                    + MAX_WIDTH + " for width and 1 and " + MAX_HEIGHT + " for height.");
         }
         for (int i = this.width; i < gridWidth; i++) {
             for (int j = 0; j < this.height; j++) {
@@ -105,12 +107,12 @@ public class Grid {
     }
 
     // this gets the outer tile always.
-    public Tile getTile(int i, int j) {
-        return tiles[i][j];
+    public Tile getTile(Point position) {
+        return tiles[position.x()][position.y()];
     }
 
-    public boolean hasType(int i, int j, Class<? extends Tile> tileType) {
-        return tiles[i][j].hasType(tileType);
+    public boolean hasType(Point position, Class<? extends Tile> tileType) {
+        return tiles[position.x()][position.y()].hasType(tileType);
     }
 
     /**
@@ -118,8 +120,8 @@ public class Grid {
      * otherwise, return an Empty tile.
      * @return The matching tile or an Empty tile if none is found.
      */
-    public Tile getTileOfType(int i, int j, Class<? extends Tile> tileType) {
-        Tile tile = tiles[i][j];
+    public Tile getTileOfType(Point position, Class<? extends Tile> tileType) {
+        Tile tile = tiles[position.x()][position.y()];
         if (tileType.isInstance(tile)) {
             return tile;
         } else if (tileType.isInstance(tile.getContainedTile())) {
@@ -134,7 +136,9 @@ public class Grid {
      * the preferred wrapper to replace tile abstractly.
      * @param oldTile do not use Empty if no preference, use null instead.
      */
-    public void replace(int i, int j, Tile newTile, Tile oldTile) {
+    public void replace(Point position, Tile newTile, Tile oldTile) {
+        int i = position.x();
+        int j = position.y();
         if (tiles[i][j] instanceof Empty || tiles[i][j] instanceof Ash
                 || isSameUuid(tiles[i][j], oldTile)) {
             tiles[i][j] = newTile;
@@ -154,7 +158,7 @@ public class Grid {
     }
 
     /* ---- Environment operations ---- */
-    public int[] getWindDirection() {
+    public Point getWindDirection() {
         return season.getWindDirection();
     }
 
@@ -189,7 +193,7 @@ public class Grid {
         return statusGrid;
     }
 
-    public record TileState(Tile tile, int x, int y) implements Comparable<TileState> {
+    public record TileState(Tile tile, Point position) implements Comparable<TileState> {
         @Override
         public int compareTo(TileState other) {
             return this.tile.getRank() - other.tile.getRank();
@@ -224,7 +228,8 @@ public class Grid {
             } catch (NoSuchMethodException e) {
                 System.err.println("Error: global action not found");
             } catch (Exception e) {
-                System.err.println("Error occurred while invoking global action for " + tileClass.getSimpleName());
+                System.err.println("Error occurred while invoking global action for "
+                        + tileClass.getSimpleName());
             }
         }
         
@@ -232,13 +237,13 @@ public class Grid {
         List<TileState> tileStates = new ArrayList<>();
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                tileStates.add(new TileState(tiles[i][j], i, j));
+                tileStates.add(new TileState(tiles[i][j], new Point(i, j)));
             }
         }
 
         tileStates.sort(TileState::compareTo);
         for (TileState tileState : tileStates) {
-            tileState.tile().act(this, newGrid, tileState.x(), tileState.y());
+            tileState.tile().act(this, newGrid, tileState.position());
         }
 
         return newGrid;

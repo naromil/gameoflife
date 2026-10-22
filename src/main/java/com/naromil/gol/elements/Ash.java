@@ -29,11 +29,11 @@ public class Ash extends Tile {
     }
 
     @Override
-    public void act(Grid grid, Grid newGrid, int i, int j) {
+    public void act(Grid grid, Grid newGrid, Point position) {
         // burnout: die
         // tick++;
         if (tick >= MAX_TICKS) {
-            newGrid.replace(i, j, new Empty(), this);
+            newGrid.replace(position, new Empty(), this);
         }
     }
 }

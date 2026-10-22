@@ -62,7 +62,7 @@ public class Electro extends Tile {
         // storms: initialize
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                Tile tile = grid.getTile(i, j);
+                Tile tile = grid.getTile(new Point(i, j));
                 if (tile instanceof Electro) {
                     // ignoring contained Electro that are for special purposes
                     ((Electro) tile).hasActed = false;
@@ -80,38 +80,36 @@ public class Electro extends Tile {
                 ? (int) Math.ceil(expextedTimes) : (int) Math.floor(expextedTimes);
         for (int t = 0; t < times; t++) {
             if (Math.random() < chance) {
-                int newI = (int) (Math.random() * height);
-                int newJ = (int) (Math.random() * width);
+                Point spawn = new Point((int) (Math.random() * height),
+                        (int) (Math.random() * width));
                 double currentId = Math.random();
-                Tile oldTile = grid.getTile(newI, newJ);
+                Tile oldTile = grid.getTile(spawn);
                 if (!oldTile.isComplexType()) {
-                    newGrid.replace(newI, newJ, new Electro(oldTile, currentId), oldTile);
+                    newGrid.replace(spawn, new Electro(oldTile, currentId), oldTile);
                 }
                 while (Math.random() < BASE_MORE_STORM_CHANCE) {
-                    Point[] neighbors = Grids.getNeighbors(newI, newJ, width, height);
+                    Point[] neighbors = Grids.getNeighbors(spawn, width, height);
                     int randomIndex = (int) (Math.random() * neighbors.length);
-                    int newI2 = neighbors[randomIndex].x();
-                    int newJ2 = neighbors[randomIndex].y();
-                    Tile oldTile2 = grid.getTile(newI2, newJ2);
+                    Point next = neighbors[randomIndex];
+                    Tile oldTile2 = grid.getTile(next);
                     if (!oldTile2.isComplexType()) {
-                        newGrid.replace(newI2, newJ2, new Electro(oldTile2, currentId),
+                        newGrid.replace(next, new Electro(oldTile2, currentId),
                                 oldTile2);
-                        newI = newI2;
-                        newJ = newJ2;
+                        spawn = next;
                     }
                 }
             }
-    }
+        }
     }
 
     @Override
-    public void act(Grid grid, Grid newGrid, int i, int j) {
+    public void act(Grid grid, Grid newGrid, Point position) {
         int directionX = (int) (Math.random() * 3) - 1;
         int directionY = (int) (Math.random() * 3) - 1;
-        act(grid, newGrid, i, j, new Point(directionX, directionY));
+        act(grid, newGrid, position, new Point(directionX, directionY));
     }
 
-    private void act(Grid grid, Grid newGrid, int i, int j, Point direction) {
+    private void act(Grid grid, Grid newGrid, Point position, Point direction) {
         int width = grid.getWidth();
         int height = grid.getHeight();
         if (hasActed) {
@@ -122,37 +120,34 @@ public class Electro extends Tile {
         // storm: disappear
         stormTicks++;
         if (stormTicks >= MAX_STORM_TICKS) {
-            newGrid.replace(i, j, containedTile, this);
+            newGrid.replace(position, containedTile, this);
             return;
         }
 
         // overloaded
         if (containedTile instanceof Pyro) {
-            newGrid.replace(i, j, new Empty(), this);
+            newGrid.replace(position, new Empty(), this);
             //overloaded: explosion
-            for (Point adjacent : Grids.getNeighbors(i, j, width, height, 2)) {
-                int newI = adjacent.x();
-                int newJ = adjacent.y();
-                Tile oldTile = grid.getTile(newI, newJ);
+            for (Point adjacent : Grids.getNeighbors(position, width, height, 2)) {
+                Tile oldTile = grid.getTile(adjacent);
                 if (oldTile instanceof Geo && ((Geo) oldTile).hasShield()) {
                     ((Geo) oldTile).setShield(false); // shield: protection
                     continue;
                 }
-                newGrid.replace(newI, newJ, new Empty(), oldTile);
+                newGrid.replace(adjacent, new Empty(), oldTile);
             }
             // overloaded: throw away
-            List<Point> neighbors2 = Arrays.asList(Grids.getNeighbors(i, j, width, height, 2));
+            List<Point> neighbors2 = Arrays.asList(
+                    Grids.getNeighbors(position, width, height, 2));
             List<Point> neighbors3 = Arrays.asList(
-                    Grids.getNeighbors(i, j, width, height, 3)).stream()
+                    Grids.getNeighbors(position, width, height, 3)).stream()
                     .filter(adjacent -> !neighbors2.contains(adjacent)).toList();
             if (neighbors3.isEmpty()) {
                 return;
             }
             int randomIndex = (int) (Math.random() * neighbors3.size());
             Point randomNeighbor = neighbors3.get(randomIndex);
-            int newI = randomNeighbor.x();
-            int newJ = randomNeighbor.y();
-            newGrid.replace(newI, newJ, new Pyro(), grid.getTile(newI, newJ));
+            newGrid.replace(randomNeighbor, new Pyro(), grid.getTile(randomNeighbor));
             return;
         }
 
@@ -160,20 +155,18 @@ public class Electro extends Tile {
         if (containedTile instanceof Dendro && ((Dendro) containedTile).hasDendroCore()) {
             Dendro dendro = (Dendro) containedTile;
             dendro.setDendroCore(false);
-            newGrid.replace(i, j, new Core(), this);
+            newGrid.replace(position, new Core(), this);
             return;
         }
 
         // charged
         if (containedTile instanceof Hydro) {
-            Point[] connected = bfs(grid, i, j); // lake in the previous tick
+            Point[] connected = bfs(grid, position); // lake in the previous tick
             for (Point neighbor : connected) {
-                int newI = neighbor.x();
-                int newJ = neighbor.y();
-                if (!grid.hasType(newI, newJ, Hydro.class)) {
+                if (!grid.hasType(neighbor, Hydro.class)) {
                     continue; // already replaced by other tile this tick
                 }
-                Hydro lakeHydro = (Hydro) grid.getTileOfType(newI, newJ, Hydro.class);
+                Hydro lakeHydro = (Hydro) grid.getTileOfType(neighbor, Hydro.class);
                 lakeHydro.setCharged(true);
             }
         }
@@ -186,13 +179,11 @@ public class Electro extends Tile {
 
         // superconduct
         if (containedTile instanceof Cryo) {
-            newGrid.replace(i, j, new Empty(), this);
+            newGrid.replace(position, new Empty(), this);
             // superconduct: brittle
-            for (Point adjacent : Grids.getNeighbors(i, j, width, height)) {
-                int newI = adjacent.x();
-                int newJ = adjacent.y();
-                if (grid.hasType(newI, newJ, Geo.class)) {
-                    Geo geo = (Geo) grid.getTileOfType(newI, newJ, Geo.class);
+            for (Point adjacent : Grids.getNeighbors(position, width, height)) {
+                if (grid.hasType(adjacent, Geo.class)) {
+                    Geo geo = (Geo) grid.getTileOfType(adjacent, Geo.class);
                     geo.setBrittle(true);
                 }
             }
@@ -204,51 +195,44 @@ public class Electro extends Tile {
             throw new IllegalStateException(
                     "Electro cannot contain another complex tile.");
         }
-        containedTile.act(grid, newGrid, i, j);
+        containedTile.act(grid, newGrid, position);
 
         // storm: moves
-        newGrid.replace(i, j, containedTile, this);
-        int newI = i + direction.x();
-        int newJ = j + direction.y();
-        if (!Grids.isOutOfBounds(newI, newJ, width, height)) {
-            if (grid.getTile(newI, newJ).isComplexType()) {
-                containedTile = grid.getTile(newI, newJ).getContainedTile();
+        newGrid.replace(position, containedTile, this);
+        Point next = position.plus(direction);
+        if (!Grids.isOutOfBounds(next, width, height)) {
+            if (grid.getTile(next).isComplexType()) {
+                containedTile = grid.getTile(next).getContainedTile();
             } else {
-                containedTile = grid.getTile(newI, newJ);
+                containedTile = grid.getTile(next);
             }
-            newGrid.replace(newI, newJ, this, grid.getTile(newI, newJ));
+            newGrid.replace(next, this, grid.getTile(next));
         }
 
         // storm: move together
-        for (Point adjacent : Grids.getNeighbors(i, j, width, height)) {
-            int adjI = adjacent.x();
-            int adjJ = adjacent.y();
-            Tile adjTile = grid.getTile(adjI, adjJ);
+        for (Point adjacent : Grids.getNeighbors(position, width, height)) {
+            Tile adjTile = grid.getTile(adjacent);
             if (adjTile instanceof Electro && ((Electro) adjTile).id == this.id) {
-                ((Electro) adjTile).act(grid, newGrid, adjI, adjJ, direction);
+                ((Electro) adjTile).act(grid, newGrid, adjacent, direction);
             }
         }
     }
 
-    private static Point[] bfs(Grid grid, int startI, int startJ) {
+    private static Point[] bfs(Grid grid, Point start) {
         int width = grid.getWidth();
         int height = grid.getHeight();
         Set<Point> visited = new HashSet<>();
         Queue<Point> queue = new ArrayDeque<>();
-        if (!grid.hasType(startI, startJ, Hydro.class)) {
+        if (!grid.hasType(start, Hydro.class)) {
             throw new IllegalArgumentException("Starting tile is not Hydro.");
         }
-        queue.add(new Point(startI, startJ));
-        visited.add(new Point(startI, startJ));
+        queue.add(start);
+        visited.add(start);
 
         while (!queue.isEmpty()) {
             Point current = queue.remove();
-            int currentI = current.x();
-            int currentJ = current.y();
-            for (Point adjacent : Grids.getNeighbors(currentI, currentJ, width, height)) {
-                int newI = adjacent.x();
-                int newJ = adjacent.y();
-                if (grid.hasType(newI, newJ, Hydro.class) && !visited.contains(adjacent)) {
+            for (Point adjacent : Grids.getNeighbors(current, width, height)) {
+                if (grid.hasType(adjacent, Hydro.class) && !visited.contains(adjacent)) {
                     queue.add(adjacent);
                     visited.add(adjacent);
                     if (visited.size() >= MAX_CHARGED_SPREAD) {

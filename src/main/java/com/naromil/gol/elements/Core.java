@@ -43,11 +43,11 @@ public class Core extends Dendro {
      * has useless quickened state, won't wither, won't grow, won't bloom
      */
     @Override
-    public void act(Grid grid, Grid newGrid, int i, int j) {
-        act(grid, newGrid, i, j, CORE_SPEED_MULTIPLIER);
+    public void act(Grid grid, Grid newGrid, Point position) {
+        act(grid, newGrid, position, CORE_SPEED_MULTIPLIER);
     }
 
-    public void act(Grid grid, Grid newGrid, int i, int j, int times) {
+    public void act(Grid grid, Grid newGrid, Point position, int times) {
         int width = grid.getWidth();
         int height = grid.getHeight();
         // quicken: timer
@@ -60,13 +60,15 @@ public class Core extends Dendro {
             // extinguish all on the grid
             for (int x = 0; x < height; x++) {
                 for (int y = 0; y < width; y++) {
-                    if (grid.hasType(x, y, Pyro.class)) {
-                        newGrid.replace(x, y, new Empty(), grid.getTileOfType(x, y, Pyro.class));
+                    Point tilePosition = new Point(x, y);
+                    if (grid.hasType(tilePosition, Pyro.class)) {
+                        newGrid.replace(tilePosition, new Empty(),
+                                grid.getTileOfType(tilePosition, Pyro.class));
                     }
                 }
             }
             
-            newGrid.replace(i, j, new Empty(), this);
+            newGrid.replace(position, new Empty(), this);
             return;
         }
 
@@ -75,27 +77,25 @@ public class Core extends Dendro {
             throw new IllegalStateException(
                     "Core cannot contain another complex tile.");
         }
-        containedTile.act(grid, newGrid, i, j);
+        containedTile.act(grid, newGrid, position);
 
         // hyperbloom: hunt
-        newGrid.replace(i, j, containedTile, this);
+        newGrid.replace(position, containedTile, this);
 
         // move one tile towards the nearest Pyro, otherwise self kill
-        Point next = Grids.directionToNearestType(grid, i, j, Pyro.class);
+        Point next = Grids.directionToNearestType(grid, position, Pyro.class);
 
         if (next != null) { // only move if pyro found
-            int x = next.x();
-            int y = next.y();
-            Tile oldTile = grid.getTile(x, y);
+            Tile oldTile = grid.getTile(next);
             if (!oldTile.isComplexType()) {
                 containedTile = oldTile;
             }
             // top priority among complex tile types
-            newGrid.replace(x, y, this, oldTile);
+            newGrid.replace(next, this, oldTile);
 
             if (times > 1) {
                 // recursion to act multiple times a tick
-                act(grid, newGrid, next.x(), next.y(), times - 1);
+                act(grid, newGrid, next, times - 1);
             }
         }
     }

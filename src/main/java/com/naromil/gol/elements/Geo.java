@@ -80,26 +80,22 @@ public class Geo extends Tile {
         return brittleDuration > 0;
     }
 
-    private static List<Point> bfs(Grid grid, Grid newGrid, int startI, int startJ,
-            Set<Point> visited) {
+    private static List<Point> bfs(Grid grid, Point start, Set<Point> visited) {
         Queue<Point> queue = new ArrayDeque<>();
         List<Point> peripheral = new ArrayList<Point>();
-        queue.add(new Point(startI, startJ));
-        visited.add(new Point(startI, startJ));
+        queue.add(start);
+        visited.add(start);
 
         while (!queue.isEmpty()) {
             Point current = queue.remove();
-            int currentI = current.x();
-            int currentJ = current.y();
-            for (Point adjacent : Grids.getNeighbors(currentI, currentJ,
+            for (Point adjacent : Grids.getNeighbors(current,
                     grid.getWidth(), grid.getHeight())) {
-                int newI = adjacent.x();
-                int newJ = adjacent.y();
-                if (grid.hasType(newI, newJ, Geo.class) && !visited.contains(adjacent)) {
+                boolean isGeo = grid.hasType(adjacent, Geo.class);
+                if (isGeo && !visited.contains(adjacent)) {
                     queue.add(adjacent);
                     visited.add(adjacent);
                 }
-                else if (!grid.hasType(newI, newJ, Geo.class)) {
+                else if (!isGeo) {
                     peripheral.add(adjacent);
                 }
             }
@@ -115,10 +111,11 @@ public class Geo extends Tile {
         Set<Point> visited = new HashSet<>();
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                if (grid.hasType(i, j, Geo.class) && !visited.contains(new Point(i, j))) {
+                Point position = new Point(i, j);
+                if (grid.hasType(position, Geo.class) && !visited.contains(position)) {
 
                     Set<Point> oldVisited = new HashSet<>(visited);
-                    List<Point> peripheral = bfs(grid, newGrid, i, j, visited);
+                    List<Point> peripheral = bfs(grid, position, visited);
                     List<Point> connected = visited.stream().
                             filter(p -> !oldVisited.contains(p)).toList();
                     if (connected.isEmpty()) {
@@ -134,9 +131,8 @@ public class Geo extends Tile {
                         double chance = BASE_MOUNTAINS_CHANCE;
                         if (Math.random() < chance) {
                             int randomIndex = (int) (Math.random() * peripheral.size());
-                            int newI = peripheral.get(randomIndex).x();
-                            int newJ = peripheral.get(randomIndex).y();
-                            newGrid.replace(newI, newJ, new Geo(), grid.getTile(newI, newJ));
+                            Point target = peripheral.get(randomIndex);
+                            newGrid.replace(target, new Geo(), grid.getTile(target));
                         }
                     }
 
@@ -146,7 +142,7 @@ public class Geo extends Tile {
     }
 
     @Override
-    public void act(Grid grid, Grid newGrid, int i, int j) {
+    public void act(Grid grid, Grid newGrid, Point position) {
         int width = grid.getWidth();
         int height = grid.getHeight();
         // crystallize: countdown
@@ -157,17 +153,15 @@ public class Geo extends Tile {
         }
 
         // crystallize
-        for (Point adjacent : Grids.getNeighbors(i, j, width, height)) {
-            int newI = adjacent.x();
-            int newJ = adjacent.y();
+        for (Point adjacent : Grids.getNeighbors(position, width, height)) {
             double chance = BASE_CRYSTALLIZE_CHANCE;
             if (hasShield()) { chance = 0; } // already have shield
             if (Math.random() < chance
-                    && grid.getTile(newI, newJ).isStrongType()) {
+                    && grid.getTile(adjacent).isStrongType()) {
                 setShield(true);
                 // crystallize: absorb
                 if (Math.random() < BASE_ABSORB_CHANCE) {
-                    newGrid.replace(newI, newJ, new Empty(), grid.getTile(newI, newJ));
+                    newGrid.replace(adjacent, new Empty(), grid.getTile(adjacent));
                 }
                 break;
             }

@@ -12,68 +12,58 @@ import com.naromil.gol.main.Grid;
 
 public class Grids {
     /* ---- Grid exploration section ---- */
-    public static boolean doesExistWithinDistance(Grid grid, int i, int j,
+    public static boolean doesExistWithinDistance(Grid grid, Point position,
             Class<? extends Tile> tileType, int distance) {
-        return countTilesWithinDistance(grid, i, j, tileType, distance) > 0;
+        return countTilesWithinDistance(grid, position, tileType, distance) > 0;
     }
 
-    public static int countTilesWithinDistance(Grid grid, int i, int j,
+    public static int countTilesWithinDistance(Grid grid, Point position,
             Class<? extends Tile> tileType, int distance) {
         int count = 0;
-        for (Point adjacent : getNeighbors(i, j, grid.getWidth(), grid.getHeight(), distance)) {
-            int newI = adjacent.x();
-            int newJ = adjacent.y();
-            if (grid.getTile(newI, newJ).hasType(tileType)) {
+        for (Point adjacent : getNeighbors(position, grid.getWidth(), grid.getHeight(), distance)) {
+            if (grid.getTile(adjacent).hasType(tileType)) {
                 count++;
             }
         }
         return count;
     }
 
-    public static boolean isOutOfBounds(int i, int j, int width, int height) {
-        return i < 0 || i >= height || j < 0 || j >= width;
+    public static boolean isOutOfBounds(Point position, int width, int height) {
+        return position.x() < 0 || position.x() >= height
+                || position.y() < 0 || position.y() >= width;
     }
 
-    // valid adjacent Point2D coordinates after boundary check
-    public static Point[] getNeighbors(int i, int j, int width, int height) {
-        return getNeighbors(i, j, width, height, 1);
+    // valid adjacent Point coordinates after boundary check
+    public static Point[] getNeighbors(Point position, int width, int height) {
+        return getNeighbors(position, width, height, 1);
     }
 
-    public static Point[] getNeighbors(int i, int j, int width, int height, int distance) {
+    public static Point[] getNeighbors(Point position, int width, int height, int distance) {
         List<Point> adjacentCoordinates = new ArrayList<>();
-        for (int x = -distance; x <= distance; x++) {
-            for (int y = -distance; y <= distance; y++) {
-                int newI = i + x;
-                int newJ = j + y;
-                if (newI >= 0 && newI < height && newJ >= 0 && newJ < width) {
-                    adjacentCoordinates.add(new Point(newI, newJ));
+        for (int dx = -distance; dx <= distance; dx++) {
+            for (int dy = -distance; dy <= distance; dy++) {
+                Point adjacent = position.plus(dx, dy);
+                if (!isOutOfBounds(adjacent, width, height)) {
+                    adjacentCoordinates.add(adjacent);
                 }
             }
         }
 
-        Point[] result = new Point[adjacentCoordinates.size()];
-        for (int k = 0; k < adjacentCoordinates.size(); k++) {
-            result[k] = adjacentCoordinates.get(k);
-        }
-        return result;
+        return adjacentCoordinates.toArray(Point[]::new);
     }
 
-    public static List<Point> bfs(Grid grid, int startI, int startJ,
+    public static List<Point> bfs(Grid grid, Point start,
             Class<? extends Tile> targetType, int maxCount) {
         Set<Point> visited = new LinkedHashSet<>();
         Queue<Point> queue = new ArrayDeque<>();
-        queue.add(new Point(startI, startJ));
-        visited.add(new Point(startI, startJ));
+        queue.add(start);
+        visited.add(start);
 
         while (!queue.isEmpty()) {
             Point current = queue.remove();
-            int currentI = current.x();
-            int currentJ = current.y();
-            for (Point adjacent : Grids.getNeighbors(currentI, currentJ,
+            for (Point adjacent : Grids.getNeighbors(current,
                     grid.getWidth(), grid.getHeight())) {
-                int newI = adjacent.x();
-                int newJ = adjacent.y();
-                if (grid.hasType(newI, newJ, targetType) && !visited.contains(adjacent)) {
+                if (grid.hasType(adjacent, targetType) && !visited.contains(adjacent)) {
                     queue.add(adjacent);
                     visited.add(adjacent);
                 }
@@ -86,23 +76,21 @@ public class Grids {
         return new ArrayList<>(visited);
     }
 
-    public static List<Point> bfs(Grid grid, int startI, int startJ,
+    public static List<Point> bfs(Grid grid, Point start,
             Class<? extends Tile> targetType) {
-        return bfs(grid, startI, startJ, targetType, Integer.MAX_VALUE);
+        return bfs(grid, start, targetType, Integer.MAX_VALUE);
     }
 
     private record DirectionStore(Point current, Point direction, int distance) {}
 
-    public static Point directionToNearestType(Grid grid, int startI, int startJ,
+    public static Point directionToNearestType(Grid grid, Point start,
             Class<? extends Tile> targetType) {
         Set<Point> visited = new HashSet<>();
         Queue<DirectionStore> queue = new ArrayDeque<>();
-        visited.add(new Point(startI, startJ));
-        for (Point adjacent : Grids.getNeighbors(startI, startJ,
+        visited.add(start);
+        for (Point adjacent : Grids.getNeighbors(start,
                 grid.getWidth(), grid.getHeight())) {
-            int newI = adjacent.x();
-            int newJ = adjacent.y();
-            if (newI != startI || newJ != startJ) {
+            if (!adjacent.equals(start)) {
                 queue.add(new DirectionStore(adjacent, adjacent, 1));
                 visited.add(adjacent);
             }
@@ -110,12 +98,10 @@ public class Grids {
 
         while (!queue.isEmpty()) {
             DirectionStore current = queue.remove();
-            int currentI = current.current().x();
-            int currentJ = current.current().y();
-            if (grid.hasType(currentI, currentJ, targetType)) {
+            if (grid.hasType(current.current(), targetType)) {
                 return current.direction();
             }
-            for (Point adjacent : Grids.getNeighbors(currentI, currentJ,
+            for (Point adjacent : Grids.getNeighbors(current.current(),
                     grid.getWidth(), grid.getHeight())) {
                 if (!visited.contains(adjacent)) {
                     queue.add(new DirectionStore(adjacent,

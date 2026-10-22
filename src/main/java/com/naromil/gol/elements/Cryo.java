@@ -37,7 +37,7 @@ public class Cryo extends Tile {
     }
 
     @Override
-    public void act(Grid grid, Grid newGrid, int i, int j) {
+    public void act(Grid grid, Grid newGrid, Point position) {
         int width = grid.getWidth();
         int height = grid.getHeight();
         // thaw
@@ -45,7 +45,7 @@ public class Cryo extends Tile {
         if (currentSeason != SeasonType.WINTER) {
             tickWithoutWinter++;
             if (tickWithoutWinter >= MAX_TICKS_WITHOUT_WINTER) {
-                newGrid.replace(i, j, new Hydro(), this);
+                newGrid.replace(position, new Hydro(), this);
                 return;
             }
         } else {
@@ -53,17 +53,15 @@ public class Cryo extends Tile {
         }
 
         // frozen
-        for (Point adjacent : Grids.getNeighbors(i, j, width, height)) {
-            int newI = adjacent.x();
-            int newJ = adjacent.y();
-            Tile adjHydro = grid.getTileOfType(newI, newJ, Hydro.class);
+        for (Point adjacent : Grids.getNeighbors(position, width, height)) {
+            Tile adjHydro = grid.getTileOfType(adjacent, Hydro.class);
             if (!(adjHydro instanceof Empty)
-                    && Grids.countTilesWithinDistance(grid, newI, newJ,
+                    && Grids.countTilesWithinDistance(grid, adjacent,
                     Cryo.class, 1) >= 2) {
                 double frozenChance = (currentSeason == SeasonType.WINTER)
                         ? BASE_FROZEN_WINTER_CHANCE : BASE_FROZEN_NORMAL_CHANCE;
                 if (Math.random() < frozenChance) {
-                    newGrid.replace(newI, newJ, new Cryo(tickWithoutWinter + 1), adjHydro);
+                    newGrid.replace(adjacent, new Cryo(tickWithoutWinter + 1), adjHydro);
                 }
             }
         }

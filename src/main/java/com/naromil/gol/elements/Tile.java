@@ -61,5 +61,5 @@ public abstract class Tile implements Comparable<Tile> {
         return;
     }
 
-    public abstract void act(Grid grid, Grid newGrid, int i, int j);
+    public abstract void act(Grid grid, Grid newGrid, Point position);
 }

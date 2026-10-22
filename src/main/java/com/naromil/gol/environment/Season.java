@@ -1,17 +1,20 @@
 package com.naromil.gol.environment;
 
+import com.naromil.gol.elements.Point;
+
 // keeps track of the current season, its duration and seasonal effects
 public class Season {
     private final int SEASON_DURATION = 100;
 
     // wind blows in one of the 8 integer directions {di, dj}
-    private static final int[][] WIND_DIRECTIONS = {
-        {-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}
+    private static final Point[] WIND_DIRECTIONS = {
+        new Point(-1, 0), new Point(1, 0), new Point(0, -1), new Point(0, 1),
+        new Point(-1, -1), new Point(-1, 1), new Point(1, -1), new Point(1, 1)
     };
 
     private SeasonType currentSeason;
     private int currentSeasonTick;
-    private int[] windDirection;
+    private Point windDirection;
 
     // default with SPRING and random wind direction
     public Season() {
@@ -19,7 +22,7 @@ public class Season {
     }
 
     // comprehensive
-    private Season(SeasonType currentSeason, int currentSeasonTick, int[] windDirection) {
+    private Season(SeasonType currentSeason, int currentSeasonTick, Point windDirection) {
         this.currentSeason = currentSeason;
         this.currentSeasonTick = currentSeasonTick;
         this.windDirection = windDirection;
@@ -34,11 +37,11 @@ public class Season {
         return currentSeason;
     }
 
-    public int[] getWindDirection() {
+    public Point getWindDirection() {
         return windDirection;
     }
 
-    private static int[] generateRandomWindDirection() {
+    private static Point generateRandomWindDirection() {
         return WIND_DIRECTIONS[(int) (Math.random() * WIND_DIRECTIONS.length)];
     }
 

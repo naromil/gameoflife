@@ -50,9 +50,10 @@ public class Pyro extends Tile {
                 List<Point> dendroTiles = new ArrayList<>();
                 for (int i = 0; i < height; i++) {
                     for(int j = 0; j < width; j++) {
-                        Tile newTile = grid.getTileOfType(i, j, Dendro.class);
+                        Point position = new Point(i, j);
+                        Tile newTile = grid.getTileOfType(position, Dendro.class);
                         if (newTile instanceof Dendro) {
-                            dendroTiles.add(new Point(i, j));
+                            dendroTiles.add(position);
                         }
                     }
                 }
@@ -61,71 +62,61 @@ public class Pyro extends Tile {
                 }
                 int randomIndex = (int) (Math.random() * dendroTiles.size());
                 Point randomTile = dendroTiles.get(randomIndex);
-                int newI = randomTile.x();
-                int newJ = randomTile.y();
-                newGrid.replace(newI, newJ, new Pyro(), grid.getTile(newI, newJ));
+                newGrid.replace(randomTile, new Pyro(), grid.getTile(randomTile));
             }
         }
     }
 
     @Override
-    public void act(Grid grid, Grid newGrid, int i, int j) {
+    public void act(Grid grid, Grid newGrid, Point position) {
         int width = grid.getWidth();
         int height = grid.getHeight();
         // burnout: become ash
         tickBurnout++;
         if (tickBurnout >= MAX_TICKS_BURNOUT) {
-            newGrid.replace(i, j, new Ash(), this);
+            newGrid.replace(position, new Ash(), this);
             return;
         }
 
         // burgeon before burning because it is stricter
         // burgeon
-        for (Point adjacent : Grids.getNeighbors(i, j, width, height)) {
-            int newI = adjacent.x();
-            int newJ = adjacent.y();
-            Tile adjDendro = grid.getTileOfType(newI, newJ, Dendro.class);
+        for (Point adjacent : Grids.getNeighbors(position, width, height)) {
+            Tile adjDendro = grid.getTileOfType(adjacent, Dendro.class);
             if (!(adjDendro instanceof Empty)
                     && ((Dendro) adjDendro).hasDendroCore()) {
                 ((Dendro) adjDendro).setDendroCore(false);
                 // burgeon: ignite
-                for (Point adjacent2 : Grids.getNeighbors(newI, newJ,
+                for (Point adjacent2 : Grids.getNeighbors(adjacent,
                         width, height, 2)) {
-                    int newI2 = adjacent2.x();
-                    int newJ2 = adjacent2.y();
-                    Tile adjDendro2 = grid.getTileOfType(newI2, newJ2, Dendro.class);
+                    Tile adjDendro2 = grid.getTileOfType(adjacent2, Dendro.class);
                     if (!(adjDendro2 instanceof Empty)) {
-                        newGrid.replace(newI2, newJ2, new Pyro(), adjDendro2);
+                        newGrid.replace(adjacent2, new Pyro(), adjDendro2);
                     }
                 }
             }
         }
 
         // burning
-        for (Point adjacent : Grids.getNeighbors(i, j, width, height)) {
-            int newI = adjacent.x();
-            int newJ = adjacent.y();
-            Tile adjDendro = grid.getTileOfType(newI, newJ, Dendro.class);
+        for (Point adjacent : Grids.getNeighbors(position, width, height)) {
+            Tile adjDendro = grid.getTileOfType(adjacent, Dendro.class);
             if (!(adjDendro instanceof Empty)
                     && Math.random() < BASE_BURNING_CHANCE) {
-                newGrid.replace(newI, newJ, new Pyro(), adjDendro);
+                newGrid.replace(adjacent, new Pyro(), adjDendro);
             }
         }
 
         // melt
         boolean hasGoneOut = false;
-        for (Point adjacent : Grids.getNeighbors(i, j, width, height)) {
-            int newI = adjacent.x();
-            int newJ = adjacent.y();
-            Tile cryoTile = grid.getTileOfType(newI, newJ, Cryo.class);
+        for (Point adjacent : Grids.getNeighbors(position, width, height)) {
+            Tile cryoTile = grid.getTileOfType(adjacent, Cryo.class);
             if (cryoTile instanceof Cryo) {
-                newGrid.replace(newI, newJ, new Hydro(), cryoTile);
+                newGrid.replace(adjacent, new Hydro(), cryoTile);
                 hasGoneOut = true; // melt: goes out
             }
         }
 
         if (hasGoneOut) {
-            newGrid.replace(i, j, new Empty(), this);
+            newGrid.replace(position, new Empty(), this);
         }
     }
 }

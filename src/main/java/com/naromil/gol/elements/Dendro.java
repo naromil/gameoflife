@@ -95,7 +95,7 @@ public class Dendro extends Tile {
     }
 
     @Override
-    public void act(Grid grid, Grid newGrid, int i, int j) {
+    public void act(Grid grid, Grid newGrid, Point position) {
         int width = grid.getWidth();
         int height = grid.getHeight();
         // season: change color
@@ -122,13 +122,11 @@ public class Dendro extends Tile {
         // wither
         boolean isNearHydro = false;
 
-        if (Grids.doesExistWithinDistance(grid, i, j, Cryo.class, 2)) {
+        if (Grids.doesExistWithinDistance(grid, position, Cryo.class, 2)) {
             isNearHydro = true;
         }
-        for (Point adj : Grids.getNeighbors(i, j, width, height, 2)) {
-            int x = adj.x();
-            int y = adj.y();
-            Tile tile = grid.getTileOfType(x, y, Hydro.class);
+        for (Point adj : Grids.getNeighbors(position, width, height, 2)) {
+            Tile tile = grid.getTileOfType(adj, Hydro.class);
             if (tile instanceof Hydro && !((Hydro) tile).isCharged()) { // charged: wither
                 isNearHydro = true;
                 break;
@@ -138,7 +136,7 @@ public class Dendro extends Tile {
         if (!isNearHydro) {
             tickWithoutHydro++;
             if (tickWithoutHydro >= MAX_TICKS_WITHOUT_HYDRO) {
-                newGrid.replace(i, j, new Ash(), this);
+                newGrid.replace(position, new Ash(), this);
                 return;
             }
         } else {
@@ -147,20 +145,18 @@ public class Dendro extends Tile {
 
         // growth
         setFrost(grid.getCurrentSeason() == SeasonType.WINTER
-                || Grids.doesExistWithinDistance(grid, i, j, Cryo.class, 1));
+                || Grids.doesExistWithinDistance(grid, position, Cryo.class, 1));
 
         if (!isFrost && tickWithoutHydro + 1 < MAX_TICKS_WITHOUT_HYDRO) { // frost
-            for (Point adjacent : Grids.getNeighbors(i, j, width, height)) {
-                int newI = adjacent.x();
-                int newJ = adjacent.y();
+            for (Point adjacent : Grids.getNeighbors(position, width, height)) {
                 // base chance and multipliers
                 double chance = BASE_GROWTH_CHANCE;
                 if (isNearHydro) { chance *= 2; }
-                if (grid.hasType(newI, newJ, Ash.class)) { chance *= 2; } // burnout: fertile
+                if (grid.hasType(adjacent, Ash.class)) { chance *= 2; } // burnout: fertile
                 if (grid.getCurrentSeason() == SeasonType.SPRING) { chance *= 1.5; }
                 if (tickQuickened > 0) { chance *= 3; }
                 if (Math.random() < chance) {
-                    newGrid.replace(newI, newJ, new Dendro(tickWithoutHydro + 1), null);
+                    newGrid.replace(adjacent, new Dendro(tickWithoutHydro + 1), null);
                 }
             }
         }
@@ -169,17 +165,15 @@ public class Dendro extends Tile {
         if (tickDendroCore > 0) {
             tickDendroCore--;
             if (tickDendroCore == 0) {
-                for (Point adjacent : Grids.getNeighbors(i, j, width, height)) {
-                    int newI = adjacent.x();
-                    int newJ = adjacent.y();
-                    newGrid.replace(newI, newJ, new Dendro(), null);
+                for (Point adjacent : Grids.getNeighbors(position, width, height)) {
+                    newGrid.replace(adjacent, new Dendro(), null);
                 }
             }
         }
 
         // bloom. after plant new Dendro because it should start next tick
         if (Grids.doesExistWithinDistance(grid,
-                i, j, Hydro.class, 1)) {
+                position, Hydro.class, 1)) {
             double chance = BASE_BLOOM_CHANCE;
             if (grid.getCurrentSeason() == SeasonType.SPRING) {
                 chance *= 2;
