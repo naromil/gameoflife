@@ -136,18 +136,17 @@ public class Electro extends Tile {
                 }
                 newGrid.replace(adjacent, oldTile, new Empty());
             }
+
             // overloaded: throw away
-            List<Point> neighbors2 = Arrays.asList(
-                    Grids.getNeighbors(position, width, height, 2));
-            List<Point> neighbors3 = Arrays.asList(
+            List<Point> nexts = Arrays.asList(
                     Grids.getNeighbors(position, width, height, 3)).stream()
-                    .filter(adjacent -> !neighbors2.contains(adjacent)).toList();
-            if (neighbors3.isEmpty()) {
+                    .filter(adjacent -> adjacent.distanceTo(position) == 3).toList();
+            if (nexts.isEmpty()) {
                 return;
             }
-            int randomIndex = (int) (Math.random() * neighbors3.size());
-            Point randomNeighbor = neighbors3.get(randomIndex);
-            newGrid.replace(randomNeighbor, grid.getTile(randomNeighbor), new Pyro());
+            int randomIndex = (int) (Math.random() * nexts.size());
+            Point next = nexts.get(randomIndex);
+            newGrid.replace(next, grid.getTile(next), new Pyro());
             return;
         }
 
@@ -179,14 +178,15 @@ public class Electro extends Tile {
         }
 
         // superconduct
-        if (containedTile instanceof Cryo) {
+        for (Point adjacent : Grids.getNeighbors(position, width, height)) {
+            if (!grid.hasType(adjacent, Cryo.class)) { continue; }
             // ice lake, use same limit
-            Point[] connected = bfs(grid, position, Cryo.class);
-            for (Point neighbor : connected) {
-                newGrid.replace(neighbor, grid.getTile(neighbor), new Empty());
+            Point[] connected = bfs(grid, adjacent, Cryo.class);
+            for (Point cryo : connected) {
+                newGrid.replace(cryo, grid.getTileOfType(cryo, Cryo.class), new Empty());
                 // superconduct: brittle
-                for (Point adjacent : Grids.getNeighbors(neighbor, width, height, 2)) {
-                    Tile geo = grid.getTileOfType(adjacent, Geo.class);
+                for (Point neighbor : Grids.getNeighbors(cryo, width, height, 2)) {
+                    Tile geo = grid.getTileOfType(neighbor, Geo.class);
                     if (geo instanceof Geo) {
                         ((Geo) geo).setBrittle(true);
                     }

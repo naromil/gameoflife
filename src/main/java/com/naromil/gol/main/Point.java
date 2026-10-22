@@ -12,4 +12,9 @@ public record Point(int x, int y) {
     public Point minus(Point other) {
         return new Point(x - other.x, y - other.y);
     }
+
+	public int distanceTo(Point point) {
+        // chebyshev distance
+        return (int) Math.max(point.x() - x, point.y() - y);
+	}
 }
