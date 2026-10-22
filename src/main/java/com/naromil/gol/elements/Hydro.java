@@ -81,8 +81,7 @@ public class Hydro extends Tile {
             Point target = next != null ? next : rain;
 
             // directly snows (spawn Cryo) in winter
-            newGrid.replace(target, isWinter ? new Cryo() : new Hydro(),
-                    grid.getTile(target));
+            newGrid.replace(target, grid.getTile(target), isWinter ? new Cryo() : new Hydro());
         }
     }
 
@@ -93,7 +92,7 @@ public class Hydro extends Tile {
         // plateau
         if (Math.random() < BASE_PLATEAU_CHANCE && Grids.doesExistWithinDistance(grid,
                 position, Geo.class, 1)) {
-            newGrid.replace(position, new Cryo(), this);
+            newGrid.replace(position, this, new Cryo());
             return;
         }
 
@@ -110,7 +109,7 @@ public class Hydro extends Tile {
                 maxTicks /= 2;
             }
             if (tickRain >= maxTicks) {
-                newGrid.replace(position, new Empty(), this);
+                newGrid.replace(position, this, new Empty());
                 return;
             }
         }
@@ -124,8 +123,7 @@ public class Hydro extends Tile {
                 List<Point> connectedPyro = Grids.bfs(grid, adjacent,
                         Pyro.class, MAX_VAPORIZE_TILES);
                 for (Point pyro : connectedPyro) {
-                    newGrid.replace(pyro, new Empty(),
-                            grid.getTileOfType(pyro, Pyro.class));
+                    newGrid.replace(pyro, grid.getTileOfType(pyro, Pyro.class), new Empty());
                 }
                 if (Math.random() < BASE_VAPORIZE_STEAM_CHANCE) {
                     vaporized = true; // vaporize: steam
@@ -135,7 +133,7 @@ public class Hydro extends Tile {
         }
 
         if (vaporized) {
-            newGrid.replace(position, new Empty(), this);
+            newGrid.replace(position, this, new Empty());
         }
     }
 }

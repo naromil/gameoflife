@@ -136,7 +136,7 @@ public class Dendro extends Tile {
         if (!isNearHydro) {
             tickWithoutHydro++;
             if (tickWithoutHydro >= MAX_TICKS_WITHOUT_HYDRO) {
-                newGrid.replace(position, new Ash(), this);
+                newGrid.replace(position, this, new Ash());
                 return;
             }
         } else {
@@ -156,7 +156,7 @@ public class Dendro extends Tile {
                 if (grid.getCurrentSeason() == SeasonType.SPRING) { chance *= 1.5; }
                 if (tickQuickened > 0) { chance *= 3; }
                 if (Math.random() < chance) {
-                    newGrid.replace(adjacent, new Dendro(tickWithoutHydro + 1), null);
+                    newGrid.replace(adjacent, null, new Dendro(tickWithoutHydro + 1));
                 }
             }
         }
@@ -166,7 +166,7 @@ public class Dendro extends Tile {
             tickDendroCore--;
             if (tickDendroCore == 0) {
                 for (Point adjacent : Grids.getNeighbors(position, width, height)) {
-                    newGrid.replace(adjacent, new Dendro(), null);
+                    newGrid.replace(adjacent, null, new Dendro());
                 }
             }
         }

@@ -62,13 +62,14 @@ public class Core extends Dendro {
                 for (int y = 0; y < width; y++) {
                     Point tilePosition = new Point(x, y);
                     if (grid.hasType(tilePosition, Pyro.class)) {
-                        newGrid.replace(tilePosition, new Empty(),
-                                grid.getTileOfType(tilePosition, Pyro.class));
+                        newGrid.replace(tilePosition,
+                                grid.getTileOfType(tilePosition, Pyro.class),
+                                new Empty());
                     }
                 }
             }
             
-            newGrid.replace(position, new Empty(), this);
+            newGrid.replace(position, this, new Empty());
             return;
         }
 
@@ -80,7 +81,7 @@ public class Core extends Dendro {
         containedTile.act(grid, newGrid, position);
 
         // hyperbloom: hunt
-        newGrid.replace(position, containedTile, this);
+        newGrid.replace(position, this, containedTile);
 
         // move one tile towards the nearest Pyro, otherwise self kill
         Point next = Grids.directionToNearestType(grid, position, Pyro.class);
@@ -91,7 +92,7 @@ public class Core extends Dendro {
                 containedTile = oldTile;
             }
             // top priority among complex tile types
-            newGrid.replace(next, this, oldTile);
+            newGrid.replace(next, oldTile, this);
 
             if (times > 1) {
                 // recursion to act multiple times a tick

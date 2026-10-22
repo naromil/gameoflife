@@ -62,7 +62,7 @@ public class Pyro extends Tile {
                 }
                 int randomIndex = (int) (Math.random() * dendroTiles.size());
                 Point randomTile = dendroTiles.get(randomIndex);
-                newGrid.replace(randomTile, new Pyro(), grid.getTile(randomTile));
+                newGrid.replace(randomTile, grid.getTile(randomTile), new Pyro());
             }
         }
     }
@@ -74,7 +74,7 @@ public class Pyro extends Tile {
         // burnout: become ash
         tickBurnout++;
         if (tickBurnout >= MAX_TICKS_BURNOUT) {
-            newGrid.replace(position, new Ash(), this);
+            newGrid.replace(position, this, new Ash());
             return;
         }
 
@@ -90,7 +90,7 @@ public class Pyro extends Tile {
                         width, height, 2)) {
                     Tile adjDendro2 = grid.getTileOfType(adjacent2, Dendro.class);
                     if (!(adjDendro2 instanceof Empty)) {
-                        newGrid.replace(adjacent2, new Pyro(), adjDendro2);
+                        newGrid.replace(adjacent2, adjDendro2, new Pyro());
                     }
                 }
             }
@@ -101,7 +101,7 @@ public class Pyro extends Tile {
             Tile adjDendro = grid.getTileOfType(adjacent, Dendro.class);
             if (!(adjDendro instanceof Empty)
                     && Math.random() < BASE_BURNING_CHANCE) {
-                newGrid.replace(adjacent, new Pyro(), adjDendro);
+                newGrid.replace(adjacent, adjDendro, new Pyro());
             }
         }
 
@@ -110,13 +110,13 @@ public class Pyro extends Tile {
         for (Point adjacent : Grids.getNeighbors(position, width, height)) {
             Tile cryoTile = grid.getTileOfType(adjacent, Cryo.class);
             if (cryoTile instanceof Cryo) {
-                newGrid.replace(adjacent, new Hydro(), cryoTile);
+                newGrid.replace(adjacent, cryoTile, new Hydro());
                 hasGoneOut = true; // melt: goes out
             }
         }
 
         if (hasGoneOut) {
-            newGrid.replace(position, new Empty(), this);
+            newGrid.replace(position, this, new Empty());
         }
     }
 }

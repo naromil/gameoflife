@@ -131,12 +131,12 @@ public class Grid {
     }
 
     /**
-     * replace newTile but it can only overwrite oldTile.
+     * replace oldTile with newTile. newTile can only overwrite oldTile.
      * can replace contained tiles as well, but only if in a complex tile.
      * the preferred wrapper to replace tile abstractly.
      * @param oldTile do not use Empty if no preference, use null instead.
      */
-    public void replace(Point position, Tile newTile, Tile oldTile) {
+    public void replace(Point position, Tile oldTile, Tile newTile) {
         int i = position.x();
         int j = position.y();
         if (tiles[i][j] instanceof Empty || tiles[i][j] instanceof Ash

@@ -75,7 +75,7 @@ public class Anemo extends Tile {
                     Point randomTile = firstTiles.get(randomIndex);
                     Tile oldTile = grid.getTile(randomTile);
                     if (!oldTile.isComplexType()) {
-                        newGrid.replace(randomTile, new Anemo(oldTile), oldTile);
+                        newGrid.replace(randomTile, oldTile, new Anemo(oldTile));
                     }
                 }
             }
@@ -91,7 +91,7 @@ public class Anemo extends Tile {
             Geo geo = (Geo) containedTile;
             // shield: protection; brittle: erosion.
             if (!geo.hasShield() && (geo.isBrittle() || Math.random() < Geo.BASE_EROSION_CHANCE)) {
-                newGrid.replace(position, new Empty(), containedTile);
+                newGrid.replace(position, containedTile, new Empty());
             }
         }
 
@@ -126,10 +126,11 @@ public class Anemo extends Tile {
             else {
                 tmp = grid.getTile(randomNeighbor);
             }
-            newGrid.replace(randomNeighbor, containedTile, tmp);
+            newGrid.replace(randomNeighbor, tmp, containedTile);
             if (Math.random() < BASE_SWIRL_COPY_CHANCE) {
                 try {
-                    containedTile = containedTile.getClass().getDeclaredConstructor(containedTile.getClass()).newInstance();
+                    containedTile = containedTile.getClass()
+                            .getDeclaredConstructor(containedTile.getClass()).newInstance();
                 } catch (Exception e) {
                     containedTile = tmp;
                 }
@@ -140,7 +141,7 @@ public class Anemo extends Tile {
         }
 
         // wind: moves
-        newGrid.replace(position, containedTile, this);
+        newGrid.replace(position, this, containedTile);
 
         // goes in the fixed direction of current seasonal wind
         Point next = position.plus(grid.getWindDirection());
@@ -149,7 +150,7 @@ public class Anemo extends Tile {
                 && !grid.getTile(next).isComplexType()) {
             // wind: absorb
             containedTile = grid.getTile(next);
-            newGrid.replace(next, this, newGrid.getTile(next));
+            newGrid.replace(next, grid.getTile(next), this);
         }
     }
 }

@@ -85,7 +85,7 @@ public class Electro extends Tile {
                 double currentId = Math.random();
                 Tile oldTile = grid.getTile(spawn);
                 if (!oldTile.isComplexType()) {
-                    newGrid.replace(spawn, new Electro(oldTile, currentId), oldTile);
+                    newGrid.replace(spawn, oldTile, new Electro(oldTile, currentId));
                 }
                 while (Math.random() < BASE_MORE_STORM_CHANCE) {
                     Point[] neighbors = Grids.getNeighbors(spawn, width, height);
@@ -93,8 +93,7 @@ public class Electro extends Tile {
                     Point next = neighbors[randomIndex];
                     Tile oldTile2 = grid.getTile(next);
                     if (!oldTile2.isComplexType()) {
-                        newGrid.replace(next, new Electro(oldTile2, currentId),
-                                oldTile2);
+                        newGrid.replace(next, oldTile2, new Electro(oldTile2, currentId));
                         spawn = next;
                     }
                 }
@@ -120,13 +119,13 @@ public class Electro extends Tile {
         // storm: disappear
         stormTicks++;
         if (stormTicks >= MAX_STORM_TICKS) {
-            newGrid.replace(position, containedTile, this);
+            newGrid.replace(position, this, containedTile);
             return;
         }
 
         // overloaded
         if (containedTile instanceof Pyro) {
-            newGrid.replace(position, new Empty(), this);
+            newGrid.replace(position, this, new Empty());
             //overloaded: explosion
             for (Point adjacent : Grids.getNeighbors(position, width, height, 2)) {
                 Tile oldTile = grid.getTile(adjacent);
@@ -134,7 +133,7 @@ public class Electro extends Tile {
                     ((Geo) oldTile).setShield(false); // shield: protection
                     continue;
                 }
-                newGrid.replace(adjacent, new Empty(), oldTile);
+                newGrid.replace(adjacent, oldTile, new Empty());
             }
             // overloaded: throw away
             List<Point> neighbors2 = Arrays.asList(
@@ -147,7 +146,7 @@ public class Electro extends Tile {
             }
             int randomIndex = (int) (Math.random() * neighbors3.size());
             Point randomNeighbor = neighbors3.get(randomIndex);
-            newGrid.replace(randomNeighbor, new Pyro(), grid.getTile(randomNeighbor));
+            newGrid.replace(randomNeighbor, grid.getTile(randomNeighbor), new Pyro());
             return;
         }
 
@@ -155,7 +154,7 @@ public class Electro extends Tile {
         if (containedTile instanceof Dendro && ((Dendro) containedTile).hasDendroCore()) {
             Dendro dendro = (Dendro) containedTile;
             dendro.setDendroCore(false);
-            newGrid.replace(position, new Core(), this);
+            newGrid.replace(position, this, new Core());
             return;
         }
 
@@ -179,7 +178,7 @@ public class Electro extends Tile {
 
         // superconduct
         if (containedTile instanceof Cryo) {
-            newGrid.replace(position, new Empty(), this);
+            newGrid.replace(position, this, new Empty());
             // superconduct: brittle
             for (Point adjacent : Grids.getNeighbors(position, width, height)) {
                 if (grid.hasType(adjacent, Geo.class)) {
@@ -198,7 +197,7 @@ public class Electro extends Tile {
         containedTile.act(grid, newGrid, position);
 
         // storm: moves
-        newGrid.replace(position, containedTile, this);
+        newGrid.replace(position, this, containedTile);
         Point next = position.plus(direction);
         if (!Grids.isOutOfBounds(next, width, height)) {
             if (grid.getTile(next).isComplexType()) {
@@ -206,7 +205,7 @@ public class Electro extends Tile {
             } else {
                 containedTile = grid.getTile(next);
             }
-            newGrid.replace(next, this, grid.getTile(next));
+            newGrid.replace(next, grid.getTile(next), this);
         }
 
         // storm: move together

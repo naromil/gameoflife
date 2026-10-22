@@ -45,7 +45,7 @@ public class Cryo extends Tile {
         if (currentSeason != SeasonType.WINTER) {
             tickWithoutWinter++;
             if (tickWithoutWinter >= MAX_TICKS_WITHOUT_WINTER) {
-                newGrid.replace(position, new Hydro(), this);
+                newGrid.replace(position, this, new Hydro());
                 return;
             }
         } else {
@@ -61,7 +61,7 @@ public class Cryo extends Tile {
                 double frozenChance = (currentSeason == SeasonType.WINTER)
                         ? BASE_FROZEN_WINTER_CHANCE : BASE_FROZEN_NORMAL_CHANCE;
                 if (Math.random() < frozenChance) {
-                    newGrid.replace(adjacent, new Cryo(tickWithoutWinter + 1), adjHydro);
+                    newGrid.replace(adjacent, adjHydro, new Cryo(tickWithoutWinter + 1));
                 }
             }
         }
