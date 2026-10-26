@@ -99,21 +99,9 @@ public class Dendro extends Tile {
     public void act(Grid grid, Grid newGrid, Point position) {
         int width = grid.getWidth();
         int height = grid.getHeight();
-        // season: change color
-        final int colorGoal;
-        switch (grid.getCurrentSeason()) {
-            case SPRING -> colorGoal = 0;
-            case SUMMER -> colorGoal = 20;
-            case FALL -> colorGoal = -10;
-            case WINTER -> colorGoal = -40;
-            default -> colorGoal = 0;
-        }
 
-        if (seasonColorModifier < colorGoal) {
-            seasonColorModifier += 2;
-        } else if (seasonColorModifier > colorGoal) {
-            seasonColorModifier -= 2;
-        }
+        // season: change color
+        changeColor(grid);
 
         // quicken: timer
         if (tickQuickened > 0) {
@@ -184,4 +172,21 @@ public class Dendro extends Tile {
             }
         }
     }
+
+	private void changeColor(Grid grid) {
+        final int colorGoal;
+        switch (grid.getCurrentSeason()) {
+            case SPRING -> colorGoal = 0;
+            case SUMMER -> colorGoal = 20;
+            case FALL -> colorGoal = -10;
+            case WINTER -> colorGoal = -40;
+            default -> colorGoal = 0;
+        }
+
+        if (seasonColorModifier < colorGoal) {
+            seasonColorModifier += 2;
+        } else if (seasonColorModifier > colorGoal) {
+            seasonColorModifier -= 2;
+        }
+	}
 }

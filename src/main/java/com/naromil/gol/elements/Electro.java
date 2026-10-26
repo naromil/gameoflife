@@ -231,6 +231,7 @@ public class Electro extends Tile {
                     }
                 }
             }
+            newGrid.replace(position, this, containedTile);
             return;
         }
 
@@ -242,15 +243,19 @@ public class Electro extends Tile {
         containedTile.act(grid, newGrid, position);
 
         // storm: moves
-        newGrid.replace(position, this, containedTile);
         Point next = position.plus(direction);
-        if (!Grids.isOutOfBounds(next, width, height)) {
-            if (grid.getTile(next).isComplexType()) {
-                containedTile = grid.getTile(next).getContainedTile();
-            } else {
-                containedTile = grid.getTile(next);
+        if (!next.equals(position)) {
+            newGrid.replace(position, this, containedTile);
+            if (!Grids.isOutOfBounds(next, width, height)) {
+                // newGrid since storm tiles ahead may have moved this tick
+                Tile nextTile = newGrid.getTile(next);
+                if (nextTile.isComplexType()) {
+                    containedTile = nextTile.getContainedTile();
+                } else {
+                    containedTile = nextTile;
+                }
+                newGrid.replace(next, nextTile, this);
             }
-            newGrid.replace(next, grid.getTile(next), this);
         }
 
         // storm: move together

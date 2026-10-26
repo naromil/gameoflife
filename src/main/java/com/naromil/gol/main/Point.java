@@ -15,6 +15,6 @@ public record Point(int x, int y) {
 
 	public int distanceTo(Point point) {
         // chebyshev distance
-        return (int) Math.max(point.x() - x, point.y() - y);
+        return Math.max(Math.abs(point.x() - x), Math.abs(point.y() - y));
 	}
 }

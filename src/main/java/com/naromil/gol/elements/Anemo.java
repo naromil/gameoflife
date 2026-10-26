@@ -131,7 +131,7 @@ public class Anemo extends Tile {
             if (Math.random() < BASE_SWIRL_COPY_CHANCE) {
                 try {
                     containedTile = containedTile.getClass()
-                            .getDeclaredConstructor(containedTile.getClass()).newInstance();
+                            .getDeclaredConstructor().newInstance();
                 } catch (Exception e) {
                     containedTile = tmp;
                 }
@@ -141,17 +141,24 @@ public class Anemo extends Tile {
             }
         }
 
-        // wind: moves
-        newGrid.replace(position, this, containedTile);
-
         // goes in the fixed direction of current seasonal wind
         Point next = position.plus(grid.getWindDirection());
 
-        if (!Grids.isOutOfBounds(next, width, height)
-                && !grid.getTile(next).isComplexType()) {
-            // wind: absorb
-            containedTile = grid.getTile(next);
-            newGrid.replace(next, grid.getTile(next), this);
+        if (Grids.isOutOfBounds(next, width, height)) {
+            newGrid.replace(position, this, containedTile);
+            return;
         }
+
+        // newGrid since the wind ahead may have moved this tick
+        Tile nextTile = newGrid.getTile(next);
+        if (nextTile.isComplexType()) {
+            return;
+        }
+
+        // wind: moves
+        newGrid.replace(position, this, containedTile);
+        // wind: absorb
+        containedTile = nextTile;
+        newGrid.replace(next, nextTile, this);
     }
 }

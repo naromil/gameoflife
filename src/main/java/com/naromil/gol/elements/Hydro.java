@@ -14,6 +14,7 @@ public class Hydro extends Tile {
     private static final double BASE_VAPORIZE_STEAM_CHANCE = 0.50;
     private static final double BASE_PLATEAU_CHANCE = 0.01;
     private static final int MAX_VAPORIZE_TILES = 5;
+    private static final int MAX_AFFINITY_STEPS = 2;
 
     private boolean isLake = false;
     private int tickRain = 0;
@@ -77,9 +78,15 @@ public class Hydro extends Tile {
                     (int) (Math.random() * width));
 
             // rain: affinity (move towards nearest alike to form lake)
-            Point next = Grids.directionToNearestType(grid, rain,
-                    isWinter ? Cryo.class : Hydro.class, 2);
-            Point target = next != null ? next : rain;
+            Class<? extends Tile> affinity = isWinter ? Cryo.class : Hydro.class;
+            Point target = rain;
+            for (int step = 0; step < MAX_AFFINITY_STEPS; step++) {
+                Point next = Grids.directionToNearestType(grid, target, affinity);
+                if (next == null || grid.hasType(next, affinity)) {
+                    break;
+                }
+                target = next;
+            }
 
             // directly snows (spawn Cryo) in winter
             newGrid.replace(target, grid.getTile(target), isWinter ? new Cryo() : new Hydro());

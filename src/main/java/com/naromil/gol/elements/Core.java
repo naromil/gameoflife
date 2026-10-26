@@ -48,7 +48,7 @@ public class Core extends Dendro {
         act(grid, newGrid, position, CORE_SPEED_MULTIPLIER);
     }
 
-    public void act(Grid grid, Grid newGrid, Point position, int times) {
+    private void act(Grid grid, Grid newGrid, Point position, int times) {
         int width = grid.getWidth();
         int height = grid.getHeight();
         // quicken: timer
@@ -74,12 +74,14 @@ public class Core extends Dendro {
             return;
         }
 
-        // contained tile act
+        // contained tile act once per tick
         if (containedTile.isComplexType()) {
             throw new IllegalStateException(
                     "Core cannot contain another complex tile.");
         }
-        containedTile.act(grid, newGrid, position);
+        if (times == CORE_SPEED_MULTIPLIER) {
+            containedTile.act(grid, newGrid, position);
+        }
 
         // hyperbloom: hunt
         newGrid.replace(position, this, containedTile);
@@ -88,8 +90,11 @@ public class Core extends Dendro {
         Point next = Grids.directionToNearestType(grid, position, Pyro.class);
 
         if (next != null) { // only move if pyro found
-            Tile oldTile = grid.getTile(next);
-            if (!oldTile.isComplexType()) {
+            // newGrid since it may have changed this tick
+            Tile oldTile = newGrid.getTile(next);
+            if (oldTile.isComplexType()) {
+                containedTile = oldTile.getContainedTile();
+            } else {
                 containedTile = oldTile;
             }
             // top priority among complex tile types
