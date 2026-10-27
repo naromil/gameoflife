@@ -1,5 +1,15 @@
 # Game of Life
 
+## Architecture
+
+- `MainController` and `Sim` are the main functions that is responsible for the UI, JavaFX logic, rendering and the `Grid` instance.
+- `SeasonType` is an enum for the four seasons. `Color` and `Point` are the record.
+- All tile classes extend the abstract class `Tile`. `Core` extends `Dendro`.
+- `Grid` interacts with `Tile` class only and access the list of actual tile classes using `TileFactory`. `Grid` itself stores `Season`.
+- `Tile` has an `containedTile` field that is mostly used in complex tiles.
+- The `Grid` wrapper method `replace(Grid, position, Tile, Tile)` safely replaces a Tile with another Tile based on UUID matching to ensure priority. It also smartly replaces `containedTile` to achieve abstraction.
+- `Grids` is the utility class used to explore `Grid`, such as getting neighbors and tracking distances.
+
 ## Elements
 
 This game of life simulation borrows elements from the video game _Genshin Impact_. These elements are:
@@ -41,6 +51,9 @@ Tiles have priorities. Lower priorities can act first and are less likely to be 
 
 ## Main Rules
 
+The probabilities are generally checked once per round.
+Global rules such as wind, storms and rain are triggered in proportion to the grid size.
+
 ### Tiles
 
 1. **Growth**: Dendro spreads to an empty neighbor 5% each tick, doubled if Hydro is within 2 tiles.
@@ -62,7 +75,7 @@ Tiles have priorities. Lower priorities can act first and are less likely to be 
 14. **Frozen (Hydro x Cryo)**: Hydro with >=2 Cryo freezes 5%.
 15. **OVERLOADED (Pyro x Electro)**: when Electro above Pyro, clears 5x5 areas and spawn a Pyro at a random place 3 tiles away.
 16. **Electro-Charged (Hydro x Electro)**: when Electro above Hydro, the Hydro becomes charged and spread to 5 nearby Hydro at maximum in the lake.
-17. **Superconduct (Cryo x Electro)**: when Electro adjacent or above Cryo, both die, make adjacent Geo brittle.
+17. **SUPERCONDUCT (Cryo x Electro)**: when Electro adjacent or above Cryo, both die, spread to 5 nearby Cryo and make adjacent Geo brittle.
 18. **Quicken (Dendro x Electro)**: Dendro becomes quickened and grows 3x faster for 5 ticks.
 19. **Bloom (Dendro x Hydro)**: Dendro next to Hydro 3% grow a Dendro Core.
 20. **Burgeon (Core x Pyro)**: Dendro Core turns all Dendro within 2 tiles into Pyro.
@@ -73,6 +86,15 @@ Tiles have priorities. Lower priorities can act first and are less likely to be 
 25. **Pollination (Dendro x Anemo)**: when Anemo above Dendro, Anemo becomes pollinated and plant a new Dendro at a empty tile that it passes.
 26. **Erosion (Geo x Anemo)**: when Anemo above Geo, 0.2% kills Geo.
 27. **Plateau (Geo x Hydro)**: when Hydro adjacent to Geo, 1% turn into Cryo.
+
+### The Complex Rules
+
+- **7 STORMS**: storms generated in chunks and move together based on ID matching.
+- **8 WIND**: wind generated at the edge, which depends on the random seasonal wind direction.
+- **15 OVERLOADED**: go through random tile at distance 3 and place a Pyro.
+- **17 SUPERCONDUCT**: use bfs to explore nearby Cryo and inflict special state on Geo.
+- **21 HYPERBLOOM**: a specialized Dendro child class, Core, chase near Pyro at 3x speed and clear all Pyro on the old board.
+- **22 SWIRL**: swap the simple tile within Anemo abstractly with adjacent with a chance to construct new one using `Class<? extends Tile>`.
 
 ## Seasons
 
