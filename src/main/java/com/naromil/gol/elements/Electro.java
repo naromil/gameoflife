@@ -163,6 +163,45 @@ public class Electro extends Tile {
             return;
         }
 
+        // all the various reactions
+        electroReactions(grid, newGrid, position);
+
+        // contained tile act, Empty does nothing
+        if (containedTile.isComplexType()) {
+            throw new IllegalStateException(
+                    "Electro cannot contain another complex tile.");
+        }
+        containedTile.act(grid, newGrid, position);
+
+        // storm: moves
+        Point next = position.plus(direction);
+        if (!next.equals(position)) {
+            newGrid.replace(position, this, containedTile);
+            if (!Grids.isOutOfBounds(next, width, height)) {
+                // newGrid since storm tiles ahead may have moved this tick
+                Tile nextTile = newGrid.getTile(next);
+                if (nextTile.isComplexType()) {
+                    containedTile = nextTile.getContainedTile();
+                } else {
+                    containedTile = nextTile;
+                }
+                newGrid.replace(next, nextTile, this);
+            }
+        }
+
+        // storm: move together
+        for (Point adjacent : Grids.getNeighbors(position, width, height)) {
+            Tile adjTile = grid.getTile(adjacent);
+            if (adjTile instanceof Electro && ((Electro) adjTile).id == this.id) {
+                ((Electro) adjTile).act(grid, newGrid, adjacent, direction);
+            }
+        }
+    }
+
+    private void electroReactions(Grid grid, Grid newGrid, Point position) {
+        int width = grid.getWidth();
+        int height = grid.getHeight();
+
         // overloaded
         if (containedTile instanceof Pyro) {
             newGrid.replace(position, this, new Empty());
@@ -233,37 +272,6 @@ public class Electro extends Tile {
             }
             newGrid.replace(position, this, containedTile);
             return;
-        }
-
-        // contained tile act, Empty does nothing
-        if (containedTile.isComplexType()) {
-            throw new IllegalStateException(
-                    "Electro cannot contain another complex tile.");
-        }
-        containedTile.act(grid, newGrid, position);
-
-        // storm: moves
-        Point next = position.plus(direction);
-        if (!next.equals(position)) {
-            newGrid.replace(position, this, containedTile);
-            if (!Grids.isOutOfBounds(next, width, height)) {
-                // newGrid since storm tiles ahead may have moved this tick
-                Tile nextTile = newGrid.getTile(next);
-                if (nextTile.isComplexType()) {
-                    containedTile = nextTile.getContainedTile();
-                } else {
-                    containedTile = nextTile;
-                }
-                newGrid.replace(next, nextTile, this);
-            }
-        }
-
-        // storm: move together
-        for (Point adjacent : Grids.getNeighbors(position, width, height)) {
-            Tile adjTile = grid.getTile(adjacent);
-            if (adjTile instanceof Electro && ((Electro) adjTile).id == this.id) {
-                ((Electro) adjTile).act(grid, newGrid, adjacent, direction);
-            }
         }
     }
 }
