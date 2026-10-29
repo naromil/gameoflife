@@ -10,6 +10,14 @@
 - The `Grid` wrapper method `replace(Grid, position, Tile, Tile)` safely replaces a Tile with another Tile based on UUID matching to ensure priority. It also smartly replaces `containedTile` to achieve abstraction.
 - `Grids` is the utility class used to explore `Grid`, such as getting neighbors and tracking distances.
 
+## Get Started
+
+- Run `./gradlew run` in the project root to compile and run.
+- The document containing all the rules is in `README.md` in the project root.
+- The source files (.java files) are in `src/main/java/com/naromil/gol`.
+- The JavaFX fxml layout file is in `src/main/resources/com/naromil/gol`.
+- The editing history (commits) of the code can be viewed on Github directly or by cloning the repo.
+
 ## Elements
 
 This game of life simulation borrows elements from the video game _Genshin Impact_. These elements are:
