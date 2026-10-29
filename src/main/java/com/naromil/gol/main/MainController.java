@@ -93,7 +93,7 @@ public class MainController {
                 Color statusColor = statusGrid[i][j];
                 if (statusColor != null) {
                     // fill half width and half height square in the center of the tile
-                    double statusSize = Math.min(tileWidth, tileHeight) / 2;
+                    double statusSize = Math.min(tileWidth, tileHeight) / 3.0;
                     double statusX = j * tileWidth + (tileWidth - statusSize) / 2;
                     double statusY = i * tileHeight + (tileHeight - statusSize) / 2;
                     gc.setFill(javafx.scene.paint.Color.rgb(statusColor.r(), statusColor.g(), statusColor.b()));
